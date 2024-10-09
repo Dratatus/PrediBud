@@ -1,18 +1,25 @@
 
+using Backend.Data.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace Backend
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
 
+            var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
+           
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<PrediBudDBContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("PrediBudConnection")));
+
 
             var app = builder.Build();
 
@@ -22,8 +29,7 @@ namespace Backend
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseHttpsRedirection();
+                        app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
