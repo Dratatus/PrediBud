@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Data.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241017205302_UserSchemaUpdate")]
+    partial class UserSchemaUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,33 +378,6 @@ namespace Backend.Data.Migrations
                     b.Navigation("Material");
                 });
 
-            modelBuilder.Entity("Backend.Data.Models.Users.User", b =>
-                {
-                    b.OwnsOne("Backend.Data.Models.Credidentials.Credentials", "Credentials", b1 =>
-                        {
-                            b1.Property<int>("UserID")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Email")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("PasswordHash")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("UserID");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserID");
-                        });
-
-                    b.Navigation("Credentials")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Backend.Data.Models.Users.Client", b =>
                 {
                     b.OwnsOne("Backend.Data.Models.Common.ContactDetails", "ContactDetails", b1 =>
@@ -427,7 +403,33 @@ namespace Backend.Data.Migrations
                                 .HasForeignKey("ClientID");
                         });
 
+                    b.OwnsOne("Backend.Data.Models.Credidentials.Credentials", "Credentials", b1 =>
+                        {
+                            b1.Property<int>("ClientID")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .ValueGeneratedOnUpdateSometimes()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PasswordHash")
+                                .IsRequired()
+                                .ValueGeneratedOnUpdateSometimes()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ClientID");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ClientID");
+                        });
+
                     b.Navigation("ContactDetails")
+                        .IsRequired();
+
+                    b.Navigation("Credentials")
                         .IsRequired();
                 });
 
@@ -456,7 +458,33 @@ namespace Backend.Data.Migrations
                                 .HasForeignKey("WorkerID");
                         });
 
+                    b.OwnsOne("Backend.Data.Models.Credidentials.Credentials", "Credentials", b1 =>
+                        {
+                            b1.Property<int>("WorkerID")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Email")
+                                .IsRequired()
+                                .ValueGeneratedOnUpdateSometimes()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PasswordHash")
+                                .IsRequired()
+                                .ValueGeneratedOnUpdateSometimes()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("WorkerID");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("WorkerID");
+                        });
+
                     b.Navigation("ContactDetails")
+                        .IsRequired();
+
+                    b.Navigation("Credentials")
                         .IsRequired();
                 });
 
