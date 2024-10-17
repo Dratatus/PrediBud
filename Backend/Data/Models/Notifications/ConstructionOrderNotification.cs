@@ -1,4 +1,4 @@
-﻿using Backend.Data.Models.Workers;
+﻿using Backend.Data.Models.Users;
 
 namespace Backend.Data.Models.Notifications
 {

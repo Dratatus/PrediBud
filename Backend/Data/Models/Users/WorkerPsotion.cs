@@ -1,4 +1,4 @@
-﻿namespace Backend.Data.Models.Workers
+﻿namespace Backend.Data.Models.Users
 {
     public enum WorkerPosition
     {
