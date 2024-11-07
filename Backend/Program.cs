@@ -1,5 +1,6 @@
 
 using Backend.Data.Context;
+using Backend.Factories;
 using Backend.Repositories;
 using Backend.services;
 using Backend.Validation;
@@ -13,19 +14,32 @@ namespace Backend
         {
 
             var builder = WebApplication.CreateBuilder(args);
+
             // Add services to the container.
-
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            // Configure Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Configure Database Context
             builder.Services.AddDbContext<PrediBudDBContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("PrediBudConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("PrediBudConnection")));
+
+            // Add repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IConstructionOrderRepository, ConstructionOrderRepository>();
+
+            // Add services
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IConstructionOrderService, ConstructionOrderService>();
+
+            // Add additional utilities
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+            // Add factory
+            builder.Services.AddScoped<IConstructionSpecificationFactory, ConstructionSpecificationFactory>();
 
 
 

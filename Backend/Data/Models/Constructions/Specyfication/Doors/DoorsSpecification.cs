@@ -1,8 +1,13 @@
-﻿namespace Backend.Data.Models.Constructions.Dimensions.Doors
+﻿using Backend.Data.Models.Constructions.Specyfication;
+
+namespace Backend.Data.Models.Constructions.Dimensions.Doors
 {
-    public class DoorsSpecification : IConstructionDimensions
+    public class DoorsSpecification : ConstructionSpecification
     {
-        public ConstructionType Type => ConstructionType.Doors;
+        public DoorsSpecification()
+        {
+            Type = ConstructionType.Doors;
+        }
         public int Amount { get; set; }
         public decimal Height { get; set; }
         public decimal Width { get; set; }

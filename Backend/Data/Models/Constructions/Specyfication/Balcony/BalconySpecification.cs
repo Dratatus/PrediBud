@@ -1,10 +1,15 @@
-﻿namespace Backend.Data.Models.Constructions.Dimensions.Balcony
+﻿using Backend.Data.Models.Constructions.Specyfication;
+
+namespace Backend.Data.Models.Constructions.Dimensions.Balcony
 {
-    public class BalconySpecification : IConstructionDimensions
+    public class BalconySpecification : ConstructionSpecification
     {
-        public ConstructionType Type => ConstructionType.Balcony;
-        public decimal BalconyLength { get; set; }  
-        public decimal BalconyWidth { get; set; }  
+        public BalconySpecification()
+        {
+            Type = ConstructionType.Balcony;
+        }
+        public decimal Length { get; set; }  
+        public decimal Width { get; set; }  
         public RailingMaterial RailingMaterial { get; set; }  
     }
 }

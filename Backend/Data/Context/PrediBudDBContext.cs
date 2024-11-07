@@ -4,6 +4,18 @@ using Backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Users;
+using Backend.Data.Models.Constructions.Dimensions.Balcony;
+using Backend.Data.Models.Constructions.Dimensions.Doors;
+using Backend.Data.Models.Constructions.Dimensions.Facade;
+using Backend.Data.Models.Constructions.Dimensions.Floor;
+using Backend.Data.Models.Constructions.Dimensions;
+using Backend.Data.Models.Constructions.Specyfication.Ceiling;
+using Backend.Data.Models.Constructions.Specyfication.Painting;
+using Backend.Data.Models.Constructions.Specyfication.Plastering;
+using Backend.Data.Models.Constructions.Specyfication.ShellOpen;
+using Backend.Data.Models.Constructions.Specyfication.Stairs;
+using Backend.Data.Models.Constructions.Specyfication;
+using Backend.Data.Models.Constructions;
 
 namespace Backend.Data.Context
 {
@@ -23,9 +35,15 @@ namespace Backend.Data.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-        .HasDiscriminator<string>("UserType")
-        .HasValue<Client>("Client")
-        .HasValue<Worker>("Worker");
+                .HasDiscriminator<string>("UserType")
+                .HasValue<Client>("Client")
+                .HasValue<Worker>("Worker");
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Address)
+                .WithOne()
+                .HasForeignKey<User>(u => u.AddressId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<User>()
                 .OwnsOne(u => u.Credentials);
@@ -43,6 +61,12 @@ namespace Backend.Data.Context
                 .HasOne(co => co.Client)
                 .WithMany(c => c.ConstructionOrders)
                 .HasForeignKey(co => co.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ConstructionOrder>()
+                .HasOne(co => co.ConstructionSpecification)
+                .WithOne()
+                .HasForeignKey<ConstructionOrder>(co => co.ConstructionSpecificationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ConstructionOrder>()
@@ -70,6 +94,22 @@ namespace Backend.Data.Context
             modelBuilder.Entity<Calculation>()
                 .Property(c => c.UserPrice)
                 .HasPrecision(18, 2);
+
+            //specifications
+            modelBuilder.Entity<ConstructionSpecification>()
+                 .ToTable("ConstructionSpecifications")
+                 .HasDiscriminator<ConstructionType>("Type")
+                 .HasValue<BalconySpecification>(ConstructionType.Balcony)
+                 .HasValue<SuspendedCeilingSpecification>(ConstructionType.SuspendedCeiling)
+                 .HasValue<DoorsSpecification>(ConstructionType.Doors)
+                 .HasValue<FacadeSpecification>(ConstructionType.Facade)
+                 .HasValue<FlooringSpecification>(ConstructionType.Flooring)
+                 .HasValue<InsulationOfAtticSpecification>(ConstructionType.InsulationOfAttic)
+                 .HasValue<PaintingSpecification>(ConstructionType.Painting)
+                 .HasValue<PlasteringSpecification>(ConstructionType.Plastering)
+                 .HasValue<ShellOpenSpecification>(ConstructionType.ShellOpen)
+                 .HasValue<StaircaseSpecification>(ConstructionType.Staircase)
+                 .HasValue<WindowsSpecification>(ConstructionType.Windows);
 
             base.OnModelCreating(modelBuilder);
         }

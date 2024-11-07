@@ -1,14 +1,9 @@
-﻿using Backend.Data.Models.Constructions.Dimensions;
+﻿using Backend.Data.Models.Constructions.Specyfication.ShellOpen;
 
-namespace Backend.Data.Models.Constructions.Specyfication.ShellOpen
+namespace Backend.DTO.Specyfication
 {
-    public class ShellOpenSpecification: ConstructionSpecification
+    public class ShellOpenSpecificationDetails
     {
-        public ShellOpenSpecification()
-        {
-            Type = ConstructionType.ShellOpen;
-        }
-
         // Właściwości dla fundamentów
         public decimal? FoundationLength { get; set; }
         public decimal? FoundationWidth { get; set; }
@@ -27,19 +22,19 @@ namespace Backend.Data.Models.Constructions.Specyfication.ShellOpen
         public PartitionWallMaterial PartitionWallMaterial { get; set; }
 
         // Właściwości dla systemów kominowych i wentylacyjnych
-        public int? ChimneyCount { get; set; }  // Liczba kominów
-        public int? VentilationSystemCount { get; set; }  // Liczba systemów wentylacyjnych
+        public int? ChimneyCount { get; set; }
+        public int? VentilationSystemCount { get; set; }
 
         // Właściwości dla stropu
-        public decimal? CeilingArea { get; set; }  // Powierzchnia stropu
-        public CeilingMaterial CeilingMaterial { get; set; }  // Materiał stropu
+        public decimal? CeilingArea { get; set; }
+        public CeilingMaterial CeilingMaterial { get; set; }
 
         // Właściwości dla dachu
-        public decimal? RoofArea { get; set; }  // Powierzchnia dachu
-        public RoofMaterial RoofMaterial { get; set; }  // Materiał dachu
-        public decimal? RoofPitch { get; set; }  // Nachylenie dachu (w stopniach)
+        public decimal? RoofArea { get; set; }
+        public RoofMaterial RoofMaterial { get; set; }
+        public decimal? RoofPitch { get; set; }
 
         // Dodatkowe właściwości
-        public string[] ImagesUrl { get; set; }  // Zdjęcia konstrukcji/planu
+        public string[] ImagesUrl { get; set; }
     }
 }

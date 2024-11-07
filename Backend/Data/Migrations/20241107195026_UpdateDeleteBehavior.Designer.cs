@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Data.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241107195026_UpdateDeleteBehavior")]
+    partial class UpdateDeleteBehavior
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,9 +102,7 @@ namespace Backend.Data.Migrations
 
                     b.ToTable("ConstructionSpecifications", (string)null);
 
-                    b.HasDiscriminator<int>("Type");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Notifications.ConstructionOrderNotification", b =>
@@ -365,13 +366,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Width")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Width")
-                                .HasColumnName("BalconySpecification_Width");
-                        });
-
-                    b.HasDiscriminator().HasValue(11);
+                    b.ToTable("BalconySpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Doors.DoorsSpecification", b =>
@@ -390,22 +385,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Width")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Amount")
-                                .HasColumnName("DoorsSpecification_Amount");
-
-                            t.Property("Height")
-                                .HasColumnName("DoorsSpecification_Height");
-
-                            t.Property("Material")
-                                .HasColumnName("DoorsSpecification_Material");
-
-                            t.Property("Width")
-                                .HasColumnName("DoorsSpecification_Width");
-                        });
-
-                    b.HasDiscriminator().HasValue(3);
+                    b.ToTable("DoorsSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Facade.FacadeSpecification", b =>
@@ -421,7 +401,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("SurfaceArea")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasDiscriminator().HasValue(4);
+                    b.ToTable("FacadeSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Floor.FlooringSpecification", b =>
@@ -431,19 +411,11 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Area")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Material")
-                        .HasColumnType("int");
+                    b.Property<string>("Material")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Area")
-                                .HasColumnName("FlooringSpecification_Area");
-
-                            t.Property("Material")
-                                .HasColumnName("FlooringSpecification_Material");
-                        });
-
-                    b.HasDiscriminator().HasValue(5);
+                    b.ToTable("FlooringSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.InsulationOfAtticSpecification", b =>
@@ -459,16 +431,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Thickness")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Area")
-                                .HasColumnName("InsulationOfAtticSpecification_Area");
-
-                            t.Property("Material")
-                                .HasColumnName("InsulationOfAtticSpecification_Material");
-                        });
-
-                    b.HasDiscriminator().HasValue(7);
+                    b.ToTable("InsulationOfAtticSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.WindowsSpecification", b =>
@@ -484,13 +447,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Width")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Height")
-                                .HasColumnName("WindowsSpecification_Height");
-                        });
-
-                    b.HasDiscriminator().HasValue(2);
+                    b.ToTable("WindowsSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Ceiling.SuspendedCeilingSpecification", b =>
@@ -506,7 +463,7 @@ namespace Backend.Data.Migrations
                     b.Property<int>("Material")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue(6);
+                    b.ToTable("SuspendedCeilingSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Painting.PaintingSpecification", b =>
@@ -522,7 +479,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("WallSurfaceArea")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasDiscriminator().HasValue(9);
+                    b.ToTable("PaintingSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Plastering.PlasteringSpecification", b =>
@@ -535,13 +492,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("WallSurfaceArea")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("WallSurfaceArea")
-                                .HasColumnName("PlasteringSpecification_WallSurfaceArea");
-                        });
-
-                    b.HasDiscriminator().HasValue(8);
+                    b.ToTable("PlasteringSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.ShellOpen.ShellOpenSpecification", b =>
@@ -606,7 +557,7 @@ namespace Backend.Data.Migrations
                     b.Property<int?>("VentilationSystemCount")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue(12);
+                    b.ToTable("ShellOpenSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Stairs.StaircaseSpecification", b =>
@@ -625,19 +576,7 @@ namespace Backend.Data.Migrations
                     b.Property<decimal>("Width")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Height")
-                                .HasColumnName("StaircaseSpecification_Height");
-
-                            t.Property("Material")
-                                .HasColumnName("StaircaseSpecification_Material");
-
-                            t.Property("Width")
-                                .HasColumnName("StaircaseSpecification_Width");
-                        });
-
-                    b.HasDiscriminator().HasValue(10);
+                    b.ToTable("StaircaseSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Users.Client", b =>
@@ -779,6 +718,105 @@ namespace Backend.Data.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Credentials")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Balcony.BalconySpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.Balcony.BalconySpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Doors.DoorsSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.Doors.DoorsSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Facade.FacadeSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.Facade.FacadeSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.Floor.FlooringSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.Floor.FlooringSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.InsulationOfAtticSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.InsulationOfAtticSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.WindowsSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Dimensions.WindowsSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Ceiling.SuspendedCeilingSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Specyfication.Ceiling.SuspendedCeilingSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Painting.PaintingSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Specyfication.Painting.PaintingSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Plastering.PlasteringSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Specyfication.Plastering.PlasteringSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.ShellOpen.ShellOpenSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Specyfication.ShellOpen.ShellOpenSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Stairs.StaircaseSpecification", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification", null)
+                        .WithOne()
+                        .HasForeignKey("Backend.Data.Models.Constructions.Specyfication.Stairs.StaircaseSpecification", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

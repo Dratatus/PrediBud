@@ -1,5 +1,6 @@
 ﻿using Backend.Data.Models.Common;
 using Backend.Data.Models.Constructions;
+using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Users;
 
@@ -8,7 +9,6 @@ namespace Backend.Data.Models.Orders
     public class ConstructionOrder
     {
         public int ID { get; set; }
-        public Address Address { get; set; }
         public string Description { get; set; }
         public ConstructionType ConstructionType { get; set; }
         public string[] placementPhotos { get; set; }
@@ -27,6 +27,8 @@ namespace Backend.Data.Models.Orders
 
         public int? WorkerId { get; set; }
         public Worker Worker { get; set; }
+        public int ConstructionSpecificationId { get; set; }
+        public ConstructionSpecification ConstructionSpecification { get; set; }
 
         public List<ConstructionOrderNotification> Notifications { get; set; } = new List<ConstructionOrderNotification>();
     }

@@ -1,6 +1,6 @@
 ﻿namespace Backend.Data.Models.Constructions.Dimensions
 {
-    public interface IConstructionDimensions
+    public interface IConstructionSpecification
     {
         ConstructionType Type { get; }
     }
