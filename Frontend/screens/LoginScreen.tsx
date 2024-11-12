@@ -1,13 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
-import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'Login'>;
 
 const LoginScreen = () => {
   const navigation = useNavigation<NavigationProps>();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://10.0.2.2:5142/api/auth/login', {
+        email: email,
+        password: password,
+      });
+
+      console.log('Login successful:', response.data);
+
+      const token = response.data.token;
+
+    } catch (error: any) {
+      console.error('Error during login:', error.response?.data || error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -22,6 +42,8 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="Email"
           keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
 
         <Text style={styles.label}>PASSWORD</Text>
@@ -29,19 +51,18 @@ const LoginScreen = () => {
           style={styles.input}
           placeholder="Password"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log('Logging in...')}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>LOG IN</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.linkText}>Don't have an account? Create one here.</Text>
-        </TouchableOpacity>
       </View>
+
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+        <Text style={styles.linkText}>Don't have an account? Create one here.</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -64,13 +85,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginBottom: 80, 
+    marginBottom: 20,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 50, 
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20, 
+    marginBottom: 30,
+    textAlign: 'center',
   },
   description: {
     fontSize: 16,
@@ -79,7 +101,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   form: {
-    width: '80%',
+    width: '85%',
     alignItems: 'center',
   },
   label: {
@@ -118,7 +140,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 15,
-    textDecorationLine: 'underline',
   },
 });
 

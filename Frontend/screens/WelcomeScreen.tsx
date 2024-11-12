@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'Welcome'>;
 
@@ -39,12 +41,12 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   title: {
-    fontSize: 40, // Zwiększenie rozmiaru czcionki
+    fontSize: 40, 
     fontWeight: 'bold',
     color: '#fff',
     marginTop: 40,
     textAlign: 'center',
-    lineHeight: 45, // Ustalenie odpowiedniego odstępu między liniami
+    lineHeight: 45, 
   },
   button: {
     width: '75%',
