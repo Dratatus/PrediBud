@@ -21,6 +21,7 @@ namespace Backend.services
             new Claim(JwtRegisteredClaimNames.Sub, user.ID.ToString()),
             new Claim(ClaimTypes.Name, user.ContactDetails.Name),
             new Claim(ClaimTypes.Email, user.Credentials.Email),
+            new Claim("UserType", user is Worker ? "Worker":"Client")
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
