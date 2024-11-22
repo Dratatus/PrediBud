@@ -10,6 +10,7 @@ namespace Backend.Data.Models.Orders
     {
         public int ID { get; set; }
         public string Description { get; set; }
+        public OrderStatus Status { get; set; }
         public ConstructionType ConstructionType { get; set; }
         public string[] placementPhotos { get; set; }
         public DateTime? RequestedStartTime { get; set; }
@@ -24,12 +25,13 @@ namespace Backend.Data.Models.Orders
 
         public int ClientId { get; set; }
         public Client Client { get; set; }
-
         public int? WorkerId { get; set; }
+
         public Worker Worker { get; set; }
         public int ConstructionSpecificationId { get; set; }
         public ConstructionSpecification ConstructionSpecification { get; set; }
 
         public List<ConstructionOrderNotification> Notifications { get; set; } = new List<ConstructionOrderNotification>();
+        public List<int> BannedWorkerIds { get; set; } = new List<int>();
     }
 }

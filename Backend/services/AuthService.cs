@@ -64,6 +64,7 @@ namespace Backend.services
                 {
                     Credentials = new Credentials { Email = request.Email, PasswordHash = hashedPassword },
                     ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone },
+                    Address = new Address { City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName },
                     Position = request.Position
                 };
             }

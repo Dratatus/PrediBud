@@ -1,5 +1,6 @@
 ﻿using Backend.Data.Models.Common;
 using Backend.Data.Models.Credidentials;
+using Backend.Data.Models.Notifications;
 
 namespace Backend.Data.Models.Users
 {
@@ -10,5 +11,6 @@ namespace Backend.Data.Models.Users
         public Credentials Credentials { get; set; }
         public int AddressId { get; set; }
         public Address Address { get; set; }
+        public List<ConstructionOrderNotification> ConstructionOrderNotifications { get; set; } = new List<ConstructionOrderNotification>();
     }
 }

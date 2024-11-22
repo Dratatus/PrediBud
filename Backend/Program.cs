@@ -3,6 +3,7 @@ using Backend.Data.Context;
 using Backend.Factories;
 using Backend.Repositories;
 using Backend.services;
+using Backend.Services;
 using Backend.Validation;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace Backend
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services to the container
             builder.Services.AddControllers();
 
             // Configure Swagger/OpenAPI
@@ -29,10 +30,13 @@ namespace Backend
             // Add repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IConstructionOrderRepository, ConstructionOrderRepository>();
+            builder.Services.AddScoped<IConstructionOrderNotificationRepository, ConstructionOrderNotificationRepository>(); // Dodaj repozytorium powiadomieñ
 
             // Add services
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IConstructionOrderService, ConstructionOrderService>();
+            builder.Services.AddScoped<INegotiationService, NegotiationService>(); 
+            builder.Services.AddScoped<INotificationService, NotificationService>(); 
 
             // Add additional utilities
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();

@@ -1,7 +1,9 @@
-﻿using Backend.Data.Models.Orders;
+﻿using Backend.Data.Models.Notifications;
+using Backend.Data.Models.Orders;
 using Backend.DTO.Request;
 using Backend.Factories;
 using Backend.Repositories;
+using Backend.Services;
 
 namespace Backend.services
 {
@@ -9,13 +11,16 @@ namespace Backend.services
     {
         private readonly IConstructionOrderRepository _orderRepository;
         private readonly IConstructionSpecificationFactory _specificationFactory;
+        private readonly INotificationService _notificationService;
 
         public ConstructionOrderService(
             IConstructionOrderRepository orderRepository,
-            IConstructionSpecificationFactory specificationFactory)
+            IConstructionSpecificationFactory specificationFactory,
+            INotificationService notificationService)
         {
             _orderRepository = orderRepository;
             _specificationFactory = specificationFactory;
+            _notificationService = notificationService;
         }
 
         public async Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId)
@@ -49,7 +54,29 @@ namespace Backend.services
             return order;
         }
 
-        public async Task<bool> DeleteOrderAsync(int clientId, int orderId)
+        public async Task<bool> AcceptOrderAsync(int orderId, int workerId)
+        {
+            var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+
+            if (order == null || order.Status != OrderStatus.New)
+                return false;
+
+            order.Status = OrderStatus.Accepted;
+            order.WorkerId = workerId;
+            await _orderRepository.SaveChangesAsync();
+
+            await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
+            {
+                ClientId = order.ClientId,
+                Title = "Order Accepted",
+                Description = "Your order has been accepted by a worker.",
+                Status = NotificationStatus.OrderAccepted
+            });
+
+            return true;
+        }
+
+    public async Task<bool> DeleteOrderAsync(int clientId, int orderId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
 

@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Backend.Data.Migrations
+namespace Backend.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    [Migration("20241107215548_AddDiscriminatorToConstructionSpecifications")]
-    partial class AddDiscriminatorToConstructionSpecifications
+    [Migration("20241114215330_construstionOrderId")]
+    partial class construstionOrderId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,14 +34,12 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Dimensions")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MaterialId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Taxes")
@@ -71,15 +69,12 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StreetName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -115,29 +110,30 @@ namespace Backend.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int?>("ConstructionOrderID")
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ConstructionOrderID")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkerId")
+                    b.Property<int?>("WorkerId")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ClientId");
 
                     b.HasIndex("ConstructionOrderID");
 
@@ -155,22 +151,18 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SupplierID")
+                    b.Property<int?>("SupplierID")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -191,6 +183,9 @@ namespace Backend.Data.Migrations
                     b.Property<decimal?>("AgreedPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("BannedWorkerIds")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
@@ -204,7 +199,6 @@ namespace Backend.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
@@ -216,6 +210,9 @@ namespace Backend.Data.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -226,7 +223,6 @@ namespace Backend.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("placementPhotos")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -250,11 +246,9 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PriceWithTaxes")
@@ -284,7 +278,6 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ClientID")
@@ -294,7 +287,6 @@ namespace Backend.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Pics")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
@@ -319,7 +311,6 @@ namespace Backend.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -570,7 +561,6 @@ namespace Backend.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImagesUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("LoadBearingWallHeight")
@@ -655,7 +645,6 @@ namespace Backend.Data.Migrations
                     b.HasBaseType("Backend.Data.Models.Users.User");
 
                     b.Property<string>("Position")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Worker");
@@ -674,15 +663,24 @@ namespace Backend.Data.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Notifications.ConstructionOrderNotification", b =>
                 {
+                    b.HasOne("Backend.Data.Models.Users.Client", "Client")
+                        .WithMany("ConstructionOrderNotifications")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Backend.Data.Models.Orders.ConstructionOrder", null)
                         .WithMany("Notifications")
-                        .HasForeignKey("ConstructionOrderID");
+                        .HasForeignKey("ConstructionOrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Backend.Data.Models.Users.Worker", "Worker")
                         .WithMany("ConstructionOrderNotifications")
                         .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Client");
 
                     b.Navigation("Worker");
                 });
@@ -691,9 +689,7 @@ namespace Backend.Data.Migrations
                 {
                     b.HasOne("Backend.Data.Models.Suppliers.Supplier", "Supplier")
                         .WithMany()
-                        .HasForeignKey("SupplierID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SupplierID");
 
                     b.Navigation("Supplier");
                 });
@@ -713,7 +709,7 @@ namespace Backend.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Backend.Data.Models.Users.Worker", "Worker")
-                        .WithMany("ConstructionOrders")
+                        .WithMany("AssignedOrders")
                         .HasForeignKey("WorkerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -764,11 +760,9 @@ namespace Backend.Data.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<string>("Email")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("PasswordHash")
-                                .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("UserID");
@@ -781,8 +775,7 @@ namespace Backend.Data.Migrations
 
                     b.Navigation("Address");
 
-                    b.Navigation("Credentials")
-                        .IsRequired();
+                    b.Navigation("Credentials");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Users.Client", b =>
@@ -793,12 +786,10 @@ namespace Backend.Data.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<string>("Name")
-                                .IsRequired()
                                 .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Phone")
-                                .IsRequired()
                                 .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("nvarchar(max)");
 
@@ -810,8 +801,7 @@ namespace Backend.Data.Migrations
                                 .HasForeignKey("ClientID");
                         });
 
-                    b.Navigation("ContactDetails")
-                        .IsRequired();
+                    b.Navigation("ContactDetails");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Users.Worker", b =>
@@ -822,12 +812,10 @@ namespace Backend.Data.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<string>("Name")
-                                .IsRequired()
                                 .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Phone")
-                                .IsRequired()
                                 .ValueGeneratedOnUpdateSometimes()
                                 .HasColumnType("nvarchar(max)");
 
@@ -839,8 +827,7 @@ namespace Backend.Data.Migrations
                                 .HasForeignKey("WorkerID");
                         });
 
-                    b.Navigation("ContactDetails")
-                        .IsRequired();
+                    b.Navigation("ContactDetails");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Orders.ConstructionOrder", b =>
@@ -855,6 +842,8 @@ namespace Backend.Data.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Users.Client", b =>
                 {
+                    b.Navigation("ConstructionOrderNotifications");
+
                     b.Navigation("ConstructionOrders");
 
                     b.Navigation("MaterialOrders");
@@ -862,9 +851,9 @@ namespace Backend.Data.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Users.Worker", b =>
                 {
-                    b.Navigation("ConstructionOrderNotifications");
+                    b.Navigation("AssignedOrders");
 
-                    b.Navigation("ConstructionOrders");
+                    b.Navigation("ConstructionOrderNotifications");
                 });
 #pragma warning restore 612, 618
         }

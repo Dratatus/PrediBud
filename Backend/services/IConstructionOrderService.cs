@@ -9,5 +9,6 @@ namespace Backend.services
         Task<ConstructionOrder> GetOrderByIdAsync(int id);
         Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId);
         Task<bool> DeleteOrderAsync(int clientId, int orderId);
+        Task<bool> AcceptOrderAsync(int orderId, int workerId);
     }
 }

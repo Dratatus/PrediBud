@@ -70,10 +70,22 @@ namespace Backend.Data.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ConstructionOrder>()
-                .HasOne(co => co.Worker)
-                .WithMany(w => w.ConstructionOrders)
-                .HasForeignKey(co => co.WorkerId)
+               .HasOne(co => co.Worker)
+               .WithMany(w => w.AssignedOrders)
+               .HasForeignKey(co => co.WorkerId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ConstructionOrderNotification>()
+                .HasOne(n => n.Client)
+                .WithMany(c => c.ConstructionOrderNotifications)
+                .HasForeignKey(n => n.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ConstructionOrderNotification>()
+                 .HasOne(n => n.Worker)
+                 .WithMany(w => w.ConstructionOrderNotifications)
+                 .HasForeignKey(n => n.WorkerId)
+                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Material>()
                 .Property(m => m.PriceWithTaxes)
