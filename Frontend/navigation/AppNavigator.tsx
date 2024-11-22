@@ -4,6 +4,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import FindWorksScreen from '../screens/FindWorksScreen';
 
 export type StackParamList = {
   Welcome: undefined;
@@ -13,6 +14,8 @@ export type StackParamList = {
     userRole: string;
     userName: string;
   };
+  FindWorks: undefined;
+  WorkDetails: { workId: string };
 };
 
 
@@ -39,6 +42,11 @@ const AppNavigator = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="FindWorks"
+        component={FindWorksScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

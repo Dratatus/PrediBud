@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,15 +19,14 @@ type UserProfileRouteProps = RouteProp<StackParamList, 'UserProfile'>;
 const UserProfileScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<UserProfileRouteProps>();
-  const { userRole = '', userName = '' } = route.params || {};
-
-  useEffect(() => {
-    console.log('User Role:', userRole);
-    console.log('User Name:', userName);
-  }, [userRole, userName]);
+  const { userRole = '', userName = 'Unknown User' } = route.params || {};
 
   const handleLogout = () => {
     navigation.navigate('Login');
+  };
+
+  const handleFindWorks = () => {
+    navigation.navigate('FindWorks');
   };
 
   return (
@@ -43,7 +42,7 @@ const UserProfileScreen: React.FC = () => {
         }
         style={styles.avatar}
       />
-      <Text style={styles.userName}>{userName && userName !== '' ? userName : 'Unknown User'}</Text>
+      <Text style={styles.userName}>{userName || 'Unknown User'}</Text>
 
       <View style={styles.optionsContainer}>
         {userRole?.toLowerCase() === 'client' ? (
@@ -67,7 +66,7 @@ const UserProfileScreen: React.FC = () => {
           </>
         ) : (
           <>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
               <Image source={icons.findWorks} style={styles.optionIcon} />
               <Text style={styles.optionText}>Find works</Text>
             </TouchableOpacity>
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     position: 'absolute',
-    top: 60,
+    top: 50,
     left: 20,
     backgroundColor: '#f0ad4e',
     paddingVertical: 8,

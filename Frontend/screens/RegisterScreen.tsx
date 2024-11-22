@@ -104,13 +104,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0d0',
   },
   logo: {
     width: 100,
     height: 100,
     marginBottom: 20,
     marginTop: 20,
+    borderRadius: 100
   },
   title: {
     fontSize: 30,
