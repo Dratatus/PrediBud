@@ -15,19 +15,58 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:5142/api/auth/login', {
-        email: email,
-        password: password,
-      });
+        const response = await axios.post('http://10.0.2.2:5142/api/auth/login', {
+            email: email,
+            password: password,
+        });
 
-      console.log('Login successful:', response.data);
+        const token = response.data.token;
+        console.log('Login successful:', token);
 
-      const token = response.data.token;
+        const decodedToken = decodeJWT(token);
+        console.log('Decoded Token:', decodedToken);
+
+        const userName = decodedToken?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+        const userRole = decodedToken?.UserType;
+
+        console.log('User Name:', userName);
+        console.log('User Role:', userRole);
+
+        navigation.navigate('UserProfile', {
+            userRole: userRole,
+            userName: userName,
+        });
 
     } catch (error: any) {
-      console.error('Error during login:', error.response?.data || error.message);
+        console.error('Error during login:', error.response?.data || error.message);
     }
-  };
+};
+
+  const decodeJWT = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    
+    while (base64.length % 4 !== 0) {
+      base64 += '=';
+    }
+
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
+
 
   return (
     <View style={styles.container}>
