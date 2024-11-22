@@ -29,6 +29,10 @@ const UserProfileScreen: React.FC = () => {
     navigation.navigate('FindWorks');
   };
 
+  const handleMyWorks = () => {
+    navigation.navigate('MyWorks');
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -70,7 +74,7 @@ const UserProfileScreen: React.FC = () => {
               <Image source={icons.findWorks} style={styles.optionIcon} />
               <Text style={styles.optionText}>Find works</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
               <Image source={icons.myWorks} style={styles.optionIcon} />
               <Text style={styles.optionText}>My works</Text>
             </TouchableOpacity>

@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import FindWorksScreen from '../screens/FindWorksScreen';
+import MyWorksScreen from '../screens/MyWorksScreen'; // Dodany import do MyWorksScreen
 
 export type StackParamList = {
   Welcome: undefined;
@@ -15,9 +16,9 @@ export type StackParamList = {
     userName: string;
   };
   FindWorks: undefined;
-  WorkDetails: { workId: string };
+  MyWorks: undefined;
+  WorkDetails: { workId: string }; // Usunięto zduplikowane WorkDetails
 };
-
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -47,6 +48,16 @@ const AppNavigator = () => {
       <Stack.Screen
         name="FindWorks"
         component={FindWorksScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MyWorks"
+        component={MyWorksScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="WorkDetails"
+        component={MyWorksScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
