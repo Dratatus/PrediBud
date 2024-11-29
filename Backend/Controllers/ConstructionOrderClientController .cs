@@ -6,11 +6,11 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ConstructionOrderController : ControllerBase
+    public class ConstructionOrderClientController : ControllerBase
     {
         private readonly IConstructionOrderService _constructionOrderService;
 
-        public ConstructionOrderController(IConstructionOrderService constructionOrderService)
+        public ConstructionOrderClientController(IConstructionOrderService constructionOrderService)
         {
             _constructionOrderService = constructionOrderService;
         }

@@ -22,6 +22,13 @@ namespace Backend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<ConstructionOrder>> GetOrdersByWorkerIdAsync(int workerId)
+        {
+            return await _context.ConstructionOrders
+                .Where(o => o.WorkerId == workerId)
+                .ToListAsync();
+        }
+
         public async Task<ConstructionOrder> GetOrderWithSpecificationByIdAsync(int id)
         {
             return await _context.ConstructionOrders
@@ -29,6 +36,13 @@ namespace Backend.Repositories
                 .FirstOrDefaultAsync(o => o.ID == id);
         }
 
+        public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)
+        {
+            return await _context.ConstructionOrders
+                .Where(o => o.Status == OrderStatus.New &&
+                            !o.BannedWorkerIds.Contains(workerId))
+                .ToListAsync();
+        }
         public async Task AddAsync(ConstructionOrder order)
         {
             await _context.ConstructionOrders.AddAsync(order);

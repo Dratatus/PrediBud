@@ -28,6 +28,16 @@ namespace Backend.services
             return await _orderRepository.GetOrdersByClientIdAsync(clientId);
         }
 
+        public async Task<IEnumerable<ConstructionOrder>> GetOrdersByWorkerIdAsync(int workerId)
+        {
+            return await _orderRepository.GetOrdersByWorkerIdAsync(workerId);
+        }
+
+        public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)
+        {
+            return await _orderRepository.GetAvailableOrdersAsync(workerId);
+        }
+
         public async Task<ConstructionOrder> GetOrderByIdAsync(int id)
         {
             return await _orderRepository.GetOrderWithSpecificationByIdAsync(id);
