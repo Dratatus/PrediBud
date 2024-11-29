@@ -18,6 +18,12 @@ namespace Backend.Repositories
             _context = context;
         }
 
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.ID == userId);
+        }
+
         public async Task<User> GetByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Credentials.Email == email);
