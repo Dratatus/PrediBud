@@ -58,7 +58,14 @@ namespace Backend.Services
             if (!isClient && !isWorker)
                 return false;
 
+
             order.Status = OrderStatus.Accepted;
+
+            if (isWorker && user is Worker worker)
+            {
+                worker.AssignedOrders.Add(order);
+            }
+
             await _orderRepository.SaveChangesAsync();
             var notification = new ConstructionOrderNotification
             {
@@ -91,9 +98,18 @@ namespace Backend.Services
             order.WorkerId = null;
             order.WorkerProposedPrice = null;
 
-            await _orderRepository.SaveChangesAsync();
+            var worker = await _userRepository.GetUserByIdAsync(bannedWordker) as Worker;
 
-            // TODO dodać usuwanie zamówienia z listy zamówień workera po banie
+            if (worker != null)
+            {
+                var assignedOrder = worker.AssignedOrders.FirstOrDefault(o => o.ID == orderId);
+                if (assignedOrder != null)
+                {
+                    worker.AssignedOrders.Remove(assignedOrder);
+                }
+            }
+
+            await _orderRepository.SaveChangesAsync();
 
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
             {
