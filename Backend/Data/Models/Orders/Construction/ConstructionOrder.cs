@@ -4,7 +4,7 @@ using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Users;
 
-namespace Backend.Data.Models.Orders
+namespace Backend.Data.Models.Orders.Construction
 {
     public class ConstructionOrder
     {
@@ -17,9 +17,9 @@ namespace Backend.Data.Models.Orders
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 
-        public decimal? ClientProposedPrice{ get; set; }
-        public decimal? WorkerProposedPrice{ get; set; }
-        public decimal? AgreedPrice{ get; set; }
+        public decimal? ClientProposedPrice { get; set; }
+        public decimal? WorkerProposedPrice { get; set; }
+        public decimal? AgreedPrice { get; set; }
 
         public decimal TotalPrice { get; set; }
 

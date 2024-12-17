@@ -1,5 +1,5 @@
 ﻿using Backend.Data.Models.Constructions.Specyfication;
-using Backend.Data.Models.Orders;
+using Backend.Data.Models.Orders.Construction;
 
 namespace Backend.Repositories
 {
