@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241215121056_materialOrder")]
+    partial class materialOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,7 +240,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MaterialOrders");
+                    b.ToTable("MaterialOrder");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Suppliers.MaterialPrice", b =>
@@ -251,9 +254,6 @@ namespace Backend.Migrations
                     b.Property<string>("MaterialCategory")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MaterialOrderID")
-                        .HasColumnType("int");
-
                     b.Property<string>("MaterialType")
                         .HasColumnType("nvarchar(max)");
 
@@ -265,11 +265,9 @@ namespace Backend.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("MaterialOrderID");
-
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("MaterialPrices");
+                    b.ToTable("MaterialPrice");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Suppliers.Supplier", b =>
@@ -689,7 +687,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Data.Models.Orders.Material.MaterialOrder", b =>
                 {
                     b.HasOne("Backend.Data.Models.Suppliers.Supplier", "Supplier")
-                        .WithMany("MaterialOrders")
+                        .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -707,11 +705,6 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Suppliers.MaterialPrice", b =>
                 {
-                    b.HasOne("Backend.Data.Models.Orders.Material.MaterialOrder", null)
-                        .WithMany("MaterialPrices")
-                        .HasForeignKey("MaterialOrderID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Backend.Data.Models.Suppliers.Supplier", "Supplier")
                         .WithMany("MaterialPrices")
                         .HasForeignKey("SupplierId")
@@ -821,15 +814,8 @@ namespace Backend.Migrations
                     b.Navigation("Notifications");
                 });
 
-            modelBuilder.Entity("Backend.Data.Models.Orders.Material.MaterialOrder", b =>
-                {
-                    b.Navigation("MaterialPrices");
-                });
-
             modelBuilder.Entity("Backend.Data.Models.Suppliers.Supplier", b =>
                 {
-                    b.Navigation("MaterialOrders");
-
                     b.Navigation("MaterialPrices");
                 });
 

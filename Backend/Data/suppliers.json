@@ -1,0 +1,364 @@
+[
+  {
+    "Name": "Supplier A",
+    "Address": {
+      "Street": "Supplier Street 1",
+      "City": "Supplier City",
+      "PostalCode": "00-001"
+    },
+    "ContactEmail": "supplier@example.com",
+    "MaterialPrices": [
+      {
+        "MaterialType": "Steel",
+        "MaterialCategory": "Balcony",
+        "PricePerUnit": 120.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Balcony",
+        "PricePerUnit": 80.0
+      },
+      {
+        "MaterialType": "Glass",
+        "MaterialCategory": "Balcony",
+        "PricePerUnit": 150.0
+      },
+      {
+        "MaterialType": "Aluminum",
+        "MaterialCategory": "Balcony",
+        "PricePerUnit": 100.0
+      },
+      {
+        "MaterialType": "WroughtIron",
+        "MaterialCategory": "Balcony",
+        "PricePerUnit": 200.0
+      },
+      {
+        "MaterialType": "Drywall",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 50.0
+      },
+      {
+        "MaterialType": "MineralFiber",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 40.0
+      },
+      {
+        "MaterialType": "Metal",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 70.0
+      },
+      {
+        "MaterialType": "PVC",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 60.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 90.0
+      },
+      {
+        "MaterialType": "GlassFiber",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 85.0
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "SuspendedCeiling",
+        "PricePerUnit": 95.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Doors",
+        "PricePerUnit": 120.0
+      },
+      {
+        "MaterialType": "Steel",
+        "MaterialCategory": "Doors",
+        "PricePerUnit": 200.0
+      },
+      {
+        "MaterialType": "PVC",
+        "MaterialCategory": "Doors",
+        "PricePerUnit": 80.0
+      },
+      {
+        "MaterialType": "Aluminum",
+        "MaterialCategory": "Doors",
+        "PricePerUnit": 150.0
+      },
+      {
+        "MaterialType": "Glass",
+        "MaterialCategory": "Doors",
+        "PricePerUnit": 180.0
+      },
+      {
+        "MaterialType": "Styrofoam",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 30.0
+      },
+      {
+        "MaterialType": "MineralWool",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 40.0
+      },
+      {
+        "MaterialType": "PolyurethaneFoam",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 35.0
+      },
+      {
+        "MaterialType": "Fiberglass",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 25.0
+      },
+      {
+        "MaterialType": "Plaster",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 20.0
+      },
+      {
+        "MaterialType": "Brick",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 100.0
+      },
+      {
+        "MaterialType": "Stone",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 150.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 90.0
+      },
+      {
+        "MaterialType": "MetalSiding",
+        "MaterialCategory": "Facade",
+        "PricePerUnit": 70.0
+      },
+      {
+        "MaterialType": "Laminate",
+        "MaterialCategory": "Flooring",
+        "PricePerUnit": 50.0
+      },
+      {
+        "MaterialType": "Hardwood",
+        "MaterialCategory": "Flooring",
+        "PricePerUnit": 100.0
+      },
+      {
+        "MaterialType": "Vinyl",
+        "MaterialCategory": "Flooring",
+        "PricePerUnit": 30.0
+      },
+      {
+        "MaterialType": "Tile",
+        "MaterialCategory": "Flooring",
+        "PricePerUnit": 70.0
+      },
+      {
+        "MaterialType": "Carpet",
+        "MaterialCategory": "Flooring",
+        "PricePerUnit": 60.0
+      },
+      {
+        "MaterialType": "MineralWool",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 40.0
+      },
+      {
+        "MaterialType": "Styrofoam",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 30.0
+      },
+      {
+        "MaterialType": "PolyurethaneFoam",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 35.0
+      },
+      {
+        "MaterialType": "Cellulose",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 25.0
+      },
+      {
+        "MaterialType": "Fiberglass",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 30.0
+      },
+      {
+        "MaterialType": "RockWool",
+        "MaterialCategory": "InsulationOfAttic",
+        "PricePerUnit": 45.0
+      },
+      {
+        "MaterialType": "Acrylic",
+        "MaterialCategory": "Painting",
+        "PricePerUnit": 15.0
+      },
+      {
+        "MaterialType": "Latex",
+        "MaterialCategory": "Painting",
+        "PricePerUnit": 12.0
+      },
+      {
+        "MaterialType": "OilBased",
+        "MaterialCategory": "Painting",
+        "PricePerUnit": 20.0
+      },
+      {
+        "MaterialType": "Gypsum",
+        "MaterialCategory": "Plastering",
+        "PricePerUnit": 18.0
+      },
+      {
+        "MaterialType": "Cement",
+        "MaterialCategory": "Plastering",
+        "PricePerUnit": 22.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Staircase",
+        "PricePerUnit": 100.0
+      },
+      {
+        "MaterialType": "Metal",
+        "MaterialCategory": "Staircase",
+        "PricePerUnit": 80.0
+      },
+      {
+        "MaterialType": "Concrete",
+        "MaterialCategory": "Staircase",
+        "PricePerUnit": 120.0
+      },
+      {
+        "MaterialType": "Concrete",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 150.0
+      },
+      {
+        "MaterialType": "Brick",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 120.0
+      },
+      {
+        "MaterialType": "AeratedConcrete",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 100.0
+      },
+      {
+        "MaterialType": "Stone",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 180.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 140.0
+      },
+      {
+        "MaterialType": "Drywall",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 50.0
+      },
+      {
+        "MaterialType": "Brick",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 110.0
+      },
+      {
+        "MaterialType": "AeratedConcrete",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 90.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 70.0
+      },
+      {
+        "MaterialType": "Glass",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 160.0
+      },
+      {
+        "MaterialType": "Concrete",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 140.0
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 120.0
+      },
+      {
+        "MaterialType": "Steel",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 180.0
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 160.0
+      },
+      {
+        "MaterialType": "PrefabricatedConcrete",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 200.0
+      },
+      {
+        "MaterialType": "Tile",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 130.0
+      },
+      {
+        "MaterialType": "MetalSheet",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 110.0
+      },
+      {
+        "MaterialType": "AsphaltShingle",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 90.0
+      },
+      {
+        "MaterialType": "Thatch",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 200.0
+      },
+      {
+        "MaterialType": "Slate",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 250.0
+      },
+      {
+        "MaterialType": "PVC",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 80.0
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "ShellOpen",
+        "PricePerUnit": 100.0
+      }
+    ]
+  },
+  {
+    "Name": "Supplier B",
+    "Address": {
+      "PostCode": "50-123",
+      "City": "Wroclaw",
+      "StreetName": "Broadway 20"
+    },
+    "ContactEmail": "supplierB@example.com",
+    "MaterialPrices": [
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Roof",
+        "PricePerUnit": 7.0
+      }
+    ]
+  }
+]

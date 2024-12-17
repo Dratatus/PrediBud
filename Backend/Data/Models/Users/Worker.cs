@@ -1,4 +1,4 @@
-﻿using Backend.Data.Models.Orders;
+﻿using Backend.Data.Models.Orders.Construction;
 
 namespace Backend.Data.Models.Users
 {

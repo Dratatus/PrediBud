@@ -2,7 +2,6 @@
 using Backend.Data.Models.Suppliers;
 using Backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Backend.Data.Models.Orders;
 using Backend.Data.Models.Users;
 using Backend.Data.Models.Constructions.Dimensions.Balcony;
 using Backend.Data.Models.Constructions.Dimensions.Doors;
@@ -16,6 +15,8 @@ using Backend.Data.Models.Constructions.Specyfication.ShellOpen;
 using Backend.Data.Models.Constructions.Specyfication.Stairs;
 using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Constructions;
+using Backend.Data.Models.Orders.Construction;
+using Backend.Data.Models.Orders.Material;
 
 namespace Backend.Data.Context
 {
@@ -24,13 +25,12 @@ namespace Backend.Data.Context
         public PrediBudDBContext(DbContextOptions<PrediBudDBContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Material> Materials { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<MaterialOrder> MaterialOrders { get; set; }
-        public DbSet<Calculation> Calculations { get; set; }
         public DbSet<MaterialNotification> MaterialNotifications { get; set; }
         public DbSet<ConstructionOrderNotification> ConstructionOrderNotifications { get; set; }
         public DbSet<ConstructionOrder> ConstructionOrders { get; set; }
+        public DbSet<MaterialOrder> MaterialOrders { get; set; } // Dodano MaterialOrder
+        public DbSet<MaterialPrice> MaterialPrices { get; set; } // Dodano MaterialPrice
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,6 +75,32 @@ namespace Backend.Data.Context
                .HasForeignKey(co => co.WorkerId)
                .OnDelete(DeleteBehavior.Restrict);
 
+            // Relacja MaterialOrder → User
+            modelBuilder.Entity<MaterialOrder>()
+                .HasOne(mo => mo.User)
+                .WithMany(u => u.MaterialOrders)
+                .HasForeignKey(mo => mo.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacja MaterialOrder → Supplier
+            modelBuilder.Entity<MaterialOrder>()
+                .HasOne(mo => mo.Supplier)
+                .WithMany(s => s.MaterialOrders)
+                .HasForeignKey(mo => mo.SupplierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relacja MaterialOrder → MaterialPrice
+            modelBuilder.Entity<MaterialOrder>()
+                .HasMany(mo => mo.MaterialPrices)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MaterialPrice>()
+                .HasOne(mp => mp.Supplier)
+                .WithMany(s => s.MaterialPrices)
+                .HasForeignKey(mp => mp.SupplierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<ConstructionOrderNotification>()
                 .HasOne(n => n.Client)
                 .WithMany(c => c.ConstructionOrderNotifications)
@@ -86,26 +112,6 @@ namespace Backend.Data.Context
                  .WithMany(w => w.ConstructionOrderNotifications)
                  .HasForeignKey(n => n.WorkerId)
                  .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Material>()
-                .Property(m => m.PriceWithTaxes)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Material>()
-                .Property(m => m.PriceWithoutTaxes)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<MaterialOrder>()
-                .Property(o => o.TotalPrice)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Calculation>()
-                .Property(c => c.Taxes)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Calculation>()
-                .Property(c => c.UserPrice)
-                .HasPrecision(18, 2);
 
             //specifications
             modelBuilder.Entity<ConstructionSpecification>()
@@ -125,6 +131,6 @@ namespace Backend.Data.Context
 
             base.OnModelCreating(modelBuilder);
         }
-
     }
+
 }
