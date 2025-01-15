@@ -17,6 +17,23 @@ using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Constructions;
 using Backend.Data.Models.Orders.Construction;
 using Backend.Data.Models.Orders.Material;
+using Backend.Data.Models.MaterialPrices.Balcony;
+using Backend.Data.Models.MaterialPrices.Celling;
+using Backend.Data.Models.MaterialPrices.Doors;
+using Backend.Data.Models.MaterialPrices.Facade;
+using Backend.Data.Models.MaterialPrices.Floor;
+using Backend.Data.Models.MaterialPrices.Insulation;
+using Backend.Data.Models.MaterialPrices.Painting;
+using Backend.Data.Models.MaterialPrices.Plastering;
+using Backend.Data.Models.MaterialPrices.ShellOpen;
+using Backend.Data.Models.MaterialPrices.Stairs;
+using Backend.Data.Models.Constructions.Specyfication.Walls;
+using Backend.Data.Models.Constructions.Specyfication.Chimney;
+using Backend.Data.Models.Constructions.Specyfication.Ventilation;
+using Backend.Data.Models.Constructions.Specyfication.Foundation;
+using Backend.Data.Models.Constructions.Specyfication.Roof;
+using Backend.Data.Models.Constructions.Specyfication.Windows;
+using Backend.Data.Models.MaterialPrices.Windows;
 
 namespace Backend.Data.Context
 {
@@ -75,21 +92,18 @@ namespace Backend.Data.Context
                .HasForeignKey(co => co.WorkerId)
                .OnDelete(DeleteBehavior.Restrict);
 
-            // Relacja MaterialOrder → User
             modelBuilder.Entity<MaterialOrder>()
                 .HasOne(mo => mo.User)
                 .WithMany(u => u.MaterialOrders)
                 .HasForeignKey(mo => mo.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Relacja MaterialOrder → Supplier
             modelBuilder.Entity<MaterialOrder>()
                 .HasOne(mo => mo.Supplier)
                 .WithMany(s => s.MaterialOrders)
                 .HasForeignKey(mo => mo.SupplierId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Relacja MaterialOrder → MaterialPrice
             modelBuilder.Entity<MaterialOrder>()
                 .HasMany(mo => mo.MaterialPrices)
                 .WithOne()
@@ -113,21 +127,49 @@ namespace Backend.Data.Context
                  .HasForeignKey(n => n.WorkerId)
                  .OnDelete(DeleteBehavior.Restrict);
 
-            //specifications
             modelBuilder.Entity<ConstructionSpecification>()
-                 .ToTable("ConstructionSpecifications")
-                 .HasDiscriminator<ConstructionType>("Type")
-                 .HasValue<BalconySpecification>(ConstructionType.Balcony)
-                 .HasValue<SuspendedCeilingSpecification>(ConstructionType.SuspendedCeiling)
-                 .HasValue<DoorsSpecification>(ConstructionType.Doors)
-                 .HasValue<FacadeSpecification>(ConstructionType.Facade)
-                 .HasValue<FlooringSpecification>(ConstructionType.Flooring)
-                 .HasValue<InsulationOfAtticSpecification>(ConstructionType.InsulationOfAttic)
-                 .HasValue<PaintingSpecification>(ConstructionType.Painting)
-                 .HasValue<PlasteringSpecification>(ConstructionType.Plastering)
-                 .HasValue<ShellOpenSpecification>(ConstructionType.ShellOpen)
-                 .HasValue<StaircaseSpecification>(ConstructionType.Staircase)
-                 .HasValue<WindowsSpecification>(ConstructionType.Windows);
+                .ToTable("ConstructionSpecifications")
+                .HasDiscriminator<ConstructionType>("Type")
+                .HasValue<BalconySpecification>(ConstructionType.Balcony)
+                .HasValue<SuspendedCeilingSpecification>(ConstructionType.SuspendedCeiling)
+                .HasValue<DoorsSpecification>(ConstructionType.Doors)
+                .HasValue<FacadeSpecification>(ConstructionType.Facade)
+                .HasValue<FlooringSpecification>(ConstructionType.Flooring)
+                .HasValue<InsulationOfAtticSpecification>(ConstructionType.InsulationOfAttic)
+                .HasValue<PaintingSpecification>(ConstructionType.Painting)
+                .HasValue<PlasteringSpecification>(ConstructionType.Plastering)
+                .HasValue<ShellOpenSpecification>(ConstructionType.ShellOpen)
+                .HasValue<StaircaseSpecification>(ConstructionType.Staircase)
+                .HasValue<WindowsSpecification>(ConstructionType.Windows)
+                .HasValue<ChimneySpecification>(ConstructionType.Chimney) 
+                .HasValue<CeilingSpecification>(ConstructionType.Ceiling)
+                .HasValue<PartitionWallSpecification>(ConstructionType.PartitionWall) 
+                .HasValue<FoundationSpecification>(ConstructionType.Foundation) 
+                .HasValue<LoadBearingWallSpecification>(ConstructionType.LoadBearingWall) 
+                .HasValue<VentilationSystemSpecification>(ConstructionType.VentilationSystem)
+                .HasValue<RoofSpecification>(ConstructionType.Roof);
+
+            modelBuilder.Entity<MaterialPrice>()
+                .ToTable("MaterialPrices")
+                .HasDiscriminator<string>("MaterialPriceType")
+                .HasValue<BalconyMaterialPrice>("Balcony")
+                .HasValue<SuspendedCeilingMaterialPrice>("SuspendedCeiling")
+                .HasValue<DoorsMaterialPrice>("Doors")
+                .HasValue<FacadeMaterialPrice>("Facade")
+                .HasValue<FlooringMaterialPrice>("Flooring")
+                .HasValue<InsulationOfAtticMaterialPrice>("InsulationOfAttic")
+                .HasValue<PaintingMaterialPrice>("Painting")
+                .HasValue<PlasteringMaterialPrice>("Plastering")
+                .HasValue<StaircaseMaterialPrice>("Staircase")
+                .HasValue<RoofMaterialPrice>("Roof")
+                .HasValue<CeilingMaterialPrice>("Ceiling")
+                .HasValue<ChimneyMaterialPrice>("Chimney")
+                .HasValue<PartitionWallMaterialPrice>("PartitionWall")
+                .HasValue<LoadBearingWallMaterialPrice>("LoadBearingWall")
+                .HasValue<FoundationMaterialPrice>("Foundation")
+                .HasValue<VentilationSystemMaterialPrice>("VentilationSystem")
+                .HasValue<StaircaseMaterialPrice>("Staircase")
+                .HasValue<WindowsMaterialPrice>("Windows");
 
             base.OnModelCreating(modelBuilder);
         }

@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250114200912_Ceiling-update")]
+    partial class Ceilingupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -936,13 +939,13 @@ namespace Backend.Migrations
                 {
                     b.HasBaseType("Backend.Data.Models.Suppliers.MaterialPrice");
 
-                    b.Property<decimal>("PricePerCubicMeter")
+                    b.Property<decimal>("PricePerUnit")
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("MaterialPrices", t =>
                         {
-                            t.Property("PricePerCubicMeter")
-                                .HasColumnName("ChimneyMaterialPrice_PricePerCubicMeter");
+                            t.Property("PricePerUnit")
+                                .HasColumnName("ChimneyMaterialPrice_PricePerUnit");
                         });
 
                     b.HasDiscriminator().HasValue("Chimney");

@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250109202300_added-staircase")]
+    partial class addedstaircase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -373,11 +376,17 @@ namespace Backend.Migrations
 
                     b.ToTable("ConstructionSpecifications", t =>
                         {
+                            t.Property("Amount")
+                                .HasColumnName("DoorsSpecification_Amount");
+
                             t.Property("Height")
                                 .HasColumnName("DoorsSpecification_Height");
 
                             t.Property("Material")
                                 .HasColumnName("DoorsSpecification_Material");
+
+                            t.Property("Width")
+                                .HasColumnName("DoorsSpecification_Width");
                         });
 
                     b.HasDiscriminator().HasValue(3);
@@ -446,11 +455,33 @@ namespace Backend.Migrations
                     b.HasDiscriminator().HasValue(7);
                 });
 
-            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Ceiling.CeilingSpecification", b =>
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Dimensions.WindowsSpecification", b =>
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<decimal>("Area")
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Height")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Width")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable("ConstructionSpecifications", t =>
+                        {
+                            t.Property("Height")
+                                .HasColumnName("WindowsSpecification_Height");
+                        });
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Ceiling.CelingSpecification", b =>
+                {
+                    b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
+
+                    b.Property<decimal?>("Area")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Material")
@@ -459,13 +490,13 @@ namespace Backend.Migrations
                     b.ToTable("ConstructionSpecifications", t =>
                         {
                             t.Property("Area")
-                                .HasColumnName("CeilingSpecification_Area");
+                                .HasColumnName("CelingSpecification_Area");
 
                             t.Property("Material")
-                                .HasColumnName("CeilingSpecification_Material");
+                                .HasColumnName("CelingSpecification_Material");
                         });
 
-                    b.HasDiscriminator().HasValue(17);
+                    b.HasDiscriminator().HasValue(18);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Ceiling.SuspendedCeilingSpecification", b =>
@@ -488,23 +519,23 @@ namespace Backend.Migrations
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<int>("Count")
+                    b.Property<int?>("Count")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue(13);
+                    b.HasDiscriminator().HasValue(14);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Foundation.FoundationSpecification", b =>
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<decimal>("Depth")
+                    b.Property<decimal?>("Depth")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Length")
+                    b.Property<decimal?>("Length")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Width")
+                    b.Property<decimal?>("Width")
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("ConstructionSpecifications", t =>
@@ -558,13 +589,13 @@ namespace Backend.Migrations
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<decimal>("Area")
+                    b.Property<decimal?>("Area")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Material")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Pitch")
+                    b.Property<decimal?>("Pitch")
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("ConstructionSpecifications", t =>
@@ -576,7 +607,7 @@ namespace Backend.Migrations
                                 .HasColumnName("RoofSpecification_Material");
                         });
 
-                    b.HasDiscriminator().HasValue(16);
+                    b.HasDiscriminator().HasValue(17);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.ShellOpen.ShellOpenSpecification", b =>
@@ -589,8 +620,14 @@ namespace Backend.Migrations
                     b.Property<int?>("ChimneyID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FoundationSpecificationID")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("FoundationDepth")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FoundationLength")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FoundationWidth")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImagesUrl")
                         .HasColumnType("nvarchar(max)");
@@ -610,8 +647,6 @@ namespace Backend.Migrations
                     b.HasIndex("CellingID");
 
                     b.HasIndex("ChimneyID");
-
-                    b.HasIndex("FoundationSpecificationID");
 
                     b.HasIndex("LoadBearingWallMaterialID");
 
@@ -659,7 +694,7 @@ namespace Backend.Migrations
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<int>("Count")
+                    b.Property<int?>("Count")
                         .HasColumnType("int");
 
                     b.ToTable("ConstructionSpecifications", t =>
@@ -668,23 +703,23 @@ namespace Backend.Migrations
                                 .HasColumnName("VentilationSystemSpecification_Count");
                         });
 
-                    b.HasDiscriminator().HasValue(15);
+                    b.HasDiscriminator().HasValue(16);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Walls.LoadBearingWallSpecification", b =>
                 {
                     b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
 
-                    b.Property<decimal>("Height")
+                    b.Property<decimal?>("Height")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Material")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Thickness")
+                    b.Property<decimal?>("Thickness")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Width")
+                    b.Property<decimal?>("Width")
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("ConstructionSpecifications", t =>
@@ -702,7 +737,7 @@ namespace Backend.Migrations
                                 .HasColumnName("LoadBearingWallSpecification_Width");
                         });
 
-                    b.HasDiscriminator().HasValue(14);
+                    b.HasDiscriminator().HasValue(15);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Walls.PartitionWallSpecification", b =>
@@ -737,40 +772,6 @@ namespace Backend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.Windows.WindowsSpecification", b =>
-                {
-                    b.HasBaseType("Backend.Data.Models.Constructions.Specyfication.ConstructionSpecification");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Height")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Material")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Width")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.ToTable("ConstructionSpecifications", t =>
-                        {
-                            t.Property("Amount")
-                                .HasColumnName("WindowsSpecification_Amount");
-
-                            t.Property("Height")
-                                .HasColumnName("WindowsSpecification_Height");
-
-                            t.Property("Material")
-                                .HasColumnName("WindowsSpecification_Material");
-
-                            t.Property("Width")
-                                .HasColumnName("WindowsSpecification_Width");
-                        });
-
-                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("Backend.Data.Models.MaterialPrices.Balcony.BalconyMaterialPrice", b =>
@@ -936,13 +937,13 @@ namespace Backend.Migrations
                 {
                     b.HasBaseType("Backend.Data.Models.Suppliers.MaterialPrice");
 
-                    b.Property<decimal>("PricePerCubicMeter")
+                    b.Property<decimal>("PricePerUnit")
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("MaterialPrices", t =>
                         {
-                            t.Property("PricePerCubicMeter")
-                                .HasColumnName("ChimneyMaterialPrice_PricePerCubicMeter");
+                            t.Property("PricePerUnit")
+                                .HasColumnName("ChimneyMaterialPrice_PricePerUnit");
                         });
 
                     b.HasDiscriminator().HasValue("Chimney");
@@ -997,12 +998,6 @@ namespace Backend.Migrations
                     b.Property<decimal>("PricePerSquareMeter")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("MaterialPrices", t =>
-                        {
-                            t.Property("PricePerSquareMeter")
-                                .HasColumnName("RoofMaterialPrice_PricePerSquareMeter");
-                        });
-
                     b.HasDiscriminator().HasValue("Roof");
                 });
 
@@ -1030,22 +1025,6 @@ namespace Backend.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasDiscriminator().HasValue("Staircase");
-                });
-
-            modelBuilder.Entity("Backend.Data.Models.MaterialPrices.Windows.WindowsMaterialPrice", b =>
-                {
-                    b.HasBaseType("Backend.Data.Models.Suppliers.MaterialPrice");
-
-                    b.Property<decimal>("PricePerSquareMeter")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("StandardHeight")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("StandardWidth")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasDiscriminator().HasValue("Windows");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Users.Client", b =>
@@ -1203,17 +1182,13 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Constructions.Specyfication.ShellOpen.ShellOpenSpecification", b =>
                 {
-                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.Ceiling.CeilingSpecification", "Celling")
+                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.Ceiling.CelingSpecification", "Celling")
                         .WithMany()
                         .HasForeignKey("CellingID");
 
                     b.HasOne("Backend.Data.Models.Constructions.Specyfication.Chimney.ChimneySpecification", "Chimney")
                         .WithMany()
                         .HasForeignKey("ChimneyID");
-
-                    b.HasOne("Backend.Data.Models.Constructions.Specyfication.Foundation.FoundationSpecification", "FoundationSpecification")
-                        .WithMany()
-                        .HasForeignKey("FoundationSpecificationID");
 
                     b.HasOne("Backend.Data.Models.Constructions.Specyfication.Walls.LoadBearingWallSpecification", "LoadBearingWallMaterial")
                         .WithMany()
@@ -1234,8 +1209,6 @@ namespace Backend.Migrations
                     b.Navigation("Celling");
 
                     b.Navigation("Chimney");
-
-                    b.Navigation("FoundationSpecification");
 
                     b.Navigation("LoadBearingWallMaterial");
 
