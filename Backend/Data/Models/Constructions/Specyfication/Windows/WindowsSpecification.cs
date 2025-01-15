@@ -1,8 +1,8 @@
 ﻿using Backend.Data.Models.Constructions.Specyfication;
 
-namespace Backend.Data.Models.Constructions.Dimensions
+namespace Backend.Data.Models.Constructions.Specyfication.Windows
 {
-    public class WindowsSpecification: ConstructionSpecification
+    public class WindowsSpecification : ConstructionSpecification
     {
         public WindowsSpecification()
         {
@@ -11,5 +11,6 @@ namespace Backend.Data.Models.Constructions.Dimensions
         public int Amount { get; set; }
         public decimal Height { get; set; }
         public decimal Width { get; set; }
+        public WindowsMaterial Material { get; set; }
     }
 }

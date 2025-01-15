@@ -12,6 +12,12 @@ using Backend.Data.Models.Constructions.Specyfication.ShellOpen;
 using Backend.Data.Models.Constructions.Specyfication.Stairs;
 using Backend.DTO.Specyfication;
 using System.Text.Json;
+using Backend.Data.Models.Constructions.Specyfication.Chimney;
+using Backend.Data.Models.Constructions.Specyfication.Roof;
+using Backend.Data.Models.Constructions.Specyfication.Ventilation;
+using Backend.Data.Models.Constructions.Specyfication.Walls;
+using Backend.Data.Models.Constructions.Specyfication.Windows;
+using Backend.Data.Models.Constructions.Specyfication.Foundation;
 
 namespace Backend.Factories
 {
@@ -52,9 +58,10 @@ namespace Backend.Factories
                     return CreateStaircaseSpecification(details as StaircaseSpecificationDetails);
 
                 case ConstructionType.Windows:
+                    return CreateWindowsSpecification(details as WindowsSpecificationDetails);
 
-                    var windowsDetails = JsonSerializer.Deserialize<WindowsSpecificationDetails>(details.ToString());
-                    return CreateWindowsSpecification(windowsDetails);
+                case ConstructionType.Foundation:
+                    return CreateFoundationSpecification(details as FoundationSpecificationDetails);
 
                 default:
                     throw new ArgumentException("Invalid construction type");
@@ -119,6 +126,17 @@ namespace Backend.Factories
                 Area = details.Area,
                 Material = details.Material
             };
+        }        
+        private FoundationSpecification CreateFoundationSpecification(FoundationSpecificationDetails details)
+        {
+            if (details == null) throw new ArgumentException("Invalid details for Foundation");
+
+            return new FoundationSpecification
+            {
+                Length = details.Length,
+                Width = details.Width,
+                Depth = details.Depth
+            };
         }
 
         private InsulationOfAtticSpecification CreateInsulationOfAtticSpecification(InsulationOfAtticSpecificationDetails details)
@@ -162,24 +180,45 @@ namespace Backend.Factories
 
             return new ShellOpenSpecification
             {
-                FoundationLength = details.FoundationLength,
-                FoundationWidth = details.FoundationWidth,
-                FoundationDepth = details.FoundationDepth,
-                LoadBearingWallHeight = details.LoadBearingWallHeight,
-                LoadBearingWallWidth = details.LoadBearingWallWidth,
-                LoadBearingWallThickness = details.LoadBearingWallThickness,
-                LoadBearingWallMaterial = details.LoadBearingWallMaterial,
-                PartitionWallHeight = details.PartitionWallHeight,
-                PartitionWallWidth = details.PartitionWallWidth,
-                PartitionWallThickness = details.PartitionWallThickness,
-                PartitionWallMaterial = details.PartitionWallMaterial,
-                ChimneyCount = details.ChimneyCount,
-                VentilationSystemCount = details.VentilationSystemCount,
-                CeilingArea = details.CeilingArea,
-                CeilingMaterial = details.CeilingMaterial,
-                RoofArea = details.RoofArea,
-                RoofMaterial = details.RoofMaterial,
-                RoofPitch = details.RoofPitch,
+                FoundationSpecification = new FoundationSpecification
+                {
+                    Length = details.FoundationLength,
+                    Width = details.FoundationWidth,
+                    Depth = details.FoundationDepth
+                },
+                LoadBearingWallMaterial = new LoadBearingWallSpecification
+                {
+                    Height = details.LoadBearingWallHeight,
+                    Width = details.LoadBearingWallWidth,
+                    Thickness = details.LoadBearingWallThickness,
+                    Material = details.LoadBearingWallMaterial
+                },
+                PartitionWall = new PartitionWallSpecification
+                {
+                    Height = details.PartitionWallHeight,
+                    Width = details.PartitionWallWidth,
+                    Thickness = details.PartitionWallThickness,
+                    Material = details.PartitionWallMaterial
+                },
+                Chimney = new ChimneySpecification
+                {
+                    Count = details.ChimneyCount
+                },
+                Ventilation = new VentilationSystemSpecification
+                {
+                    Count = details.VentilationSystemCount
+                },
+                Celling = new CeilingSpecification
+                {
+                    Area = details.CeilingArea,
+                    Material = details.CeilingMaterial
+                },
+                Roof = new RoofSpecification
+                {
+                    Area = details.RoofArea,
+                    Material = details.RoofMaterial,
+                    Pitch = details.RoofPitch
+                },
                 ImagesUrl = details.ImagesUrl
             };
         }

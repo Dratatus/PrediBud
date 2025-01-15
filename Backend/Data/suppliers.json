@@ -11,340 +11,730 @@
       {
         "MaterialType": "Steel",
         "MaterialCategory": "Balcony",
-        "PricePerUnit": 120.0
+        "PricePerMeter": 150.0,
+        "Height": 1.1,
+        "PriceWithoutTax": 135.0,
+        "MaterialPriceType": "Balcony"
       },
       {
         "MaterialType": "Wood",
         "MaterialCategory": "Balcony",
-        "PricePerUnit": 80.0
+        "PricePerMeter": 120.0,
+        "PriceWithoutTax": 105.0,
+        "Height": 1.1,
+        "MaterialPriceType": "Balcony"
       },
       {
         "MaterialType": "Glass",
         "MaterialCategory": "Balcony",
-        "PricePerUnit": 150.0
+        "PricePerMeter": 200.0,
+        "PriceWithoutTax": 135.0,
+        "Height": 1.1,
+        "MaterialPriceType": "Balcony"
       },
       {
         "MaterialType": "Aluminum",
         "MaterialCategory": "Balcony",
-        "PricePerUnit": 100.0
+        "PricePerMeter": 180.0,
+        "PriceWithoutTax": 135.0,
+        "Height": 1.1,
+        "MaterialPriceType": "Balcony"
       },
       {
         "MaterialType": "WroughtIron",
         "MaterialCategory": "Balcony",
-        "PricePerUnit": 200.0
+        "PricePerMeter": 220.0,
+        "PriceWithoutTax": 135.0,
+        "Height": 1.1,
+        "MaterialPriceType": "Balcony"
       },
       {
         "MaterialType": "Drywall",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 50.0
+        "PricePerSquareMeter": 12.0,
+        "PriceWithoutTax": 9.76,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "MineralFiber",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 40.0
+        "PricePerSquareMeter": 30.0,
+        "PriceWithoutTax": 24.39,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "Metal",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 70.0
+        "PricePerSquareMeter": 50.0,
+        "PriceWithoutTax": 40.65,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "PVC",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 60.0
+        "PricePerSquareMeter": 25.0,
+        "PriceWithoutTax": 20.33,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "Wood",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 90.0
+        "PricePerSquareMeter": 60.0,
+        "PriceWithoutTax": 48.78,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "GlassFiber",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 85.0
+        "PricePerSquareMeter": 40.0,
+        "PriceWithoutTax": 32.52,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "Composite",
         "MaterialCategory": "SuspendedCeiling",
-        "PricePerUnit": 95.0
+        "PricePerSquareMeter": 70.0,
+        "PriceWithoutTax": 56.91,
+        "MaterialPriceType": "SuspendedCeiling"
       },
       {
         "MaterialType": "Wood",
         "MaterialCategory": "Doors",
-        "PricePerUnit": 120.0
+        "Height": 2.0,
+        "Width": 0.9,
+        "PricePerDoor": 3000.0,
+        "PriceWithoutTax": 2439.02,
+        "MaterialPriceType": "Doors"
       },
       {
         "MaterialType": "Steel",
         "MaterialCategory": "Doors",
-        "PricePerUnit": 200.0
+        "Height": 2.0,
+        "Width": 0.9,
+        "PricePerDoor": 2500.0,
+        "PriceWithoutTax": 2032.52,
+        "MaterialPriceType": "Doors"
       },
       {
         "MaterialType": "PVC",
         "MaterialCategory": "Doors",
-        "PricePerUnit": 80.0
+        "Height": 2.0,
+        "Width": 0.9,
+        "PricePerDoor": 1500.0,
+        "PriceWithoutTax": 1219.51,
+        "MaterialPriceType": "Doors"
       },
       {
         "MaterialType": "Aluminum",
         "MaterialCategory": "Doors",
-        "PricePerUnit": 150.0
+        "Height": 2.0,
+        "Width": 0.9,
+        "PricePerDoor": 4000.0,
+        "PriceWithoutTax": 3252.03,
+        "MaterialPriceType": "Doors"
       },
       {
         "MaterialType": "Glass",
         "MaterialCategory": "Doors",
-        "PricePerUnit": 180.0
+        "Height": 2.0,
+        "Width": 0.9,
+        "PricePerDoor": 5000.0,
+        "PriceWithoutTax": 4065.04,
+        "MaterialPriceType": "Doors"
       },
       {
         "MaterialType": "Styrofoam",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 30.0
+        "Thickness": 10.0,
+        "PricePerSquareMeter": 50.0,
+        "PricePerSquareMeterFinish": 30.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 40.65
       },
       {
         "MaterialType": "MineralWool",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 40.0
+        "Thickness": 15.0,
+        "PricePerSquareMeter": 80.0,
+        "PricePerSquareMeterFinish": 40.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 65.04
       },
       {
         "MaterialType": "PolyurethaneFoam",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 35.0
+        "Thickness": 12.0,
+        "PricePerSquareMeter": 120.0,
+        "PricePerSquareMeterFinish": 50.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 97.56
       },
       {
         "MaterialType": "Fiberglass",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 25.0
+        "Thickness": 10.0,
+        "PricePerSquareMeter": 70.0,
+        "PricePerSquareMeterFinish": 35.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 56.91
       },
       {
         "MaterialType": "Plaster",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 20.0
+        "Thickness": 2.0,
+        "PricePerSquareMeter": 30.0,
+        "PricePerSquareMeterFinish": 10.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 24.39
       },
       {
         "MaterialType": "Brick",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 100.0
+        "Thickness": 10.0,
+        "PricePerSquareMeter": 180.0,
+        "PricePerSquareMeterFinish": 50.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 146.34
       },
       {
         "MaterialType": "Stone",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 150.0
+        "Thickness": 15.0,
+        "PricePerSquareMeter": 300.0,
+        "PricePerSquareMeterFinish": 80.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 243.90
       },
       {
         "MaterialType": "Wood",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 90.0
+        "Thickness": 10.0,
+        "PricePerSquareMeter": 150.0,
+        "PricePerSquareMeterFinish": 40.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 121.95
       },
       {
         "MaterialType": "MetalSiding",
         "MaterialCategory": "Facade",
-        "PricePerUnit": 70.0
+        "Thickness": 5.0,
+        "PricePerSquareMeter": 100.0,
+        "PricePerSquareMeterFinish": 20.0,
+        "MaterialPriceType": "Facade",
+        "PriceWithoutTax": 81.30
       },
       {
         "MaterialType": "Laminate",
         "MaterialCategory": "Flooring",
-        "PricePerUnit": 50.0
+        "PricePerSquareMeter": 50.0,
+        "PriceWithoutTax": 40.65,
+        "MaterialPriceType": "Flooring"
       },
       {
         "MaterialType": "Hardwood",
         "MaterialCategory": "Flooring",
-        "PricePerUnit": 100.0
+        "PricePerSquareMeter": 120.0,
+        "PriceWithoutTax": 97.56,
+        "MaterialPriceType": "Flooring"
       },
       {
         "MaterialType": "Vinyl",
         "MaterialCategory": "Flooring",
-        "PricePerUnit": 30.0
+        "PricePerSquareMeter": 70.0,
+        "PriceWithoutTax": 56.91,
+        "MaterialPriceType": "Flooring"
       },
       {
         "MaterialType": "Tile",
         "MaterialCategory": "Flooring",
-        "PricePerUnit": 70.0
+        "PricePerSquareMeter": 90.0,
+        "PriceWithoutTax": 73.17,
+        "MaterialPriceType": "Flooring"
       },
       {
         "MaterialType": "Carpet",
         "MaterialCategory": "Flooring",
-        "PricePerUnit": 60.0
+        "PricePerSquareMeter": 60.0,
+        "PriceWithoutTax": 48.78,
+        "MaterialPriceType": "Flooring"
       },
       {
         "MaterialType": "MineralWool",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 40.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 60.0,
+        "PriceWithoutTax": 48.78,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "Styrofoam",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 30.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 50.0,
+        "PriceWithoutTax": 40.65,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "PolyurethaneFoam",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 35.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 70.0,
+        "PriceWithoutTax": 56.91,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "Cellulose",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 25.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 65.0,
+        "PriceWithoutTax": 52.85,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "Fiberglass",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 30.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 55.0,
+        "PriceWithoutTax": 44.72,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "RockWool",
         "MaterialCategory": "InsulationOfAttic",
-        "PricePerUnit": 45.0
+        "Thickness": 20.0,
+        "PricePerSquareMeter": 75.0,
+        "PriceWithoutTax": 60.98,
+        "MaterialPriceType": "InsulationOfAttic"
       },
       {
         "MaterialType": "Acrylic",
         "MaterialCategory": "Painting",
-        "PricePerUnit": 15.0
+        "PricePerLiter": 60.0,
+        "CoveragePerLiter": 12.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 48.78
       },
       {
         "MaterialType": "Latex",
         "MaterialCategory": "Painting",
-        "PricePerUnit": 12.0
+        "PricePerLiter": 100.0,
+        "CoveragePerLiter": 14.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 81.30
       },
       {
         "MaterialType": "OilBased",
         "MaterialCategory": "Painting",
-        "PricePerUnit": 20.0
+        "PricePerLiter": 80.0,
+        "CoveragePerLiter": 10.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 65.04
+      },
+      {
+        "MaterialType": "WaterBased",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 50.0,
+        "CoveragePerLiter": 11.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 40.65
+      },
+      {
+        "MaterialType": "Epoxy",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 120.0,
+        "CoveragePerLiter": 8.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 97.56
+      },
+      {
+        "MaterialType": "Enamel",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 90.0,
+        "CoveragePerLiter": 10.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 73.17
+      },
+      {
+        "MaterialType": "Chalk",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 70.0,
+        "CoveragePerLiter": 9.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 56.91
+      },
+      {
+        "MaterialType": "Matte",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 65.0,
+        "CoveragePerLiter": 13.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 52.85
+      },
+      {
+        "MaterialType": "Satin",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 75.0,
+        "CoveragePerLiter": 12.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 60.98
+      },
+      {
+        "MaterialType": "Glossy",
+        "MaterialCategory": "Painting",
+        "PricePerLiter": 85.0,
+        "CoveragePerLiter": 11.0,
+        "MaterialPriceType": "Painting",
+        "PriceWithoutTax": 69.11
       },
       {
         "MaterialType": "Gypsum",
         "MaterialCategory": "Plastering",
-        "PricePerUnit": 18.0
+        "PricePerSquareMeter": 45.0,
+        "PriceWithoutTax": 36.59,
+        "MaterialPriceType": "Plastering"
       },
       {
         "MaterialType": "Cement",
         "MaterialCategory": "Plastering",
-        "PricePerUnit": 22.0
+        "PricePerSquareMeter": 50.0,
+        "PriceWithoutTax": 40.65,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Lime",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 42.0,
+        "PriceWithoutTax": 34.15,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "LimeCement",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 55.0,
+        "PriceWithoutTax": 44.72,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Clay",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 60.0,
+        "PriceWithoutTax": 48.78,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Acrylic",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 65.0,
+        "PriceWithoutTax": 52.85,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Silicone",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 70.0,
+        "PriceWithoutTax": 56.91,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Silicate",
+        "MaterialCategory": "Plastering",
+        "PricePerSquareMeter": 75.0,
+        "PriceWithoutTax": 60.98,
+        "MaterialPriceType": "Plastering"
+      },
+      {
+        "MaterialType": "Concrete",
+        "MaterialCategory": "Ceiling",
+        "PricePerSquareMeter": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "Ceiling"
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "Ceiling",
+        "PricePerSquareMeter": 350.0,
+        "PriceWithoutTax": 284.55,
+        "MaterialPriceType": "Ceiling"
+      },
+      {
+        "MaterialType": "Steel",
+        "MaterialCategory": "Ceiling",
+        "PricePerSquareMeter": 400.0,
+        "PriceWithoutTax": 325.20,
+        "MaterialPriceType": "Ceiling"
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "Ceiling",
+        "PricePerSquareMeter": 450.0,
+        "PriceWithoutTax": 365.85,
+        "MaterialPriceType": "Ceiling"
+      },
+      {
+        "MaterialType": "PrefabricatedConcrete",
+        "MaterialCategory": "Ceiling",
+        "PricePerSquareMeter": 250.0,
+        "PriceWithoutTax": 203.25,
+        "MaterialPriceType": "Ceiling"
+      },
+      {
+        "MaterialType": "Concrete",
+        "MaterialCategory": "LoadBearingWall",
+        "PricePerSquareMeter": 200.0,
+        "PriceWithoutTax": 162.60,
+        "MaterialPriceType": "LoadBearingWall"
+      },
+      {
+        "MaterialType": "Brick",
+        "MaterialCategory": "LoadBearingWall",
+        "PricePerSquareMeter": 250.0,
+        "PriceWithoutTax": 203.25,
+        "MaterialPriceType": "LoadBearingWall"
+      },
+      {
+        "MaterialType": "AeratedConcrete",
+        "MaterialCategory": "LoadBearingWall",
+        "PricePerSquareMeter": 170.0,
+        "PriceWithoutTax": 138.21,
+        "MaterialPriceType": "LoadBearingWall"
+      },
+      {
+        "MaterialType": "Stone",
+        "MaterialCategory": "LoadBearingWall",
+        "PricePerSquareMeter": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "LoadBearingWall"
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "LoadBearingWall",
+        "PricePerSquareMeter": 220.0,
+        "PriceWithoutTax": 178.86,
+        "MaterialPriceType": "LoadBearingWall"
+      },
+      {
+        "MaterialType": "Drywall",
+        "MaterialCategory": "PartitionWall",
+        "PricePerSquareMeter": 100.0,
+        "PriceWithoutTax": 81.30,
+        "MaterialPriceType": "PartitionWall"
+      },
+      {
+        "MaterialType": "Brick",
+        "MaterialCategory": "PartitionWall",
+        "PricePerSquareMeter": 150.0,
+        "PriceWithoutTax": 121.95,
+        "MaterialPriceType": "PartitionWall"
+      },
+      {
+        "MaterialType": "AeratedConcrete",
+        "MaterialCategory": "PartitionWall",
+        "PricePerSquareMeter": 120.0,
+        "PriceWithoutTax": 97.56,
+        "MaterialPriceType": "PartitionWall"
+      },
+      {
+        "MaterialType": "Wood",
+        "MaterialCategory": "PartitionWall",
+        "PricePerSquareMeter": 130.0,
+        "PriceWithoutTax": 105.69,
+        "MaterialPriceType": "PartitionWall"
+      },
+      {
+        "MaterialType": "Glass",
+        "MaterialCategory": "PartitionWall",
+        "PricePerSquareMeter": 200.0,
+        "PriceWithoutTax": 162.60,
+        "MaterialPriceType": "PartitionWall"
+      },
+      {
+        "MaterialType": "Tile",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 120.0,
+        "PriceWithoutTax": 97.56,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "MetalSheet",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 80.0,
+        "PriceWithoutTax": 65.04,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "AsphaltShingle",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 70.0,
+        "PriceWithoutTax": 56.91,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "Thatch",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 500.0,
+        "PriceWithoutTax": 406.50,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "Slate",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 400.0,
+        "PriceWithoutTax": 325.20,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "PVC",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 60.0,
+        "PriceWithoutTax": 48.78,
+        "MaterialPriceType": "Roof"
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "Roof",
+        "PricePerSquareMeter": 90.0,
+        "PriceWithoutTax": 73.17,
+        "MaterialPriceType": "Roof"
       },
       {
         "MaterialType": "Wood",
         "MaterialCategory": "Staircase",
-        "PricePerUnit": 100.0
+        "PricePerStep": 600.0,
+        "PriceWithoutTax": 487.80,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
       },
       {
         "MaterialType": "Metal",
         "MaterialCategory": "Staircase",
-        "PricePerUnit": 80.0
+        "PricePerStep": 350.0,
+        "PriceWithoutTax": 284.55,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
       },
       {
         "MaterialType": "Concrete",
         "MaterialCategory": "Staircase",
-        "PricePerUnit": 120.0
-      },
-      {
-        "MaterialType": "Concrete",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 150.0
-      },
-      {
-        "MaterialType": "Brick",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 120.0
-      },
-      {
-        "MaterialType": "AeratedConcrete",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 100.0
+        "PricePerStep": 400.0,
+        "PriceWithoutTax": 325.20,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
       },
       {
         "MaterialType": "Stone",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 180.0
-      },
-      {
-        "MaterialType": "Wood",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 140.0
-      },
-      {
-        "MaterialType": "Drywall",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 50.0
-      },
-      {
-        "MaterialType": "Brick",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 110.0
-      },
-      {
-        "MaterialType": "AeratedConcrete",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 90.0
-      },
-      {
-        "MaterialType": "Wood",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 70.0
+        "MaterialCategory": "Staircase",
+        "PricePerStep": 500.0,
+        "PriceWithoutTax": 406.50,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
       },
       {
         "MaterialType": "Glass",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 160.0
+        "MaterialCategory": "Staircase",
+        "PricePerStep": 900.0,
+        "PriceWithoutTax": 731.70,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
+      },
+      {
+        "MaterialType": "Composite",
+        "MaterialCategory": "Staircase",
+        "PricePerStep": 450.0,
+        "PriceWithoutTax": 365.85,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
+      },
+      {
+        "MaterialType": "Marble",
+        "MaterialCategory": "Staircase",
+        "PricePerStep": 700.0,
+        "PriceWithoutTax": 569.11,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
+      },
+      {
+        "MaterialType": "Granite",
+        "MaterialCategory": "Staircase",
+        "PricePerStep": 650.0,
+        "PriceWithoutTax": 528.46,
+        "MaterialPriceType": "Staircase",
+        "StandardStepHeight": 0.17,
+        "StandardStepWidth": 1.0
+      },
+      {
+        "MaterialCategory": "VentilationSystem",
+        "PricePerUnit": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "VentilationSystem"
       },
       {
         "MaterialType": "Concrete",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 140.0
+        "MaterialCategory": "Foundation",
+        "PricePerCubicMeter": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "Foundation"
+      },
+      {
+        "MaterialCategory": "Chimney",
+        "PricePerCubicMeter": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "Chimney"
       },
       {
         "MaterialType": "Wood",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 120.0
-      },
-      {
-        "MaterialType": "Steel",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 180.0
-      },
-      {
-        "MaterialType": "Composite",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 160.0
-      },
-      {
-        "MaterialType": "PrefabricatedConcrete",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 200.0
-      },
-      {
-        "MaterialType": "Tile",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 130.0
-      },
-      {
-        "MaterialType": "MetalSheet",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 110.0
-      },
-      {
-        "MaterialType": "AsphaltShingle",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 90.0
-      },
-      {
-        "MaterialType": "Thatch",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 200.0
-      },
-      {
-        "MaterialType": "Slate",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 250.0
+        "MaterialCategory": "Windows",
+        "PricePerSquareMeter": 350.0,
+        "PriceWithoutTax": 284.55,
+        "MaterialPriceType": "Windows",
+        "StandardHeight": 1.2,
+        "StandardWidth": 1.0
       },
       {
         "MaterialType": "PVC",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 80.0
+        "MaterialCategory": "Windows",
+        "PricePerSquareMeter": 300.0,
+        "PriceWithoutTax": 243.90,
+        "MaterialPriceType": "Windows",
+        "StandardHeight": 1.2,
+        "StandardWidth": 1.0
+      },
+      {
+        "MaterialType": "Aluminum",
+        "MaterialCategory": "Windows",
+        "PricePerSquareMeter": 450.0,
+        "PriceWithoutTax": 365.85,
+        "MaterialPriceType": "Windows",
+        "StandardHeight": 1.2,
+        "StandardWidth": 1.0
+      },
+      {
+        "MaterialType": "Steel",
+        "MaterialCategory": "Windows",
+        "PricePerSquareMeter": 500.0,
+        "PriceWithoutTax": 406.50,
+        "MaterialPriceType": "Windows",
+        "StandardHeight": 1.2,
+        "StandardWidth": 1.0
       },
       {
         "MaterialType": "Composite",
-        "MaterialCategory": "ShellOpen",
-        "PricePerUnit": 100.0
+        "MaterialCategory": "Windows",
+        "PricePerSquareMeter": 400.0,
+        "PriceWithoutTax": 325.20,
+        "MaterialPriceType": "Windows",
+        "StandardHeight": 1.2,
+        "StandardWidth": 1.0
       }
     ]
   },
+
   {
     "Name": "Supplier B",
     "Address": {
@@ -354,11 +744,12 @@
     },
     "ContactEmail": "supplierB@example.com",
     "MaterialPrices": [
-      {
-        "MaterialType": "Wood",
-        "MaterialCategory": "Roof",
-        "PricePerUnit": 7.0
-      }
+      //{
+      //  "MaterialType": "Wood",
+      //  "MaterialCategory": "Roof",
+      //  "PricePerUnit": 7.0,
+      //  "PriceWithoutTax": 5.39
+      //}
     ]
   }
 ]

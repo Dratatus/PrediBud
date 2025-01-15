@@ -1,13 +1,15 @@
-
+using Backend.Conventer;
 using Backend.Data.Context;
 using Backend.Factories;
 using Backend.Repositories;
 using Backend.services;
+using Backend.services.Calculator;
 using Backend.Services;
 using Backend.Validation;
 using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Backend
 {
@@ -19,7 +21,12 @@ namespace Backend
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new ConstructionSpecificationJsonConverter());
+            });
 
             // Configure Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
@@ -42,6 +49,8 @@ namespace Backend
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ISupplierService, SupplierService>();
             builder.Services.AddScoped<IMaterialOrderService, MaterialOrderService>();
+            builder.Services.AddScoped<ICalculatorService, CalculatorService>();
+
 
             // Add additional utilities
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();
