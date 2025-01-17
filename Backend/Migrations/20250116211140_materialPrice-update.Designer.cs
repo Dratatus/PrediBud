@@ -4,6 +4,7 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(PrediBudDBContext))]
-    partial class PrediBudDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250116211140_materialPrice-update")]
+    partial class materialPriceupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1124,7 +1127,7 @@ namespace Backend.Migrations
                         .HasForeignKey("MaterialPriceId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Backend.Data.Models.Suppliers.Supplier", null)
+                    b.HasOne("Backend.Data.Models.Suppliers.Supplier", "Supplier")
                         .WithMany("MaterialOrders")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1137,6 +1140,8 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("MaterialPrice");
+
+                    b.Navigation("Supplier");
 
                     b.Navigation("User");
                 });

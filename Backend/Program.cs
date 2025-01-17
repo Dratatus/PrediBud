@@ -41,6 +41,8 @@ namespace Backend
             builder.Services.AddScoped<IConstructionOrderRepository, ConstructionOrderRepository>();
             builder.Services.AddScoped<IConstructionOrderNotificationRepository, ConstructionOrderNotificationRepository>();
             builder.Services.AddScoped<IMaterialOrderRepository, MaterialOrderRepository>();
+            builder.Services.AddScoped<IMaterialPriceRepository, MaterialPriceRepository>();
+
 
             // Add services
             builder.Services.AddScoped<IAuthService, AuthService>();
