@@ -16,6 +16,7 @@ namespace Backend.Data.Models.Orders.Material
         public int UserId { get; set; }
         public User User { get; set; }
         public int SupplierId { get; set; }
+        public Supplier Supplier { get; set; }
         public int? MaterialPriceId { get; set; }
         public MaterialPrice MaterialPrice { get; set; }
     }

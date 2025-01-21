@@ -16,7 +16,7 @@ namespace Backend.Controllers
         }
 
 
-        [HttpGet("{clientId}")]
+        [HttpGet("all/{clientId}")]
         public async Task<IActionResult> GetAllOrders(int clientId)
         {
             var orders = await _constructionOrderService.GetOrdersByClientIdAsync(clientId);

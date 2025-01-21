@@ -1,4 +1,5 @@
 ﻿using Backend.Data.Models.Orders.Construction;
+using Backend.DTO.ConstructionOrderDto;
 using Backend.DTO.Request;
 
 namespace Backend.services
@@ -7,10 +8,10 @@ namespace Backend.services
     {
         Task<ConstructionOrder> CreateOrderAsync(CreateOrderRequest request);
         Task<ConstructionOrder> GetOrderByIdAsync(int id);
-        Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId);
         Task<bool> DeleteOrderAsync(int clientId, int orderId);
         Task<bool> AcceptOrderAsync(int orderId, int workerId);
-        Task<IEnumerable<ConstructionOrder>> GetOrdersByWorkerIdAsync(int workerId);
-        Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId);
+        Task<List<ConstructionOrderDto>> GetOrdersByClientIdAsync(int clientId);
+        Task<IEnumerable<ConstructionOrderDto>> GetOrdersByWorkerIdAsync(int workerId);
+        Task<IEnumerable<ConstructionOrderDto>> GetAvailableOrdersAsync(int workerId);
     }
 }

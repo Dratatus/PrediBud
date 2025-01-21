@@ -2,9 +2,9 @@
   {
     "Name": "Supplier A",
     "Address": {
-      "Street": "Supplier Street 1",
+      "StreetName": "Supplier Street 1",
       "City": "Supplier City",
-      "PostalCode": "00-001"
+      "PostCode": "00-001"
     },
     "ContactEmail": "supplier@example.com",
     "MaterialPrices": [

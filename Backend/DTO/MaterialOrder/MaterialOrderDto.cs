@@ -1,4 +1,5 @@
-﻿using Backend.DTO.Users.Supplier;
+﻿using Backend.Data.Models.Suppliers;
+using Backend.DTO.Users.Supplier;
 
 namespace Backend.DTO.MaterialOrder
 {
@@ -18,6 +19,7 @@ namespace Backend.DTO.MaterialOrder
         public int UserId { get; set; }
         public SupplierDto Supplier { get; set; }
         public int SupplierId { get; set; }
+        public MaterialPrice MaterialPrice { get; set; }
         public int? MaterialPriceId { get; set; }
     }
 }

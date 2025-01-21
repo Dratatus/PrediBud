@@ -16,7 +16,9 @@ namespace Backend.Repositories
         public async Task<MaterialOrder> GetMaterialOrderByIdAsync(int orderId)
         {
             return await _context.MaterialOrders
-                .Include(mo => mo.MaterialPrice) 
+                .Include(mo => mo.MaterialPrice)
+                .Include(mo => mo.Supplier)
+                .Include(mo => mo.Supplier.Address)
                 .FirstOrDefaultAsync(mo => mo.ID == orderId);
         }
 
@@ -25,6 +27,8 @@ namespace Backend.Repositories
         {
             return await _context.MaterialOrders
                 .Include(mo => mo.MaterialPrice)
+                .Include(mo => mo.Supplier)
+                .Include(mo => mo.Supplier.Address)
                 .ToListAsync();
         }
 

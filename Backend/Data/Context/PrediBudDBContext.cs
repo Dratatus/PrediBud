@@ -99,10 +99,10 @@ namespace Backend.Data.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<MaterialOrder>()
-                .HasOne<Supplier>() 
-                .WithMany(s => s.MaterialOrders) 
-                .HasForeignKey(mo => mo.SupplierId) 
-                .OnDelete(DeleteBehavior.Cascade); 
+                .HasOne(mo => mo.Supplier)
+                .WithMany(s => s.MaterialOrders)
+                .HasForeignKey(mo => mo.SupplierId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<MaterialOrder>()
                  .HasOne(mo => mo.MaterialPrice)

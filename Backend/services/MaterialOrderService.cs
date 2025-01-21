@@ -1,5 +1,7 @@
-﻿using Backend.Data.Models.Orders.Material;
+﻿using Backend.Data.Models.Common;
+using Backend.Data.Models.Orders.Material;
 using Backend.DTO.MaterialOrder;
+using Backend.DTO.Users.Supplier;
 using Backend.Repositories;
 
 namespace Backend.services
@@ -49,7 +51,6 @@ namespace Backend.services
             existing.Quantity = dto.Quantity;
             existing.CreatedDate = dto.CreatedDate;
             existing.UserId = dto.UserId;
-            existing.SupplierId = dto.SupplierId;
             existing.MaterialPriceId = dto.MaterialPriceId;
 
             await _repository.UpdateMaterialOrderAsync(existing);
@@ -82,7 +83,15 @@ namespace Backend.services
 
                 UserId = entity.UserId,
                 SupplierId = entity.SupplierId,
-                MaterialPriceId = entity.MaterialPriceId
+                Supplier = new SupplierDto
+                {
+                    Name = entity.Supplier.Name,
+                    ContactEmail = entity.Supplier.ContactEmail,
+                    Address = entity.Supplier.Address
+                },
+                MaterialPriceId = entity.MaterialPriceId,
+                MaterialPrice = entity.MaterialPrice
+
             };
         }
 
@@ -99,7 +108,7 @@ namespace Backend.services
                 CreatedDate = dto.CreatedDate,
 
                 UserId = dto.UserId,
-                SupplierId = dto.SupplierId,
+                SupplierId = dto.Supplier.ID,
                 MaterialPriceId = dto.MaterialPriceId
             };
         }
