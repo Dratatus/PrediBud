@@ -4,34 +4,34 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
 
-// Sample data for my works
-const myWorks = [
-  { id: '1', title: 'Kitchen wall' },
-  { id: '2', title: 'Dining room wall' },
-  { id: '3', title: 'Kitchen wall' },
-  { id: '4', title: 'Dining room wall' },
+// Sample data for My Orders
+const myOrders = [
+  { id: '1', title: 'Bricks', icon: require('../assets/icons/package.png') },
+  { id: '2', title: 'Fundaments', icon: require('../assets/icons/package.png') },
+  { id: '3', title: 'Stone', icon: require('../assets/icons/package.png') },
+  { id: '4', title: 'Kitchen Wall', icon: require('../assets/icons/package.png') },
 ];
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'MyWorks'>;
+type NavigationProps = NativeStackNavigationProp<StackParamList, 'MyOrders'>;
 
-const MyWorksScreen: React.FC = () => {
+const MyOrdersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  const handleDetails = (workId: string) => {
-    navigation.navigate('WorkDetails', { workId }); // Przekierowanie do WorkDetails
-  };  
+  const handleDetails = (orderId: string) => {
+    navigation.navigate('OrderDetails', { workId: orderId });
+  };
 
-  const renderWorkItem = ({ item }: { item: typeof myWorks[0] }) => (
-    <View style={styles.workItemContainer}>
-      <View style={styles.workInfoContainer}>
-        <Image source={require('../assets/icons/crane.png')} style={styles.workIcon} />
+  const renderOrderItem = ({ item }: { item: typeof myOrders[0] }) => (
+    <View style={styles.orderItemContainer}>
+      <View style={styles.orderInfoContainer}>
+        <Image source={item.icon} style={styles.orderIcon} />
         <View>
-          <Text style={styles.workId}>Work #{item.id}</Text>
-          <Text style={styles.workTitle}>Title: {item.title}</Text>
+          <Text style={styles.orderId}>Order #{item.id}</Text>
+          <Text style={styles.orderTitle}>Title: {item.title}</Text>
         </View>
       </View>
       <TouchableOpacity style={styles.detailsButton} onPress={() => handleDetails(item.id)}>
@@ -42,15 +42,15 @@ const MyWorksScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-        <Text style={styles.returnButtonText}>Back</Text>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.backButtonText}>{'<'} Back</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>My works</Text>
+      <Text style={styles.headerText}>My orders</Text>
       <FlatList
-        data={myWorks}
-        renderItem={renderWorkItem}
+        data={myOrders}
+        renderItem={renderOrderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.workList}
+        contentContainerStyle={styles.orderList}
       />
     </View>
   );
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9b234',
     padding: 20,
   },
-  returnButton: {
+  backButton: {
     position: 'absolute',
     top: 50,
     left: 20,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     zIndex: 1,
   },
-  returnButtonText: {
+  backButtonText: {
     color: 'black',
     fontWeight: 'bold',
   },
@@ -80,12 +80,12 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     marginTop: 90,
-    marginBottom: 60,
+    marginBottom: 30,
   },
-  workList: {
+  orderList: {
     paddingBottom: 100,
   },
-  workItemContainer: {
+  orderItemContainer: {
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 10,
@@ -94,20 +94,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  workInfoContainer: {
+  orderInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  workIcon: {
+  orderIcon: {
     width: 40,
     height: 40,
     marginRight: 15,
   },
-  workId: {
+  orderId: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  workTitle: {
+  orderTitle: {
     fontSize: 16,
   },
   detailsButton: {
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyWorksScreen;
+export default MyOrdersScreen;

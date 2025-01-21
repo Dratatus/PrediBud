@@ -33,6 +33,22 @@ const UserProfileScreen: React.FC = () => {
     navigation.navigate('MyWorks');
   };
 
+  const handleMyOrders = () => {
+    navigation.navigate('MyOrders');
+  };
+
+  const handleNotifications = () =>{
+    navigation.navigate('Notifications');
+  }
+
+  const handleCalculator = () =>{
+    navigation.navigate('Calculator');
+  }
+
+  const handleMaterials = () =>{
+    navigation.navigate('Materials');
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -49,45 +65,46 @@ const UserProfileScreen: React.FC = () => {
       <Text style={styles.userName}>{userName || 'Unknown User'}</Text>
 
       <View style={styles.optionsContainer}>
-        {userRole?.toLowerCase() === 'client' ? (
-          <>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.calculator} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Calculator</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.orders} style={styles.optionIcon} />
-              <Text style={styles.optionText}>My orders</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.notifications} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Notifications</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Materials</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
-              <Image source={icons.findWorks} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Find works</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
-              <Image source={icons.myWorks} style={styles.optionIcon} />
-              <Text style={styles.optionText}>My works</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.notifications} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Notifications</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
-              <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Materials</Text>
-            </TouchableOpacity>
-          </>
-        )}
+      {userRole?.toLowerCase() === 'client' ? (
+  <>
+    <TouchableOpacity style={styles.optionButton} onPress={handleCalculator}>
+      <Image source={icons.calculator} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Calculator</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleMyOrders}>
+      <Image source={icons.orders} style={styles.optionIcon} />
+      <Text style={styles.optionText}>My orders</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+      <Image source={icons.notifications} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Notifications</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+      <Image source={icons.materials} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Materials</Text>
+    </TouchableOpacity>
+  </>
+) : (
+  <>
+    <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
+      <Image source={icons.findWorks} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Find works</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
+      <Image source={icons.myWorks} style={styles.optionIcon} />
+      <Text style={styles.optionText}>My works</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+      <Image source={icons.notifications} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Notifications</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+      <Image source={icons.materials} style={styles.optionIcon} />
+      <Text style={styles.optionText}>Materials</Text>
+    </TouchableOpacity>
+  </>
+)}
+
       </View>
     </View>
   );

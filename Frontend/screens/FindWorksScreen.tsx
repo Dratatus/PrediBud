@@ -22,8 +22,8 @@ const FindWorksScreen: React.FC = () => {
   };
 
   const handleDetails = (workId: string) => {
-    navigation.navigate('WorkDetails', { workId });
-  };
+    navigation.navigate('OrderDetails', { workId }); // Przekierowanie do OrderDetails
+  };  
 
   const renderWorkItem = ({ item }: { item: typeof availableWorks[0] }) => (
     <View style={styles.workItemContainer}>
