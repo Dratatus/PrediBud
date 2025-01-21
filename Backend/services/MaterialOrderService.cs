@@ -1,4 +1,7 @@
-﻿using Backend.Data.Models.Orders.Material;
+﻿using Backend.Data.Models.Common;
+using Backend.Data.Models.Orders.Material;
+using Backend.DTO.MaterialOrder;
+using Backend.DTO.Users.Supplier;
 using Backend.Repositories;
 
 namespace Backend.services
@@ -11,48 +14,103 @@ namespace Backend.services
         {
             _repository = repository;
         }
-
-        public async Task<MaterialOrder> CreateMaterialOrderAsync(MaterialOrder order)
+        public async Task<MaterialOrderDto> CreateMaterialOrderAsync(MaterialOrderDto dto)
         {
-            await _repository.AddMaterialOrderAsync(order);
-            return order;
+            var entity = MapToEntity(dto);
+
+            await _repository.AddMaterialOrderAsync(entity);
+
+            var createdEntity = await _repository.GetMaterialOrderByIdAsync(entity.ID);
+
+            var createdDto = MapToDto(createdEntity);
+            return createdDto;
         }
 
-        public async Task<MaterialOrder> GetMaterialOrderByIdAsync(int orderId)
+        public async Task<MaterialOrderDto> GetMaterialOrderByIdAsync(int orderId)
         {
-            return await _repository.GetMaterialOrderByIdAsync(orderId);
+            var entity = await _repository.GetMaterialOrderByIdAsync(orderId);
+            if (entity == null) return null;
+
+            return MapToDto(entity);
         }
 
-        public async Task<IEnumerable<MaterialOrder>> GetAllMaterialOrdersAsync()
+        public async Task<IEnumerable<MaterialOrderDto>> GetAllMaterialOrdersAsync()
         {
-            return await _repository.GetAllMaterialOrdersAsync();
+            var entities = await _repository.GetAllMaterialOrdersAsync();
+            return entities.Select(e => MapToDto(e));
         }
 
-        public async Task<bool> UpdateMaterialOrderAsync(MaterialOrder order)
+        public async Task<bool> UpdateMaterialOrderAsync(MaterialOrderDto dto)
         {
-            var existingOrder = await _repository.GetMaterialOrderByIdAsync(order.ID);
-            if (existingOrder == null)
+            var existing = await _repository.GetMaterialOrderByIdAsync(dto.ID);
+            if (existing == null)
                 return false;
 
-            existingOrder.MaterialCategory = order.MaterialCategory;
-            existingOrder.MaterialType = order.MaterialType;
-            existingOrder.Quantity = order.Quantity;
-            existingOrder.Taxes = order.Taxes;
-            existingOrder.SupplierId = order.SupplierId;
-            existingOrder.UnitPrice = order.UnitPrice;
+            existing.UnitPriceNet = dto.UnitPriceNet;
+            existing.UnitPriceGross = dto.UnitPriceGross;
+            existing.Quantity = dto.Quantity;
+            existing.CreatedDate = dto.CreatedDate;
+            existing.UserId = dto.UserId;
+            existing.MaterialPriceId = dto.MaterialPriceId;
 
-            await _repository.UpdateMaterialOrderAsync(existingOrder);
+            await _repository.UpdateMaterialOrderAsync(existing);
             return true;
         }
 
         public async Task<bool> DeleteMaterialOrderAsync(int orderId)
         {
-            var order = await _repository.GetMaterialOrderByIdAsync(orderId);
-            if (order == null)
+            var existing = await _repository.GetMaterialOrderByIdAsync(orderId);
+            if (existing == null)
                 return false;
 
             await _repository.DeleteMaterialOrderAsync(orderId);
             return true;
+        }
+
+        private MaterialOrderDto MapToDto(MaterialOrder entity)
+        {
+            if (entity == null) return null;
+
+            return new MaterialOrderDto
+            {
+                ID = entity.ID,
+                UnitPriceNet = entity.UnitPriceNet,
+                UnitPriceGross = entity.UnitPriceGross,
+                Quantity = entity.Quantity,
+                TotalPriceNet = entity.TotalPriceNet,
+                TotalPriceGross = entity.TotalPriceGross,
+                CreatedDate = entity.CreatedDate,
+
+                UserId = entity.UserId,
+                SupplierId = entity.SupplierId,
+                Supplier = new SupplierDto
+                {
+                    Name = entity.Supplier.Name,
+                    ContactEmail = entity.Supplier.ContactEmail,
+                    Address = entity.Supplier.Address
+                },
+                MaterialPriceId = entity.MaterialPriceId,
+                MaterialPrice = entity.MaterialPrice
+
+            };
+        }
+
+        private MaterialOrder MapToEntity(MaterialOrderDto dto)
+        {
+            if (dto == null) return null;
+
+            return new MaterialOrder
+            {
+                ID = dto.ID,
+                UnitPriceNet = dto.UnitPriceNet,
+                UnitPriceGross = dto.UnitPriceGross,
+                Quantity = dto.Quantity,
+                CreatedDate = dto.CreatedDate,
+
+                UserId = dto.UserId,
+                SupplierId = dto.Supplier.ID,
+                MaterialPriceId = dto.MaterialPriceId
+            };
         }
     }
 }

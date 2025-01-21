@@ -1,10 +1,13 @@
-﻿using Backend.Data.Models.Notifications;
+﻿using Backend.Data.Models.Constructions.Specyfication;
+using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
+using Backend.DTO.ConstructionOrderDto;
 using Backend.DTO.Request;
+using Backend.DTO.Users.Client;
+using Backend.DTO.Users.Worker;
 using Backend.Factories;
 using Backend.Repositories;
-using Backend.Services;
 
 namespace Backend.services
 {
@@ -24,21 +27,117 @@ namespace Backend.services
             _notificationService = notificationService;
         }
 
-        public async Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId)
+        public async Task<List<ConstructionOrderDto>> GetOrdersByClientIdAsync(int clientId)
         {
-            return await _orderRepository.GetOrdersByClientIdAsync(clientId);
+            var orders = await _orderRepository.GetOrdersByClientIdAsync(clientId);
+
+            return orders.Select(order => new ConstructionOrderDto
+            {
+                ID = order.ID,
+                Description = order.Description,
+                Status = order.Status,
+                ConstructionType = order.ConstructionType,
+                PlacementPhotos = order.placementPhotos,
+                RequestedStartTime = order.RequestedStartTime,
+                StartDate = order.StartDate,
+                EndDate = order.EndDate,
+                ClientProposedPrice = order.ClientProposedPrice,
+                WorkerProposedPrice = order.WorkerProposedPrice,
+                AgreedPrice = order.AgreedPrice,
+                TotalPrice = order.TotalPrice,
+                ClientId = order.ClientId,
+                Client = order.Client == null ? null : new ClientDto
+                {
+                    ID = order.Client.ID,
+                    ContactDetails = order.Client.ContactDetails,
+                    AddressId = order.Client.AddressId,
+                    Address = order.Client.Address
+                },
+                WorkerId = order.WorkerId,
+                Worker = order.Worker == null ? null : new WorkerDto
+                {
+                    ID = order.Worker.ID,
+                    Position = order.Worker.Position,
+                    ContactDetails = order.Worker.ContactDetails,
+                    AddressId = order.Worker.AddressId,
+                    Address = order.Worker.Address
+                },
+                ConstructionSpecification = order.ConstructionSpecification,
+                ConstructionSpecificationId = order.ConstructionSpecificationId
+                
+            }).ToList();
         }
 
-        public async Task<IEnumerable<ConstructionOrder>> GetOrdersByWorkerIdAsync(int workerId)
+        public async Task<IEnumerable<ConstructionOrderDto>> GetOrdersByWorkerIdAsync(int workerId)
         {
-            return await _orderRepository.GetOrdersByWorkerIdAsync(workerId);
+            var orders = await _orderRepository.GetOrdersByWorkerIdAsync(workerId);
+
+            return orders.Select(order => new ConstructionOrderDto
+            {
+                ID = order.ID,
+                Description = order.Description,
+                Status = order.Status,
+                ConstructionType = order.ConstructionType,
+                PlacementPhotos = order.placementPhotos,
+                RequestedStartTime = order.RequestedStartTime,
+                StartDate = order.StartDate,
+                EndDate = order.EndDate,
+                ClientProposedPrice = order.ClientProposedPrice,
+                WorkerProposedPrice = order.WorkerProposedPrice,
+                AgreedPrice = order.AgreedPrice,
+                TotalPrice = order.TotalPrice,
+                ClientId = order.ClientId,
+                Client = order.Client == null ? null : new ClientDto
+                {
+                    ID = order.Client.ID,
+                    ContactDetails = order.Client.ContactDetails,
+                    AddressId = order.Client.AddressId,
+                    Address = order.Client.Address
+                },
+                WorkerId = order.WorkerId,
+                Worker = order.Worker == null ? null : new WorkerDto
+                {
+                    ID = order.Worker.ID,
+                    Position = order.Worker.Position,
+                    ContactDetails = order.Worker.ContactDetails,
+                    AddressId = order.Worker.AddressId,
+                    Address = order.Worker.Address
+                },
+                ConstructionSpecification = order.ConstructionSpecification,
+                ConstructionSpecificationId = order.ConstructionSpecificationId
+            }).ToList();
         }
 
-        public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)
+        public async Task<IEnumerable<ConstructionOrderDto>> GetAvailableOrdersAsync(int workerId)
         {
-            return await _orderRepository.GetAvailableOrdersAsync(workerId);
-        }
+            var orders = await _orderRepository.GetAvailableOrdersAsync(workerId);
 
+            return orders.Select(order => new ConstructionOrderDto
+            {
+                ID = order.ID,
+                Description = order.Description,
+                Status = order.Status,
+                ConstructionType = order.ConstructionType,
+                PlacementPhotos = order.placementPhotos,
+                RequestedStartTime = order.RequestedStartTime,
+                StartDate = order.StartDate,
+                EndDate = order.EndDate,
+                ClientProposedPrice = order.ClientProposedPrice,
+                WorkerProposedPrice = order.WorkerProposedPrice,
+                AgreedPrice = order.AgreedPrice,
+                TotalPrice = order.TotalPrice,
+                ClientId = order.ClientId,
+                Client = order.Client == null ? null : new ClientDto
+                {
+                    ID = order.Client.ID,
+                    ContactDetails = order.Client.ContactDetails,
+                    AddressId = order.Client.AddressId,
+                    Address = order.Client.Address
+                },
+                ConstructionSpecification = order.ConstructionSpecification,
+                ConstructionSpecificationId = order.ConstructionSpecificationId,
+            }).ToList();
+        }
         public async Task<ConstructionOrder> GetOrderByIdAsync(int id)
         {
             return await _orderRepository.GetOrderWithSpecificationByIdAsync(id);

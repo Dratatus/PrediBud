@@ -25,46 +25,64 @@ namespace Backend.Factories
     {
         public ConstructionSpecification CreateSpecification(ConstructionType type, object details)
         {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, 
+                PropertyNameCaseInsensitive = true 
+            };
+
             switch (type)
             {
                 case ConstructionType.Balcony:
-                    return CreateBalconySpecification(details as BalconySpecificationDetails);
+                    var balconyDetails = JsonSerializer.Deserialize<BalconySpecificationDetails>(details.ToString(), options);
+                    return CreateBalconySpecification(balconyDetails);
 
                 case ConstructionType.SuspendedCeiling:
-                    return CreateSuspendedCeilingSpecification(details as SuspendedCeilingSpecificationDetails);
+                    var suspendedCeilingDetails = JsonSerializer.Deserialize<SuspendedCeilingSpecificationDetails>(details.ToString(), options);
+                    return CreateSuspendedCeilingSpecification(suspendedCeilingDetails);
 
                 case ConstructionType.Doors:
-                    return CreateDoorsSpecification(details as DoorsSpecificationDetails);
+                    var doorsDetails = JsonSerializer.Deserialize<DoorsSpecificationDetails>(details.ToString(), options);
+                    return CreateDoorsSpecification(doorsDetails);
 
                 case ConstructionType.Facade:
-                    return CreateFacadeSpecification(details as FacadeSpecificationDetails);
+                    var facadeDetails = JsonSerializer.Deserialize<FacadeSpecificationDetails>(details.ToString(), options);
+                    return CreateFacadeSpecification(facadeDetails);
 
                 case ConstructionType.Flooring:
-                    return CreateFlooringSpecification(details as FlooringSpecificationDetails);
+                    var flooringDetails = JsonSerializer.Deserialize<FlooringSpecificationDetails>(details.ToString(), options);
+                    return CreateFlooringSpecification(flooringDetails);
 
                 case ConstructionType.InsulationOfAttic:
-                    return CreateInsulationOfAtticSpecification(details as InsulationOfAtticSpecificationDetails);
+                    var insulationDetails = JsonSerializer.Deserialize<InsulationOfAtticSpecificationDetails>(details.ToString(), options);
+                    return CreateInsulationOfAtticSpecification(insulationDetails);
 
                 case ConstructionType.Painting:
-                    return CreatePaintingSpecification(details as PaintingSpecificationDetails);
+                    var paintingDetails = JsonSerializer.Deserialize<PaintingSpecificationDetails>(details.ToString(), options);
+                    return CreatePaintingSpecification(paintingDetails);
 
                 case ConstructionType.Plastering:
-                    return CreatePlasteringSpecification(details as PlasteringSpecificationDetails);
+                    var plasteringDetails = JsonSerializer.Deserialize<PlasteringSpecificationDetails>(details.ToString(), options);
+                    return CreatePlasteringSpecification(plasteringDetails);
 
                 case ConstructionType.ShellOpen:
-                    return CreateShellOpenSpecification(details as ShellOpenSpecificationDetails);
+                    var shellOpenDetails = JsonSerializer.Deserialize<ShellOpenSpecificationDetails>(details.ToString(), options);
+                    return CreateShellOpenSpecification(shellOpenDetails);
 
                 case ConstructionType.Staircase:
-                    return CreateStaircaseSpecification(details as StaircaseSpecificationDetails);
+                    var staircaseDetails = JsonSerializer.Deserialize<StaircaseSpecificationDetails>(details.ToString(), options);
+                    return CreateStaircaseSpecification(staircaseDetails);
 
                 case ConstructionType.Windows:
-                    return CreateWindowsSpecification(details as WindowsSpecificationDetails);
+                    var windowsDetails = JsonSerializer.Deserialize<WindowsSpecificationDetails>(details.ToString(), options);
+                    return CreateWindowsSpecification(windowsDetails);
 
                 case ConstructionType.Foundation:
-                    return CreateFoundationSpecification(details as FoundationSpecificationDetails);
+                    var foundationDetails = JsonSerializer.Deserialize<FoundationSpecificationDetails>(details.ToString(), options);
+                    return CreateFoundationSpecification(foundationDetails);
 
                 default:
-                    throw new ArgumentException("Invalid construction type");
+                    throw new NotSupportedException($"Construction type {type} is not supported.");
             }
         }
 
@@ -126,7 +144,7 @@ namespace Backend.Factories
                 Area = details.Area,
                 Material = details.Material
             };
-        }        
+        }
         private FoundationSpecification CreateFoundationSpecification(FoundationSpecificationDetails details)
         {
             if (details == null) throw new ArgumentException("Invalid details for Foundation");

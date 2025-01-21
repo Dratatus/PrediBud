@@ -16,14 +16,19 @@ namespace Backend.Repositories
         public async Task<MaterialOrder> GetMaterialOrderByIdAsync(int orderId)
         {
             return await _context.MaterialOrders
-                .Include(mo => mo.MaterialPrices) // Eager loading for related materials
+                .Include(mo => mo.MaterialPrice)
+                .Include(mo => mo.Supplier)
+                .Include(mo => mo.Supplier.Address)
                 .FirstOrDefaultAsync(mo => mo.ID == orderId);
         }
+
 
         public async Task<IEnumerable<MaterialOrder>> GetAllMaterialOrdersAsync()
         {
             return await _context.MaterialOrders
-                .Include(mo => mo.MaterialPrices)
+                .Include(mo => mo.MaterialPrice)
+                .Include(mo => mo.Supplier)
+                .Include(mo => mo.Supplier.Address)
                 .ToListAsync();
         }
 

@@ -6,7 +6,7 @@ namespace Backend.DTO.Request
     {
         public string Description { get; set; }
         public ConstructionType ConstructionType { get; set; }
-        public object SpecificationDetails { get; set; }  // Szczegóły specyfikacji w postaci odpowiedniego DTO (np. BalconySpecificationDetails)
+        public object SpecificationDetails { get; set; } 
         public string[] PlacementPhotos { get; set; }
         public DateTime? RequestedStartTime { get; set; }
         public decimal? ClientProposedPrice { get; set; }

@@ -48,5 +48,15 @@ namespace Backend.Repositories
             return true;
         }
 
+        public async Task<bool> HasMaterialOrdersAsync(int userId)
+        {
+            return await _context.MaterialOrders.AnyAsync(mo => mo.UserId == userId);
+        }
+
+        public async Task<bool> HasConstructionOrdersAsync(int userId)
+        {
+            return await _context.ConstructionOrders.AnyAsync(co => co.ClientId == userId || co.WorkerId == userId);
+        }
+
     }
 }

@@ -1,4 +1,7 @@
 ﻿using Backend.Data.Models.Orders.Material;
+using Backend.Data.Models.Suppliers;
+using Backend.Data.Models.Users;
+using Backend.DTO.MaterialOrder;
 using Backend.services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,36 +19,36 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(MaterialOrder order)
+        public async Task<IActionResult> CreateOrder([FromBody] MaterialOrderDto dto)
         {
-            var createdOrder = await _service.CreateMaterialOrderAsync(order);
-            return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.ID }, createdOrder);
+            var createdDto = await _service.CreateMaterialOrderAsync(dto);
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = createdDto.ID }, createdDto);
         }
 
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderById(int orderId)
         {
-            var order = await _service.GetMaterialOrderByIdAsync(orderId);
-            if (order == null)
+            var dto = await _service.GetMaterialOrderByIdAsync(orderId);
+            if (dto == null)
                 return NotFound($"Order with ID {orderId} not found.");
 
-            return Ok(order);
+            return Ok(dto);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            var orders = await _service.GetAllMaterialOrdersAsync();
-            return Ok(orders);
+            var dtos = await _service.GetAllMaterialOrdersAsync();
+            return Ok(dtos);
         }
 
         [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateOrder(int orderId, MaterialOrder updatedOrder)
+        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] MaterialOrderDto updatedDto)
         {
-            if (orderId != updatedOrder.ID)
+            if (orderId != updatedDto.ID)
                 return BadRequest("Order ID mismatch.");
 
-            var success = await _service.UpdateMaterialOrderAsync(updatedOrder);
+            var success = await _service.UpdateMaterialOrderAsync(updatedDto);
             if (!success)
                 return NotFound($"Order with ID {orderId} not found.");
 
