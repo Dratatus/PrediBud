@@ -7,5 +7,8 @@ namespace Backend.Repositories
         Task<User> GetByEmailAsync(string email);
         Task AddUserAsync(User user);
         Task<bool> DeleteUserAsync(int userId);
+        Task<User> GetUserByIdAsync(int userId);
+        Task<bool> HasConstructionOrdersAsync(int userId);
+        Task<bool> HasMaterialOrdersAsync(int userId);
     }
 }

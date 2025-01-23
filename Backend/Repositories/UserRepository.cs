@@ -18,6 +18,12 @@ namespace Backend.Repositories
             _context = context;
         }
 
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.ID == userId);
+        }
+
         public async Task<User> GetByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Credentials.Email == email);
@@ -40,6 +46,16 @@ namespace Backend.Repositories
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> HasMaterialOrdersAsync(int userId)
+        {
+            return await _context.MaterialOrders.AnyAsync(mo => mo.UserId == userId);
+        }
+
+        public async Task<bool> HasConstructionOrdersAsync(int userId)
+        {
+            return await _context.ConstructionOrders.AnyAsync(co => co.ClientId == userId || co.WorkerId == userId);
         }
 
     }

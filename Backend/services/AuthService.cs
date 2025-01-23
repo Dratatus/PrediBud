@@ -53,7 +53,9 @@ namespace Backend.services
                 user = new Client
                 {
                     Credentials = new Credentials { Email = request.Email, PasswordHash = hashedPassword },
-                    ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone }
+                    ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone },
+                    Address = new Address {City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName }
+                    
                 };
             }
             else
@@ -62,6 +64,7 @@ namespace Backend.services
                 {
                     Credentials = new Credentials { Email = request.Email, PasswordHash = hashedPassword },
                     ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone },
+                    Address = new Address { City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName },
                     Position = request.Position
                 };
             }
@@ -74,10 +77,28 @@ namespace Backend.services
         }
         public async Task<AuthResult> DeleteUserAsync(int userId)
         {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return new AuthResult { Success = false, Message = "User not found" };
+            }
+
+            var hasMaterialOrders = await _userRepository.HasMaterialOrdersAsync(userId);
+            if (hasMaterialOrders)
+            {
+                return new AuthResult { Success = false, Message = "Cannot delete user with material orders." };
+            }
+
+            var hasConstructionOrders = await _userRepository.HasConstructionOrdersAsync(userId);
+            if (hasConstructionOrders)
+            {
+                return new AuthResult { Success = false, Message = "Cannot delete user with construction orders." };
+            }
+
             var success = await _userRepository.DeleteUserAsync(userId);
             if (!success)
             {
-                return new AuthResult { Success = false, Message = "User not found" };
+                return new AuthResult { Success = false, Message = "Failed to delete user." };
             }
 
             return new AuthResult { Success = true, Message = "User deleted successfully" };

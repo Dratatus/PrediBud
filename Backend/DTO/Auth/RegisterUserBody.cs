@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Backend.Data.Models.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTO.Auth
 {
@@ -10,6 +11,9 @@ namespace Backend.DTO.Auth
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public Address Address { get; set; }
 
         [Required]
         public string Name { get; set; }
