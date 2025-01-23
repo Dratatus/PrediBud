@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Switch } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Switch, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
@@ -10,96 +10,146 @@ type NavigationProps = NativeStackNavigationProp<StackParamList, 'Register'>;
 const RegisterScreen = () => {
   const navigation = useNavigation<NavigationProps>();
 
+  // Pola formularza
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isClient, setIsClient] = useState(true);
 
+  // Dane adresowe
+  const [streetName, setStreetName] = useState('');
+  const [city, setCity] = useState('');
+  const [postCode, setPostCode] = useState('');
+
   const handleRegister = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:5142/api/auth/register', {
+      const requestBody = {
         email: email,
         password: password,
         name: name,
         phone: phoneNumber,
         isClient: isClient,
-      });
+        address: {
+          streetName: streetName,
+          city: city,
+          postCode: postCode,
+        },
+      };
+
+      const response = await axios.post('http://10.0.2.2:5142/api/auth/register', requestBody);
 
       console.log('Registration successful:', response.data);
-      // Przechowaj token i przekieruj do ekranu głównego po udanej rejestracji
+
+      // Przekierowanie do ekranu logowania
+      navigation.navigate('Login');
     } catch (error: any) {
       console.error('Error during registration:', error.response?.data || error.message);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.title}>PREDICT YOUR FUTURE!</Text>
-      <Text style={styles.subtitle}>Create new Account</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Text style={styles.title}>PREDICT YOUR FUTURE!</Text>
+        <Text style={styles.subtitle}>Create new Account</Text>
 
-      <View style={styles.form}>
-        <Text style={styles.label}>NAME</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          value={name}
-          onChangeText={setName}
-        />
-
-        <Text style={styles.label}>PHONE NUMBER</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-
-        <Text style={styles.label}>EMAIL</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <Text style={styles.label}>PASSWORD</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <View style={styles.switchContainer}>
-          <Text style={styles.label}>REGISTER AS CLIENT</Text>
-          <Switch
-            value={isClient}
-            onValueChange={setIsClient}
-            trackColor={{ false: '#767577', true: '#f0ad4e' }}
-            thumbColor={isClient ? '#f0ad4e' : '#f4f3f4'}
+        <View style={styles.form}>
+          {/* Pola podstawowe */}
+          <Text style={styles.label}>NAME</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
           />
+
+          <Text style={styles.label}>PHONE NUMBER</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+          />
+
+          <Text style={styles.label}>EMAIL</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <Text style={styles.label}>PASSWORD</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          {/* Adres */}
+          <Text style={styles.label}>STREET NAME</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Street Name"
+            value={streetName}
+            onChangeText={setStreetName}
+          />
+
+          <Text style={styles.label}>CITY</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="City"
+            value={city}
+            onChangeText={setCity}
+          />
+
+          <Text style={styles.label}>POST CODE</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Post Code"
+            keyboardType="numeric"
+            value={postCode}
+            onChangeText={setPostCode}
+          />
+
+          {/* Typ użytkownika */}
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>REGISTER AS CLIENT</Text>
+            <Switch
+              value={isClient}
+              onValueChange={setIsClient}
+              trackColor={{ false: '#767577', true: '#f0ad4e' }}
+              thumbColor={isClient ? '#f0ad4e' : '#f4f3f4'}
+            />
+          </View>
+
+          <TouchableOpacity style={[styles.button, { marginBottom: 1 }]} onPress={handleRegister}>
+            <Text style={styles.buttonText}>SIGN UP</Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={[styles.button, { marginBottom: 1 }]} onPress={handleRegister}>
-          <Text style={styles.buttonText}>SIGN UP</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.linkContainer}>
+          <Text style={styles.linkText}>Already Registered? Log in here.</Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.linkContainer}>
-        <Text style={styles.linkText}>Already Registered? Log in here.</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
-    flex: 1,
+    width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -111,7 +161,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 20,
     marginTop: 20,
-    borderRadius: 100
+    borderRadius: 100,
   },
   title: {
     fontSize: 30,

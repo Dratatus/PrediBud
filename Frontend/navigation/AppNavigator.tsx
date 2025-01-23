@@ -13,6 +13,8 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import CalculatorScreen from '../screens/CalculatorScreen';
 import MaterialsScreen from '../screens/MaterialsScreen';
 import OrderMaterialScreen from '../screens/OrderMaterialScreen'; // Import OrderMaterialScreen
+import CostSummaryScreen from '../screens/CostSummaryScreen'; // Import CostSummaryScreen
+import ConstructionOrderScreen from '../screens/ConstructionOrderScreen'; // Import ConstructionOrderScreen
 
 export type StackParamList = {
   Welcome: undefined;
@@ -37,8 +39,17 @@ export type StackParamList = {
     dimensions: string;
     taxes: string;
     pricePerMaterial: string;
+    totalCost: number; // Dodano totalCost do typowania
   };
   OrderMaterial: { materialId: string }; // Typowanie dla OrderMaterial
+  ConstructionOrder: {
+    objectType: string;
+    description: string;
+    dimensions: string;
+    proposedPrice: number;
+    startDate: string;
+    address: string;
+  }; // Typowanie dla ConstructionOrder
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -107,8 +118,18 @@ const AppNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="OrderMaterial" // Dodanie OrderMaterialScreen
+        name="OrderMaterial"
         component={OrderMaterialScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CostSummary"
+        component={CostSummaryScreen} // Dodanie CostSummaryScreen
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ConstructionOrder"
+        component={ConstructionOrderScreen} // Dodanie ConstructionOrderScreen
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
