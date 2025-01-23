@@ -1,6 +1,6 @@
 ﻿namespace Backend.DTO.Request
 {
-    public class RejectNegotiationRequest
+    public class CompleteOrderRequest
     {
         public int UserId { get; set; }
     }

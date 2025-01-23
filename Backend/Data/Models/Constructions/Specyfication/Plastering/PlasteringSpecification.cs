@@ -6,7 +6,7 @@
         {
             Type = ConstructionType.Plastering;
         }
-        public decimal WallSurfaceArea { get; set; }  // Powierzchnia ścian do otynkowania
-        public PlasterType PlasterType { get; set; }  // Typ tynku
+        public decimal WallSurfaceArea { get; set; }  
+        public PlasterType PlasterType { get; set; }  
     }
 }

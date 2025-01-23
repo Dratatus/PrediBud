@@ -2,10 +2,10 @@
 {
     public enum FlooringMaterial
     {
-        Laminate,        // Panele laminowane
-        Hardwood,        // Drewniane deski
-        Vinyl,           // Winyl
-        Tile,            // Kafelki
-        Carpet           // Dywan
+        Laminate,       
+        Hardwood,       
+        Vinyl,          
+        Tile,            
+        Carpet          
     }
 }

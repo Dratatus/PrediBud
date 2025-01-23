@@ -2,14 +2,14 @@
 {
     public enum StaircaseMaterial
     {
-        Wood,        // Drewno
-        Metal,       // Metal
-        Concrete,    // Beton
-        Stone,       // Kamień
-        Glass,       // Szkło
-        Composite,   // Kompozyt
-        Marble,      // Marmur
-        Granite      // Granit
+        Wood,      
+        Metal,      
+        Concrete,   
+        Stone,      
+        Glass,      
+        Composite, 
+        Marble,   
+        Granite    
     }
 
 }

@@ -2,9 +2,9 @@
 {
     public enum InsulationType
     {
-        Styrofoam,        // Styropian
-        MineralWool,      // Wełna mineralna
-        PolyurethaneFoam, // Pianka poliuretanowa
-        Fiberglass        // Włókno szklane
+        Styrofoam,      
+        MineralWool,     
+        PolyurethaneFoam, 
+        Fiberglass       
     }
 }

@@ -46,8 +46,8 @@ namespace Backend.Data.Context
         public DbSet<MaterialNotification> MaterialNotifications { get; set; }
         public DbSet<ConstructionOrderNotification> ConstructionOrderNotifications { get; set; }
         public DbSet<ConstructionOrder> ConstructionOrders { get; set; }
-        public DbSet<MaterialOrder> MaterialOrders { get; set; } // Dodano MaterialOrder
-        public DbSet<MaterialPrice> MaterialPrices { get; set; } // Dodano MaterialPrice
+        public DbSet<MaterialOrder> MaterialOrders { get; set; } 
+        public DbSet<MaterialPrice> MaterialPrices { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

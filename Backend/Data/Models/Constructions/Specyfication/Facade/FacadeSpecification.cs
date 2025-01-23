@@ -8,8 +8,8 @@ namespace Backend.Data.Models.Constructions.Dimensions.Facade
         {
             Type = ConstructionType.Facade;
         }
-        public decimal SurfaceArea { get; set; }  // Powierzchnia elewacji w metrach kwadratowych
-        public InsulationType InsulationType { get; set; }  // Typ izolacji (np. styropian, wełna mineralna)
+        public decimal SurfaceArea { get; set; }  
+        public InsulationType InsulationType { get; set; }  
         public FinishMaterial FinishMaterial { get; set; }
     }
 }

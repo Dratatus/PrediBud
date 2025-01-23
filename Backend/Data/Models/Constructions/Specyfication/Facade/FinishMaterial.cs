@@ -2,10 +2,10 @@
 {
     public enum FinishMaterial
     {
-        Plaster,         // Tynk
-        Brick,           // Cegła klinkierowa
-        Stone,           // Kamień
-        Wood,            // Drewno
-        MetalSiding      // Siding metalowy
+        Plaster,
+        Brick,           
+        Stone,          
+        Wood,           
+        MetalSiding     
     }
 }

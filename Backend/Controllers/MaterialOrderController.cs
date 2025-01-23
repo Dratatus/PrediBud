@@ -42,25 +42,22 @@ namespace Backend.Controllers
             return Ok(dtos);
         }
 
-        [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateOrder(int orderId, [FromBody] MaterialOrderDto updatedDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateOrder(int userId, [FromBody] UpdateMaterialOrderDto updatedDto)
         {
-            if (orderId != updatedDto.ID)
-                return BadRequest("Order ID mismatch.");
-
-            var success = await _service.UpdateMaterialOrderAsync(updatedDto);
+            var success = await _service.UpdateMaterialOrderAsync(updatedDto, userId);
             if (!success)
-                return NotFound($"Order with ID {orderId} not found.");
+                return BadRequest($"Order with ID not found.");
 
             return NoContent();
         }
 
         [HttpDelete("{orderId}")]
-        public async Task<IActionResult> DeleteOrder(int orderId)
+        public async Task<IActionResult> DeleteOrder(int orderId, int userId)
         {
-            var success = await _service.DeleteMaterialOrderAsync(orderId);
+            var success = await _service.DeleteMaterialOrderAsync(orderId, userId);
             if (!success)
-                return NotFound($"Order with ID {orderId} not found.");
+                return BadRequest("Unauthorized");
 
             return NoContent();
         }

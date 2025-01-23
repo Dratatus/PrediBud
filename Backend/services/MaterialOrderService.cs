@@ -9,10 +9,12 @@ namespace Backend.services
     public class MaterialOrderService : IMaterialOrderService
     {
         private readonly IMaterialOrderRepository _repository;
+        private readonly IUserRepository _userRepository;
 
-        public MaterialOrderService(IMaterialOrderRepository repository)
+        public MaterialOrderService(IMaterialOrderRepository repository, IUserRepository userRepository)
         {
             _repository = repository;
+            _userRepository = userRepository;
         }
         public async Task<MaterialOrderDto> CreateMaterialOrderAsync(MaterialOrderDto dto)
         {
@@ -40,33 +42,32 @@ namespace Backend.services
             return entities.Select(e => MapToDto(e));
         }
 
-        public async Task<bool> UpdateMaterialOrderAsync(MaterialOrderDto dto)
+        public async Task<bool> UpdateMaterialOrderAsync(UpdateMaterialOrderDto dto, int userId)
         {
             var existing = await _repository.GetMaterialOrderByIdAsync(dto.ID);
-            if (existing == null)
+
+            if (existing == null || existing.UserId != userId)
                 return false;
 
             existing.UnitPriceNet = dto.UnitPriceNet;
             existing.UnitPriceGross = dto.UnitPriceGross;
             existing.Quantity = dto.Quantity;
-            existing.CreatedDate = dto.CreatedDate;
-            existing.UserId = dto.UserId;
             existing.MaterialPriceId = dto.MaterialPriceId;
 
             await _repository.UpdateMaterialOrderAsync(existing);
             return true;
         }
 
-        public async Task<bool> DeleteMaterialOrderAsync(int orderId)
+        public async Task<bool> DeleteMaterialOrderAsync(int orderId, int userId)
         {
             var existing = await _repository.GetMaterialOrderByIdAsync(orderId);
-            if (existing == null)
+
+            if (existing == null || existing.UserId != userId)
                 return false;
 
             await _repository.DeleteMaterialOrderAsync(orderId);
             return true;
         }
-
         private MaterialOrderDto MapToDto(MaterialOrder entity)
         {
             if (entity == null) return null;
