@@ -2,6 +2,7 @@
 using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
+using Backend.Data.Models.Users;
 using Backend.DTO.ConstructionOrderDto;
 using Backend.DTO.Request;
 using Backend.DTO.Users.Client;
@@ -16,15 +17,16 @@ namespace Backend.services
         private readonly IConstructionOrderRepository _orderRepository;
         private readonly IConstructionSpecificationFactory _specificationFactory;
         private readonly INotificationService _notificationService;
-
+        private readonly IUserRepository _userRepository;
         public ConstructionOrderService(
             IConstructionOrderRepository orderRepository,
             IConstructionSpecificationFactory specificationFactory,
-            INotificationService notificationService)
+            INotificationService notificationService, IUserRepository userRepository)
         {
             _orderRepository = orderRepository;
             _specificationFactory = specificationFactory;
             _notificationService = notificationService;
+            _userRepository = userRepository;
         }
 
         public async Task<List<ConstructionOrderDto>> GetOrdersByClientIdAsync(int clientId)
@@ -64,7 +66,7 @@ namespace Backend.services
                 },
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId
-                
+
             }).ToList();
         }
 
@@ -146,7 +148,14 @@ namespace Backend.services
         public async Task<ConstructionOrder> CreateOrderAsync(CreateOrderRequest request)
         {
             var specification = _specificationFactory.CreateSpecification(request.ConstructionType, request.SpecificationDetails);
+            var user = await _userRepository.GetUserByIdAsync(request.ClientId);
 
+            var isClient = user is Client;
+
+            if (!isClient)
+            {
+                throw new Exception("only client can create construction order");
+            }
             var order = new ConstructionOrder
             {
                 Description = request.Description,
@@ -186,7 +195,7 @@ namespace Backend.services
             return true;
         }
 
-    public async Task<bool> DeleteOrderAsync(int clientId, int orderId)
+        public async Task<bool> DeleteOrderAsync(int clientId, int orderId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
 

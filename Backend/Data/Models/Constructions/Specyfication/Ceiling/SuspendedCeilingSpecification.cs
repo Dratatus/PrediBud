@@ -8,8 +8,8 @@ namespace Backend.Data.Models.Constructions.Specyfication.Ceiling
         {
             Type = ConstructionType.SuspendedCeiling;
         }
-        public decimal Area { get; set; }  // Powierzchnia sufitu w metrach kwadratowych
-        public decimal Height { get; set; }  // Wysokość sufitu od podłogi
-        public SuspendedCeilingMaterial Material { get; set; }  // Materiał sufitu podwieszanego (np. płyty gipsowo-kartonowe)
+        public decimal Area { get; set; }  
+        public decimal Height { get; set; }  
+        public SuspendedCeilingMaterial Material { get; set; } 
     }
 }

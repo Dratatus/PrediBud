@@ -9,6 +9,6 @@ namespace Backend.Data.Models.Constructions.Dimensions.Floor
             Type = ConstructionType.Flooring;
         }
         public decimal Area { get; set; }
-        public FlooringMaterial Material { get; set; }  // Typ podłogi (np. panele, parkiet, kafelki)
+        public FlooringMaterial Material { get; set; } 
     }
 }

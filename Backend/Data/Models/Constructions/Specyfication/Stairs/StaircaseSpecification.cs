@@ -8,9 +8,9 @@ namespace Backend.Data.Models.Constructions.Specyfication.Stairs
         {
             Type = ConstructionType.Staircase;
         }
-        public int NumberOfSteps { get; set; }  // Liczba stopni
-        public decimal Height { get; set; }  // Wysokość stopnia
-        public decimal Width { get; set; }  // Szerokość stopnia
-        public StaircaseMaterial Material { get; set; }  // Materiał schodów
+        public int NumberOfSteps { get; set; } 
+        public decimal Height { get; set; }
+        public decimal Width { get; set; }  
+        public StaircaseMaterial Material { get; set; }  
     }
 }

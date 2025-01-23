@@ -20,7 +20,6 @@ namespace Backend.Data.Models.Orders.Construction
         public decimal? ClientProposedPrice { get; set; }
         public decimal? WorkerProposedPrice { get; set; }
         public decimal? AgreedPrice { get; set; }
-
         public decimal TotalPrice { get; set; }
 
         public int ClientId { get; set; }
@@ -28,10 +27,12 @@ namespace Backend.Data.Models.Orders.Construction
         public int? WorkerId { get; set; }
 
         public Worker Worker { get; set; }
+        public LastActionBy LastActionBy { get; set; } = LastActionBy.None;
         public int ConstructionSpecificationId { get; set; }
         public ConstructionSpecification ConstructionSpecification { get; set; }
 
         public List<ConstructionOrderNotification> Notifications { get; set; } = new List<ConstructionOrderNotification>();
         public List<int> BannedWorkerIds { get; set; } = new List<int>();
+
     }
 }

@@ -1,6 +1,7 @@
 using Backend.Conventer;
 using Backend.Data.Context;
 using Backend.Factories;
+using Backend.Middlewares;
 using Backend.Repositories;
 using Backend.services;
 using Backend.services.Calculator;
@@ -76,9 +77,11 @@ namespace Backend
             builder.Services.AddHangfireServer();
 
 
+            builder.WebHost.UseUrls("http://localhost:5142", "https://localhost:7290");
 
             var app = builder.Build();
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHangfireDashboard();
 
             // Configure the HTTP request pipeline.

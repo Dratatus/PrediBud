@@ -14,5 +14,6 @@ namespace Backend.Data.Models.Notifications
         public int? ClientId { get; set; }
         public Client Client { get; set; }
         public int ConstructionOrderID { get; set; }
+        public DateTime Date { get; set; }
     }
 }

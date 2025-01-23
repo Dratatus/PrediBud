@@ -2,12 +2,12 @@
 {
     public enum InsulationMaterial
     {
-        MineralWool,       // Wełna mineralna
-        Styrofoam,         // Styropian
-        PolyurethaneFoam,  // Pianka poliuretanowa
-        Cellulose,         // Celuloza
-        Fiberglass,        // Włókno szklane
-        RockWool           // Wełna skalna
+        MineralWool,      
+        Styrofoam,        
+        PolyurethaneFoam,  
+        Cellulose,        
+        Fiberglass,       
+        RockWool          
     }
 
 }

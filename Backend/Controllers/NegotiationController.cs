@@ -37,15 +37,36 @@ namespace Backend.Controllers
             return Ok("Negotiation has been accepted.");
         }
 
-        // Odrzucenie negocjacji przez Klienta lub Workera
         [HttpPost("{orderId}/reject")]
         public async Task<IActionResult> RejectNegotiation(int orderId, [FromBody] RejectNegotiationRequest request)
         {
-            var success = await _negotiationService.RejectNegotiation(orderId, request.UserId, request.IsClient);
+            var success = await _negotiationService.RejectNegotiation(orderId, request.UserId);
             if (!success)
                 return BadRequest("Unable to reject negotiation.");
 
             return Ok("Negotiation has been rejected.");
+        }
+
+        [HttpPost("{orderId}/continue")]
+        public async Task<IActionResult> ContinueNegotiation(int orderId, [FromBody] ContinueNegotiationRequest request)
+        {
+            var success = await _negotiationService.ContinueNegotiation(orderId, request.UserId, request.ProposedPrice);
+
+            if (!success)
+                return BadRequest("Unable to continue negotiation.");
+
+            return Ok("Negotiation has been continued.");
+        }
+
+        [HttpPost("{orderId}/complete")]
+        public async Task<IActionResult> CompleteOrder(int orderId, [FromBody] CompleteOrderRequest request)
+        {
+            var success = await _negotiationService.CompleteOrder(orderId, request.UserId);
+
+            if (!success)
+                return BadRequest("Unable to continue negotiation.");
+
+            return Ok("Negotiation has been continued.");
         }
     }
 }

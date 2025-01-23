@@ -29,6 +29,7 @@ namespace Backend.Services
             order.Status = OrderStatus.NegotiationInProgress;
             order.WorkerId = workerId;
             order.WorkerProposedPrice = proposedPrice;
+            order.LastActionBy = LastActionBy.Worker;
 
             await _orderRepository.SaveChangesAsync();
 
@@ -37,8 +38,9 @@ namespace Backend.Services
                 ClientId = order.ClientId,
                 Title = "Negotiation Started",
                 Description = $"Worker has proposed a price of {proposedPrice}.",
-                Status = NotificationStatus.NegotiationStarted, 
-                ConstructionOrderID = order.ID
+                Status = NotificationStatus.NegotiationStarted,
+                ConstructionOrderID = order.ID,
+                Date = DateTime.Now
             });
 
             return true;
@@ -55,11 +57,19 @@ namespace Backend.Services
             var isClient = user is Client && order.ClientId == userId;
             var isWorker = user is Worker && order.WorkerId == userId;
 
+
             if (!isClient && !isWorker)
                 return false;
 
+            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
+             (isWorker && order.LastActionBy == LastActionBy.Worker))
+            {
+                return false;
+            }
 
             order.Status = OrderStatus.Accepted;
+            order.AgreedPrice = isClient ? order.WorkerProposedPrice : order.ClientProposedPrice;
+            order.StartDate = DateTime.Now;
 
             if (isWorker && user is Worker worker)
             {
@@ -74,7 +84,8 @@ namespace Backend.Services
                 Status = NotificationStatus.OrderAccepted,
                 WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : 0,
                 ClientId = isClient ? null : order.ClientId,
-                ConstructionOrderID = order.ID
+                ConstructionOrderID = order.ID,
+                Date = DateTime.Now
             };
 
             await _notificationService.SendNotificationAsync(notification);
@@ -82,12 +93,25 @@ namespace Backend.Services
             return true;
         }
 
-        public async Task<bool> RejectNegotiation(int orderId, int rejectingUserId, bool isClient)
+        public async Task<bool> RejectNegotiation(int orderId, int rejectingUserId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+            var user = await _userRepository.GetUserByIdAsync(rejectingUserId);
+
+            var isClient = user is Client && order.ClientId == rejectingUserId;
+            var isWorker = user is Worker && order.WorkerId == rejectingUserId;
 
             if (order == null || (isClient && order.ClientId != rejectingUserId) || (!isClient && order.WorkerId != rejectingUserId))
                 return false;
+
+            if (!isClient && !isWorker)
+                return false;
+
+            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
+             (isWorker && order.LastActionBy == LastActionBy.Worker))
+            {
+                return false;
+            }
 
             order.BannedWorkerIds.Add(order.WorkerId.Value);
             order.Status = OrderStatus.New;
@@ -118,57 +142,80 @@ namespace Backend.Services
                 Title = "Negotiation Rejected",
                 Description = isClient ? "Client has rejected the terms." : "Worker has rejected the terms.",
                 Status = NotificationStatus.NegotiationRejected,
-                ConstructionOrderID = order.ID
+                ConstructionOrderID = order.ID,
+                Date = DateTime.Now
             });
 
             return true;
         }
 
-        public async Task<bool> ContinueNegotiation(int orderId, int userId, bool isClient, decimal proposedPrice)
+        public async Task<bool> ContinueNegotiation(int orderId, int userId, decimal proposedPrice)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+            var user = await _userRepository.GetUserByIdAsync(userId);
 
-            if (order == null || order.Status != OrderStatus.NegotiationInProgress)
+            if (order == null || user == null || order.Status != OrderStatus.NegotiationInProgress)
                 return false;
 
-            if (isClient && order.ClientId == userId)
+            var isClient = user is Client && order.ClientId == userId;
+            var isWorker = user is Worker && order.WorkerId == userId;
+
+            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
+                (isWorker && order.LastActionBy == LastActionBy.Worker))
+            {
+                return false;
+            }
+
+            if (isClient)
                 order.ClientProposedPrice = proposedPrice;
-            else if (!isClient && order.WorkerId == userId)
+            else if (isWorker)
                 order.WorkerProposedPrice = proposedPrice;
             else
                 return false;
+
+            order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
 
             await _orderRepository.SaveChangesAsync();
 
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
             {
-                ClientId = isClient ? 0 : order.ClientId,
-                WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : 0,
+                ClientId = isWorker ? order.ClientId : null,
+                WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
                 Title = "Continued Negotiation",
                 Description = isClient ? "Client has continued negotiations." : "Worker has continued negotiations.",
                 Status = NotificationStatus.ContinuedNegotiation,
-                ConstructionOrderID = order.ID
+                ConstructionOrderID = order.ID,
+                Date = DateTime.Now
             });
 
             return true;
         }
 
-        public async Task<bool> CompleteOrder(int orderId, int workerId)
+        public async Task<bool> CompleteOrder(int orderId, int userId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+            var user = await _userRepository.GetUserByIdAsync(userId);
 
-            if (order == null || order.WorkerId != workerId || order.Status != OrderStatus.Accepted)
+            if (order == null || order.Status != OrderStatus.Accepted)
                 return false;
+
+            var isClient = user is Client && order.ClientId == userId;
+            var isWorker = user is Worker && order.WorkerId == userId;
+
+            order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
 
             order.Status = OrderStatus.Completed;
             await _orderRepository.SaveChangesAsync();
 
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
             {
-                ClientId = order.ClientId,
+                ClientId = isWorker ? order.ClientId : null,
+                WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
                 Title = "Order Completed",
-                Description = "The worker has marked the order as completed.",
-                Status = NotificationStatus.OrderCompleted
+                Description = isClient ? "The client has marked the order as completed." : "The worker has marked the order as completed.",
+                Status = NotificationStatus.OrderCompleted,
+                ConstructionOrderID = order.ID,
+                Date = DateTime.Now
             });
 
             return true;

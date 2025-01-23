@@ -9,8 +9,8 @@ namespace Backend.Data.Models.Constructions.Dimensions
         {
             Type = ConstructionType.InsulationOfAttic;
         }
-        public decimal Area { get; set; }  // Powierzchnia poddasza w metrach kwadratowych
-        public InsulationMaterial Material { get; set; }  // Materiał izolacyjny (np. wełna mineralna, styropian)
-        public decimal Thickness { get; set; }  // Grubość izolacji w centymetrach
+        public decimal Area { get; set; }  
+        public InsulationMaterial Material { get; set; } 
+        public decimal Thickness { get; set; }  
     }
 }
