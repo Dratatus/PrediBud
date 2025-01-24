@@ -1,9 +1,13 @@
+using Backend.Data.Consts;
+using Backend.Data.Models.Common;
 using Backend.Data.Models.Credidentials;
 using Backend.Data.Models.Users;
 using Backend.DTO.Auth;
+using Backend.Middlewares;
 using Backend.Repositories;
 using Backend.services;
 using Backend.Validatiors.Login;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace Backend.Tests.Services
@@ -61,7 +65,7 @@ namespace Backend.Tests.Services
         }
 
         [Fact]
-        public async Task LoginAsync_ReturnsFailure_WhenUserNotFound()
+        public async Task LoginAsync_ThrowsApiException_WhenUserNotFound()
         {
             // Arrange
             var loginBody = new LoginBody { Email = "test@example.com", Password = "password" };
@@ -69,16 +73,14 @@ namespace Backend.Tests.Services
             _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(loginBody.Email))
                 .ReturnsAsync((User)null);
 
-            // Act
-            var result = await _authService.LoginAsync(loginBody);
-
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("Invalid email or password", result.Message);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.LoginAsync(loginBody));
+            Assert.Equal(ErrorMessages.InvalidEmailOrPassword, exception.Message);
+            Assert.Equal(StatusCodes.Status401Unauthorized, exception.StatusCode);
         }
 
         [Fact]
-        public async Task LoginAsync_ReturnsFailure_WhenPasswordIsInvalid()
+        public async Task LoginAsync_ThrowsApiException_WhenPasswordIsInvalid()
         {
             // Arrange
             var loginBody = new LoginBody { Email = "test@example.com", Password = "password" };
@@ -94,12 +96,10 @@ namespace Backend.Tests.Services
             _passwordValidationMock.Setup(pv => pv.ValidatePassword(loginBody.Password, user.Credentials.PasswordHash))
                 .Returns(false);
 
-            // Act
-            var result = await _authService.LoginAsync(loginBody);
-
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("Invalid email or password", result.Message);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.LoginAsync(loginBody));
+            Assert.Equal(ErrorMessages.InvalidEmailOrPassword, exception.Message);
+            Assert.Equal(StatusCodes.Status401Unauthorized, exception.StatusCode);
         }
 
         [Fact]
@@ -110,7 +110,15 @@ namespace Backend.Tests.Services
             {
                 Email = "newuser@example.com",
                 Password = "password",
-                IsClient = true
+                IsClient = true, 
+                Name = "Daniel Orban",
+                Phone = "+23 4212231 23",
+                Position = "Client",
+                Address = new Address { 
+                    City = "Kraków", 
+                    PostCode = "33-200",
+                    StreetName = "Wielicka 12B"
+                }
             };
 
             _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(registerBody.Email))
@@ -118,6 +126,9 @@ namespace Backend.Tests.Services
 
             _jwtTokenGeneratorMock.Setup(jwt => jwt.GenerateToken(It.IsAny<User>()))
                 .Returns("token");
+
+            _userRepositoryMock.Setup(repo => repo.AddUserAsync(It.IsAny<User>()))
+                .Returns(Task.CompletedTask);
 
             // Act
             var result = await _authService.RegisterAsync(registerBody);
@@ -128,14 +139,23 @@ namespace Backend.Tests.Services
         }
 
         [Fact]
-        public async Task RegisterAsync_ReturnsFailure_WhenUserAlreadyExists()
+        public async Task RegisterAsync_ThrowsApiException_WhenUserAlreadyExists()
         {
             // Arrange
             var registerBody = new RegisterUserBody
             {
-                Email = "existinguser@example.com",
+                Email = "newuser@example.com",
                 Password = "password",
-                IsClient = true
+                IsClient = true,
+                Name = "Daniel Orban",
+                Phone = "+23 4212231 23",
+                Position = "Client",
+                Address = new Address
+                {
+                    City = "Kraków",
+                    PostCode = "33-200",
+                    StreetName = "Wielicka 12B"
+                }
             };
 
             var existingUser = new User
@@ -144,48 +164,45 @@ namespace Backend.Tests.Services
             };
 
             _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(registerBody.Email))
-                .ReturnsAsync(existingUser); 
+                .ReturnsAsync(existingUser);
 
-            // Act
-            var result = await _authService.RegisterAsync(registerBody);
-
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("User already exists", result.Message);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.RegisterAsync(registerBody));
+            Assert.Equal(ErrorMessages.UserAlreadyExists, exception.Message);
+            Assert.Equal(StatusCodes.Status400BadRequest, exception.StatusCode);
         }
 
         [Fact]
-        public async Task DeleteUserAsync_ReturnsSuccess_WhenUserIsDeleted()
+        public async Task DeleteUserAsync_Success_WhenUserIsDeleted()
         {
-            // Arrange
             var userId = 1;
+            var user = new User { ID = userId };
 
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId))
+                .ReturnsAsync(user);
+            _userRepositoryMock.Setup(repo => repo.HasMaterialOrdersAsync(userId))
+                .ReturnsAsync(false);
+            _userRepositoryMock.Setup(repo => repo.HasConstructionOrdersAsync(userId))
+                .ReturnsAsync(false);
             _userRepositoryMock.Setup(repo => repo.DeleteUserAsync(userId))
                 .ReturnsAsync(true);
 
-            // Act
-            var result = await _authService.DeleteUserAsync(userId);
+            await _authService.DeleteUserAsync(userId);
 
-            // Assert
-            Assert.True(result.Success);
-            Assert.Equal("User deleted successfully", result.Message);
+            _userRepositoryMock.Verify(repo => repo.DeleteUserAsync(userId), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteUserAsync_ReturnsFailure_WhenUserNotFound()
+        public async Task DeleteUserAsync_ThrowsApiException_WhenUserNotFound()
         {
-            // Arrange
             var userId = 1;
 
-            _userRepositoryMock.Setup(repo => repo.DeleteUserAsync(userId))
-                .ReturnsAsync(false);
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(userId))
+                .ReturnsAsync((User)null);
 
-            // Act
-            var result = await _authService.DeleteUserAsync(userId);
-
-            // Assert
-            Assert.False(result.Success);
-            Assert.Equal("User not found", result.Message);
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.DeleteUserAsync(userId));
+            Assert.Equal(ErrorMessages.UserNotFound, exception.Message);
+            Assert.Equal(StatusCodes.Status404NotFound, exception.StatusCode);
         }
     }
 }

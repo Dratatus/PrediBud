@@ -1,3 +1,5 @@
+using Backend.Data.Models.Common;
+using Backend.DTO.Auth;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Text;
@@ -16,14 +18,20 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task Register_ReturnsSuccess_WhenUserIsCreated()
         {
-            var requestBody = new
+            var requestBody = new RegisterUserBody
             {
-                email = "newuser@example.com",
-                password = "password123",
-                isClient = true,
-                name = "New User",
-                phone = "123456789",
-                position = (string)null
+                Email = "newuser@example.com",
+                Password = "password",
+                IsClient = true,
+                Name = "Daniel Orban",
+                Phone = "+23 4212231 23",
+                Position = "Client",
+                Address = new Address
+                {
+                    City = "Kraków",
+                    PostCode = "33-200",
+                    StreetName = "Wielicka 12B"
+                }
             };
 
             var content = new StringContent(
