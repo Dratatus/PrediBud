@@ -1,10 +1,13 @@
-﻿using Backend.Data.Models.Common;
+﻿using Backend.Data.Consts;
+using Backend.Data.Models.Common;
 using Backend.Data.Models.Credidentials;
 using Backend.Data.Models.Users;
 using Backend.DTO;
 using Backend.DTO.Auth;
+using Backend.Middlewares;
 using Backend.Repositories;
-using Backend.Validation;
+using Backend.Validatiors.DeleteUser;
+using Backend.Validatiors.Login;
 
 namespace Backend.services
 {
@@ -23,13 +26,16 @@ namespace Backend.services
 
         public async Task<AuthResult> LoginAsync(LoginBody request)
         {
+            LoginValidator.Validate(request);
+
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user == null)
-                return new AuthResult { Success = false, Message = "Invalid email or password" };
+                throw new ApiException(ErrorMessages.InvalidEmailOrPassword, StatusCodes.Status401Unauthorized);
 
             var validPassword = _passwordValidator.ValidatePassword(request.Password, user.Credentials.PasswordHash);
+
             if (!validPassword)
-                return new AuthResult { Success = false, Message = "Invalid email or password" };
+                throw new ApiException(ErrorMessages.InvalidEmailOrPassword, StatusCodes.Status401Unauthorized);
 
             var token = _jwtTokenGenerator.GenerateToken(user);
 
@@ -38,10 +44,13 @@ namespace Backend.services
 
         public async Task<AuthResult> RegisterAsync(RegisterUserBody request)
         {
+            RegisterUserValidator.Validate(request);
+
             var existingUser = await _userRepository.GetByEmailAsync(request.Email);
+
             if (existingUser != null)
             {
-                return new AuthResult { Success = false, Message = "User already exists" };
+                throw new ApiException(ErrorMessages.UserAlreadyExists, StatusCodes.Status400BadRequest);
             }
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -54,8 +63,12 @@ namespace Backend.services
                 {
                     Credentials = new Credentials { Email = request.Email, PasswordHash = hashedPassword },
                     ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone },
-                    Address = new Address {City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName }
-                    
+                    Address = new Address
+                    {
+                        City = request.Address.City,
+                        PostCode = request.Address.PostCode,
+                        StreetName = request.Address.StreetName
+                    }
                 };
             }
             else
@@ -64,7 +77,12 @@ namespace Backend.services
                 {
                     Credentials = new Credentials { Email = request.Email, PasswordHash = hashedPassword },
                     ContactDetails = new ContactDetails { Name = request.Name, Phone = request.Phone },
-                    Address = new Address { City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName },
+                    Address = new Address
+                    {
+                        City = request.Address.City,
+                        PostCode = request.Address.PostCode,
+                        StreetName = request.Address.StreetName
+                    },
                     Position = request.Position
                 };
             }
@@ -75,33 +93,24 @@ namespace Backend.services
 
             return new AuthResult { Success = true, Token = token };
         }
-        public async Task<AuthResult> DeleteUserAsync(int userId)
+
+        public async Task DeleteUserAsync(int userId)
         {
+            DeleteUserValidator.Validate(userId);
+
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return new AuthResult { Success = false, Message = "User not found" };
+                throw new ApiException(ErrorMessages.UserNotFound, StatusCodes.Status404NotFound);
             }
 
-            var hasMaterialOrders = await _userRepository.HasMaterialOrdersAsync(userId);
-            if (hasMaterialOrders)
-            {
-                return new AuthResult { Success = false, Message = "Cannot delete user with material orders." };
-            }
-
-            var hasConstructionOrders = await _userRepository.HasConstructionOrdersAsync(userId);
-            if (hasConstructionOrders)
-            {
-                return new AuthResult { Success = false, Message = "Cannot delete user with construction orders." };
-            }
+            DeleteUserValidator.ValidateUserOrders(user, await _userRepository.HasMaterialOrdersAsync(userId), await _userRepository.HasConstructionOrdersAsync(userId));
 
             var success = await _userRepository.DeleteUserAsync(userId);
             if (!success)
             {
-                return new AuthResult { Success = false, Message = "Failed to delete user." };
+                throw new ApiException(ErrorMessages.FailedToDeleteUser, StatusCodes.Status500InternalServerError);
             }
-
-            return new AuthResult { Success = true, Message = "User deleted successfully" };
         }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using Backend.Data.Context;
 using Backend.Data.Models.Users;
-using Backend.DTO;
-using Backend.DTO.Auth;
-using Backend.services;
-using Backend.Validation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories

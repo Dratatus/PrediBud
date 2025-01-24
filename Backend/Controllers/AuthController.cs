@@ -22,9 +22,6 @@ namespace Backend.Controllers
 
             var result = await _authService.LoginAsync(request);
 
-            if (!result.Success)
-                return Unauthorized(result.Message);
-
             return Ok(new { Token = result.Token });
         }
 
@@ -45,12 +42,8 @@ namespace Backend.Controllers
         [HttpDelete("delete/{userId}")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
-            var result = await _authService.DeleteUserAsync(userId);
-
-            if (!result.Success)
-                return NotFound(result.Message);
-
-            return Ok(result.Message);
+            await _authService.DeleteUserAsync(userId);
+            return Ok(new { Message = "User deleted successfully." });
         }
     }
 }

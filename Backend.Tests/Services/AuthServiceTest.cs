@@ -3,7 +3,7 @@ using Backend.Data.Models.Users;
 using Backend.DTO.Auth;
 using Backend.Repositories;
 using Backend.services;
-using Backend.Validation;
+using Backend.Validatiors.Login;
 using Moq;
 
 namespace Backend.Tests.Services

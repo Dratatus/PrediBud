@@ -1,4 +1,4 @@
-﻿namespace Backend.Validation
+﻿namespace Backend.Validatiors.Login
 {
     public interface IPasswordValidation
     {

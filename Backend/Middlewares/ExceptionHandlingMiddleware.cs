@@ -29,16 +29,30 @@
             var response = context.Response;
             response.ContentType = "application/json";
 
-            response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            int statusCode;
+            string message;
+
+            if (exception is ApiException apiException)
+            {
+                statusCode = apiException.StatusCode;
+                message = apiException.Message;
+            }
+            else
+            {
+                statusCode = (int)HttpStatusCode.InternalServerError;
+                message = "An unexpected error occurred.";
+            }
+
+            response.StatusCode = statusCode;
 
             var result = JsonSerializer.Serialize(new
             {
-                message = "An unexpected error occurred.",
-                details = exception.Message 
+                error = message,
+                statusCode = statusCode,
+                details = exception is ApiException ? null : exception.Message 
             });
 
             return response.WriteAsync(result);
         }
     }
-
 }

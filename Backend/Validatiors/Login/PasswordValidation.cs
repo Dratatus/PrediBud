@@ -1,6 +1,6 @@
-﻿namespace Backend.Validation
+﻿namespace Backend.Validatiors.Login
 {
-    public class PasswordValidation: IPasswordValidation
+    public class PasswordValidation : IPasswordValidation
     {
         public bool ValidatePassword(string password, string passwordHash)
         {
