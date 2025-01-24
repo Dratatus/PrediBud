@@ -11,6 +11,7 @@ using Backend.Data.Models.Constructions.Specyfication.Stairs;
 using Backend.Data.Models.Constructions.Specyfication.Walls;
 using Backend.Data.Models.Constructions.Specyfication.Windows;
 using Backend.Data.Models.Suppliers;
+using Backend.Middlewares;
 
 namespace Backend.services.Calculator.Mappers
 {
@@ -25,7 +26,7 @@ namespace Backend.services.Calculator.Mappers
                 RailingMaterial.Glass => MaterialType.Glass,
                 RailingMaterial.Aluminum => MaterialType.Aluminum,
                 RailingMaterial.WroughtIron => MaterialType.WroughtIron,
-                _ => throw new ArgumentException($"Unsupported RailingMaterial: {railingMaterial}")
+                _ => throw new ApiException($"Unsupported RailingMaterial: {railingMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -38,7 +39,7 @@ namespace Backend.services.Calculator.Mappers
                 CeilingMaterial.Steel => MaterialType.Steel,
                 CeilingMaterial.Composite => MaterialType.Composite,
                 CeilingMaterial.PrefabricatedConcrete => MaterialType.PrefabricatedConcrete,
-                _ => throw new ArgumentException($"Unsupported CeilingMaterial: {ceilingMaterial}")
+                _ => throw new ApiException($"Unsupported CeilingMaterial: {ceilingMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -53,7 +54,7 @@ namespace Backend.services.Calculator.Mappers
                 SuspendedCeilingMaterial.Wood => MaterialType.Wood,
                 SuspendedCeilingMaterial.GlassFiber => MaterialType.GlassFiber,
                 SuspendedCeilingMaterial.Composite => MaterialType.Composite,
-                _ => throw new ArgumentException($"Unsupported SuspendedCeilingMaterial: {suspendedCeilingMaterial}")
+                _ => throw new ApiException($"Unsupported SuspendedCeilingMaterial: {suspendedCeilingMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -66,7 +67,7 @@ namespace Backend.services.Calculator.Mappers
                 DoorMaterial.PVC => MaterialType.PVC,
                 DoorMaterial.Aluminum => MaterialType.Aluminum,
                 DoorMaterial.Glass => MaterialType.Glass,
-                _ => throw new ArgumentException($"Unsupported DoorMaterial: {doorMaterial}")
+                _ => throw new ApiException($"Unsupported DoorMaterial: {doorMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -78,7 +79,7 @@ namespace Backend.services.Calculator.Mappers
                 InsulationType.MineralWool => MaterialType.MineralWool,
                 InsulationType.PolyurethaneFoam => MaterialType.PolyurethaneFoam,
                 InsulationType.Fiberglass => MaterialType.Fiberglass,
-                _ => throw new ArgumentException($"Unsupported InsulationType: {insulationType}")
+                _ => throw new ApiException($"Unsupported InsulationType: {insulationType}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -91,7 +92,7 @@ namespace Backend.services.Calculator.Mappers
                 FinishMaterial.Stone => MaterialType.Stone,
                 FinishMaterial.Wood => MaterialType.Wood,
                 FinishMaterial.MetalSiding => MaterialType.MetalSiding,
-                _ => throw new ArgumentException($"Unsupported FinishMaterial: {finishMaterial}")
+                _ => throw new ApiException($"Unsupported FinishMaterial: {finishMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -105,7 +106,7 @@ namespace Backend.services.Calculator.Mappers
                 InsulationMaterial.Cellulose => MaterialType.Cellulose,
                 InsulationMaterial.Fiberglass => MaterialType.Fiberglass,
                 InsulationMaterial.RockWool => MaterialType.RockWool,
-                _ => throw new ArgumentException($"Unsupported InsulationMaterial: {insulationMaterial}")
+                _ => throw new ApiException($"Unsupported InsulationMaterial: {insulationMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -118,7 +119,7 @@ namespace Backend.services.Calculator.Mappers
                 FlooringMaterial.Vinyl => MaterialType.Vinyl,
                 FlooringMaterial.Tile => MaterialType.Tile,
                 FlooringMaterial.Carpet => MaterialType.Carpet,
-                _ => throw new ArgumentException($"Unsupported FlooringMaterial: {flooringMaterial}")
+                _ => throw new ApiException($"Unsupported FlooringMaterial: {flooringMaterial}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -136,7 +137,7 @@ namespace Backend.services.Calculator.Mappers
                 PaintType.Matte => MaterialType.Matte,
                 PaintType.Satin => MaterialType.Satin,
                 PaintType.Glossy => MaterialType.Glossy,
-                _ => throw new ArgumentException($"Unsupported PaintType: {paintType}")
+                _ => throw new ApiException($"Unsupported PaintType: {paintType}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -152,7 +153,7 @@ namespace Backend.services.Calculator.Mappers
                 PlasterType.Acrylic => MaterialType.Acrylic,
                 PlasterType.Silicone => MaterialType.Silicone,
                 PlasterType.Silicate => MaterialType.Silicate,
-                _ => throw new ArgumentException($"Unsupported PlasterType: {plasterType}")
+                _ => throw new ApiException($"Unsupported PlasterType: {plasterType}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -168,7 +169,7 @@ namespace Backend.services.Calculator.Mappers
                 StaircaseMaterial.Composite => MaterialType.Composite,
                 StaircaseMaterial.Marble => MaterialType.Marble,
                 StaircaseMaterial.Granite => MaterialType.Granite,
-                _ => throw new ArgumentException($"Unsupported StaircaseMaterial: {material}")
+                _ => throw new ApiException($"Unsupported StaircaseMaterial: {material}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -181,7 +182,7 @@ namespace Backend.services.Calculator.Mappers
                 LoadBearingWallMaterial.AeratedConcrete => MaterialType.AeratedConcrete,
                 LoadBearingWallMaterial.Stone => MaterialType.Stone,
                 LoadBearingWallMaterial.Wood => MaterialType.Wood,
-                _ => throw new ArgumentException($"Unsupported LoadBearingWallMaterial: {material}")
+                _ => throw new ApiException($"Unsupported LoadBearingWallMaterial: {material}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -194,7 +195,7 @@ namespace Backend.services.Calculator.Mappers
                 PartitionWallMaterial.AeratedConcrete => MaterialType.AeratedConcrete,
                 PartitionWallMaterial.Wood => MaterialType.Wood,
                 PartitionWallMaterial.Glass => MaterialType.Glass,
-                _ => throw new ArgumentException($"Unsupported PartitionWallMaterial: {material}")
+                _ => throw new ApiException($"Unsupported PartitionWallMaterial: {material}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -207,7 +208,7 @@ namespace Backend.services.Calculator.Mappers
                 WindowsMaterial.Aluminum => MaterialType.Aluminum,
                 WindowsMaterial.Steel => MaterialType.Steel,
                 WindowsMaterial.Composite => MaterialType.Composite,
-                _ => throw new ArgumentException($"Unsupported WindowsMaterial: {material}")
+                _ => throw new ApiException($"Unsupported WindowsMaterial: {material}", StatusCodes.Status400BadRequest)
             };
         }
 
@@ -222,7 +223,7 @@ namespace Backend.services.Calculator.Mappers
                 RoofMaterial.Slate => MaterialType.Slate,
                 RoofMaterial.PVC => MaterialType.PVC,
                 RoofMaterial.Composite => MaterialType.Composite,
-                _ => throw new ArgumentException($"Unsupported RoofMaterial: {material}")
+                _ => throw new ApiException($"Unsupported RoofMaterial: {material}", StatusCodes.Status400BadRequest)
             };
         }
 

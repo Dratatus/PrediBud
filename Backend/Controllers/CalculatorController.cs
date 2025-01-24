@@ -19,24 +19,9 @@ namespace Backend.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> CalculatePrice([FromBody] ConstructionSpecification specification)
         {
-            if (specification == null)
-            {
-                return BadRequest("Specification cannot be null.");
-            }
+            var calculatedPrice = await _calculatorService.CalculatePriceAsync(specification);
 
-            try
-            {
-                var calculatedPrice = await _calculatorService.CalculatePriceAsync(specification);
-                return Ok(calculatedPrice);
-            }
-            catch (NotSupportedException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
+            return Ok(calculatedPrice);
         }
     }
 }

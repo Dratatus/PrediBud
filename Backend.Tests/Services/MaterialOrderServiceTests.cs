@@ -28,7 +28,7 @@ namespace MyApp.Tests.Services
         {
             var inputDto = new MaterialOrderDto
             {
-                ID = 0, 
+                ID = 0,
                 UnitPriceNet = 528.46m,
                 UnitPriceGross = 650m,
                 Quantity = 10,
@@ -45,7 +45,7 @@ namespace MyApp.Tests.Services
 
             var createdEntity = new MaterialOrder
             {
-                ID = 123, 
+                ID = 123,
                 UnitPriceNet = 528.46m,
                 UnitPriceGross = 650m,
                 Quantity = 10,
@@ -63,9 +63,10 @@ namespace MyApp.Tests.Services
             };
 
             _mockRepo.Setup(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()))
+                     .Callback<MaterialOrder>(order => order.ID = 123) 
                      .Returns(Task.CompletedTask);
 
-            _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(It.IsAny<int>()))
+            _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(123))
                      .ReturnsAsync(createdEntity);
 
             var resultDto = await _service.CreateMaterialOrderAsync(inputDto);
@@ -73,11 +74,11 @@ namespace MyApp.Tests.Services
             _mockRepo.Verify(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()),
                              Times.Once);
 
-            _mockRepo.Verify(r => r.GetMaterialOrderByIdAsync(createdEntity.ID),
+            _mockRepo.Verify(r => r.GetMaterialOrderByIdAsync(123), 
                              Times.Once);
 
             Assert.NotNull(resultDto);
-            Assert.Equal(123, resultDto.ID); 
+            Assert.Equal(123, resultDto.ID);
             Assert.Equal(650m, resultDto.UnitPriceGross);
             Assert.Equal(10, resultDto.Quantity);
             Assert.Equal(1, resultDto.UserId);
