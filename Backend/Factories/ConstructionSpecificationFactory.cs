@@ -18,6 +18,9 @@ using Backend.Data.Models.Constructions.Specyfication.Ventilation;
 using Backend.Data.Models.Constructions.Specyfication.Walls;
 using Backend.Data.Models.Constructions.Specyfication.Windows;
 using Backend.Data.Models.Constructions.Specyfication.Foundation;
+using Backend.Validatiors.ConstructionOrder.Specyfication;
+using Backend.Data.Consts;
+using Backend.Middlewares;
 
 namespace Backend.Factories
 {
@@ -82,13 +85,13 @@ namespace Backend.Factories
                     return CreateFoundationSpecification(foundationDetails);
 
                 default:
-                    throw new NotSupportedException($"Construction type {type} is not supported.");
+                    throw new ApiException($"Construction type {type} is not supported.", StatusCodes.Status400BadRequest);
             }
         }
 
         private BalconySpecification CreateBalconySpecification(BalconySpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Balcony");
+            BalconySpecificationValidator.Validate(details);
 
             return new BalconySpecification
             {
@@ -100,7 +103,7 @@ namespace Backend.Factories
 
         private SuspendedCeilingSpecification CreateSuspendedCeilingSpecification(SuspendedCeilingSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Suspended Ceiling");
+            SuspendedCeilingSpecificationValidator.Validate(details);
 
             return new SuspendedCeilingSpecification
             {
@@ -112,7 +115,7 @@ namespace Backend.Factories
 
         private DoorsSpecification CreateDoorsSpecification(DoorsSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Doors");
+            DoorsSpecificationValidator.Validate(details);
 
             return new DoorsSpecification
             {
@@ -125,7 +128,7 @@ namespace Backend.Factories
 
         private FacadeSpecification CreateFacadeSpecification(FacadeSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Facade");
+            FacadeSpecificationValidator.Validate(details);
 
             return new FacadeSpecification
             {
@@ -137,7 +140,7 @@ namespace Backend.Factories
 
         private FlooringSpecification CreateFlooringSpecification(FlooringSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Flooring");
+            FlooringSpecificationValidator.Validate(details);
 
             return new FlooringSpecification
             {
@@ -147,7 +150,7 @@ namespace Backend.Factories
         }
         private FoundationSpecification CreateFoundationSpecification(FoundationSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Foundation");
+            FoundationSpecificationValidator.Validate(details);
 
             return new FoundationSpecification
             {
@@ -159,7 +162,7 @@ namespace Backend.Factories
 
         private InsulationOfAtticSpecification CreateInsulationOfAtticSpecification(InsulationOfAtticSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Insulation of Attic");
+            InsulationOfAtticSpecificationValidator.Validate(details);
 
             return new InsulationOfAtticSpecification
             {
@@ -171,7 +174,7 @@ namespace Backend.Factories
 
         private PaintingSpecification CreatePaintingSpecification(PaintingSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Painting");
+            PaintingSpecificationValidator.Validate(details);
 
             return new PaintingSpecification
             {
@@ -183,7 +186,7 @@ namespace Backend.Factories
 
         private PlasteringSpecification CreatePlasteringSpecification(PlasteringSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Plastering");
+            PlasteringSpecificationValidator.Validate(details);
 
             return new PlasteringSpecification
             {
@@ -194,7 +197,7 @@ namespace Backend.Factories
 
         private ShellOpenSpecification CreateShellOpenSpecification(ShellOpenSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Shell Open");
+            ShellOpenSpecificationValidator.Validate(details);
 
             return new ShellOpenSpecification
             {
@@ -243,7 +246,7 @@ namespace Backend.Factories
 
         private StaircaseSpecification CreateStaircaseSpecification(StaircaseSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Staircase");
+            StaircaseSpecificationValidator.Validate(details);
 
             return new StaircaseSpecification
             {
@@ -256,7 +259,7 @@ namespace Backend.Factories
 
         private WindowsSpecification CreateWindowsSpecification(WindowsSpecificationDetails details)
         {
-            if (details == null) throw new ArgumentException("Invalid details for Windows");
+            WindowsSpecificationValidator.Validate(details);
 
             return new WindowsSpecification
             {

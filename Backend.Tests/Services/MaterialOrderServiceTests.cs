@@ -7,7 +7,7 @@ using Backend.Repositories;
 using Backend.services; 
 using Moq;
 
-namespace MyApp.Tests.Services
+namespace Backend.Tests.Services
 {
     public class MaterialOrderServiceTests
     {

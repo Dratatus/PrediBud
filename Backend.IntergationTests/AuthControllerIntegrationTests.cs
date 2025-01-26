@@ -20,7 +20,7 @@ namespace Backend.IntergationTests
         {
             var requestBody = new RegisterUserBody
             {
-                Email = "newuser@example.com",
+                Email = "newuser1@example.com",
                 Password = "password",
                 IsClient = true,
                 Name = "Daniel Orban",

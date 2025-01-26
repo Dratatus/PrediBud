@@ -30,7 +30,7 @@ namespace Backend.Conventer
             {
                 var jsonObject = jsonDoc.RootElement;
 
-                if (jsonObject.TryGetProperty("Type", out var typeProperty))
+                if (jsonObject.TryGetProperty("Type", out var typeProperty) || jsonObject.TryGetProperty("type", out typeProperty))
                 {
                     var typeString = typeProperty.GetString();
 

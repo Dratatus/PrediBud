@@ -1,4 +1,4 @@
-﻿using Backend.Data.Models.Constructions.Specyfication;
+﻿using Backend.Data.Consts;
 using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
@@ -8,7 +8,9 @@ using Backend.DTO.Request;
 using Backend.DTO.Users.Client;
 using Backend.DTO.Users.Worker;
 using Backend.Factories;
+using Backend.Middlewares;
 using Backend.Repositories;
+using Backend.Validatiors.Orders.Construction;
 
 namespace Backend.services
 {
@@ -140,22 +142,59 @@ namespace Backend.services
                 ConstructionSpecificationId = order.ConstructionSpecificationId,
             }).ToList();
         }
-        public async Task<ConstructionOrder> GetOrderByIdAsync(int id)
+        public async Task<ConstructionOrderDto> GetOrderByIdAsync(int id)
         {
-            return await _orderRepository.GetOrderWithSpecificationByIdAsync(id);
+            var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(id);
+
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
+
+            var orderDTo = new ConstructionOrderDto
+            {
+                ID = order.ID,
+                Description = order.Description,
+                Status = order.Status,
+                ConstructionType = order.ConstructionType,
+                PlacementPhotos = order.placementPhotos,
+                RequestedStartTime = order.RequestedStartTime,
+                StartDate = order.StartDate,
+                EndDate = order.EndDate,
+                ClientProposedPrice = order.ClientProposedPrice,
+                WorkerProposedPrice = order.WorkerProposedPrice,
+                AgreedPrice = order.AgreedPrice,
+                TotalPrice = order.TotalPrice,
+                ClientId = order.ClientId,
+                Client = order.Client == null ? null : new ClientDto
+                {
+                    ID = order.Client.ID,
+                    ContactDetails = order.Client.ContactDetails,
+                    AddressId = order.Client.AddressId,
+                    Address = order.Client.Address
+                },
+                ConstructionSpecification = order.ConstructionSpecification,
+                ConstructionSpecificationId = order.ConstructionSpecificationId,
+            };
+
+
+            return orderDTo;
         }
 
-        public async Task<ConstructionOrder> CreateOrderAsync(CreateOrderRequest request)
+        public async Task<ConstructionOrderDto> CreateOrderAsync(CreateOrderRequest request)
         {
+            CreateOrderRequestValidator.Validate(request);
+
             var specification = _specificationFactory.CreateSpecification(request.ConstructionType, request.SpecificationDetails);
             var user = await _userRepository.GetUserByIdAsync(request.ClientId);
 
             var isClient = user is Client;
 
-            if (!isClient)
+            if (user is not Client)
             {
-                throw new Exception("only client can create construction order");
+                throw new ApiException(ErrorMessages.OnlyClientCanCreateOrder, StatusCodes.Status403Forbidden);
             }
+
             var order = new ConstructionOrder
             {
                 Description = request.Description,
@@ -170,15 +209,24 @@ namespace Backend.services
             await _orderRepository.AddAsync(order);
             await _orderRepository.SaveChangesAsync();
 
-            return order;
+            return new ConstructionOrderDto
+            {
+                ID = order.ID,
+                Description = order.Description,
+                ClientId = order.ClientId,
+                ConstructionType = order.ConstructionType,
+                RequestedStartTime = order.RequestedStartTime,
+                ClientProposedPrice = order.ClientProposedPrice,
+                PlacementPhotos = order.placementPhotos,
+                ConstructionSpecification = specification
+            };
         }
 
         public async Task<bool> AcceptOrderAsync(int orderId, int workerId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
 
-            if (order == null || order.Status != OrderStatus.New)
-                return false;
+            if (order == null || order.Status != OrderStatus.New) throw new ApiException(ErrorMessages.InvalidOrder, StatusCodes.Status400BadRequest);
 
             order.Status = OrderStatus.Accepted;
             order.WorkerId = workerId;
@@ -199,9 +247,14 @@ namespace Backend.services
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
 
-            if (order == null || order.ClientId != clientId)
+            if (order == null)
             {
-                return false;
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (order.ClientId != clientId)
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedOrderAccess, StatusCodes.Status403Forbidden);
             }
 
             await _orderRepository.DeleteAsync(order);

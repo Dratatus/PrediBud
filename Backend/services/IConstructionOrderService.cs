@@ -6,8 +6,8 @@ namespace Backend.services
 {
     public interface IConstructionOrderService
     {
-        Task<ConstructionOrder> CreateOrderAsync(CreateOrderRequest request);
-        Task<ConstructionOrder> GetOrderByIdAsync(int id);
+        Task<ConstructionOrderDto> CreateOrderAsync(CreateOrderRequest request);
+        Task<ConstructionOrderDto> GetOrderByIdAsync(int id);
         Task<bool> DeleteOrderAsync(int clientId, int orderId);
         Task<bool> AcceptOrderAsync(int orderId, int workerId);
         Task<List<ConstructionOrderDto>> GetOrdersByClientIdAsync(int clientId);

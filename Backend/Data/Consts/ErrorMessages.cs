@@ -69,6 +69,45 @@
         public const string InvalidRoofArea = "Roof area must be greater than zero.";
         public const string InvalidRoofPitch = "Roof pitch must be between 0 and 90 degrees.";
         public const string RoofMaterialPriceNotFound = "Material price not found for the given roof type and material.";
-
+        public const string RequestCannotBeNull = "Request cannot be null.";
+        public const string DescriptionIsRequired = "Description is required.";
+        public const string InvalidClientId = "Invalid Client ID.";
+        public const string SpecificationDetailsCannotBeNull = "SpecificationDetails cannot be null.";
+        public const string UnsupportedConstructionType = "Unsupported ConstructionType: {0}";
+        public const string InvalidDoorsDetails = "Doors details cannot be null.";
+        public const string InvalidBalconyDetails = "Balcony details cannot be null.";
+        public const string InvalidBalconyLength = "Balcony length must be greater than 0.";
+        public const string InvalidBalconyWidth = "Balcony width must be greater than 0.";
+        public const string InvalidSuspendedCeilingDetails = "Suspended ceiling details cannot be null.";
+        public const string InvalidFacadeDetails = "Facade details cannot be null.";
+        public const string InvalidFlooringDetails = "Flooring details cannot be null.";
+        public const string InvalidFoundationDetails = "Foundation details cannot be null.";
+        public const string InvalidInsulationOfAtticDetails = "Insulation of attic details cannot be null.";
+        public const string InvalidInsulationOfAtticArea = "Insulation of attic area must be greater than zero.";
+        public const string InvalidInsulationOfAtticThickness = "Insulation of attic thickness must be greater than zero.";
+        public const string InvalidRequest = "Request cannot be null.";
+        public const string InvalidType = "Invalid 'Type' value.";
+        public const string InvalidPaintingDetails = "Painting details cannot be null.";
+        public const string InvalidPaintingWallSurfaceArea = "Wall surface area for painting must be greater than zero.";
+        public const string InvalidPaintingNumberOfCoats = "Number of coats must be greater than zero.";
+        public const string InvalidPlasteringDetails = "Plastering details cannot be null.";
+        public const string InvalidPlasteringWallSurfaceArea = "Wall surface area for plastering must be greater than zero.";
+        public const string InvalidShellOpenDetails = "Shell open details cannot be null.";
+        public const string InvalidShellOpenFoundation = "Foundation details in ShellOpen must be valid.";
+        public const string InvalidShellOpenLoadBearingWall = "Load bearing wall details in ShellOpen must be valid.";
+        public const string InvalidShellOpenPartitionWall = "Partition wall details in ShellOpen must be valid.";
+        public const string InvalidShellOpenChimney = "Chimney count in ShellOpen must be greater than zero.";
+        public const string InvalidShellOpenVentilation = "Ventilation system count in ShellOpen must be greater than zero.";
+        public const string InvalidShellOpenRoof = "Roof details in ShellOpen must be valid.";
+        public const string InvalidStaircaseDetails = "Staircase details cannot be null.";
+        public const string InvalidStaircaseNumberOfSteps = "Number of steps must be greater than zero.";
+        public const string InvalidWindowsDetails = "Windows details cannot be null.";
+        public const string InvalidWindowsAmount = "Amount of windows must be greater than zero.";
+        public const string InvalidWindowsHeight = "Window height must be greater than zero.";
+        public const string InvalidWindowsWidth = "Window width must be greater than zero.";
+        public const string OnlyClientCanCreateOrder = "Only a client can create a construction order.";
+        public const string OrderNotFound = "The requested order was not found.";
+        public const string InvalidOrder = "Invalid Order";
+        public const string UnauthorizedOrderAccess = "You do not have permission to access this order.";
     }
 }
