@@ -1,11 +1,10 @@
-﻿using Backend.Data.Models.Constructions.Dimensions.Balcony;
-using Backend.Data.Models.Price;
+﻿using Backend.Data.Models.Price;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 
-namespace Backend.Tests.Integration.Controllers
+namespace Backend.IntergationTests
 {
     public class CalculatorControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -19,7 +18,6 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task CalculatePrice_ReturnsCalculatedPrice_ForValidSpecification()
         {
-            // Arrange
             var balconySpecification = new
             {
                 Type = "Balcony",
@@ -34,10 +32,8 @@ namespace Backend.Tests.Integration.Controllers
                 "application/json"
             );
 
-            // Act
             var response = await _client.PostAsync("/api/Calculator/calculate", content);
 
-            // Assert
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -51,7 +47,6 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task CalculatePrice_ReturnsBadRequest_ForUnsupportedSpecification()
         {
-            // Arrange
             var unsupportedSpecification = new
             {
                 Type = "UnsupportedType"
@@ -63,10 +58,8 @@ namespace Backend.Tests.Integration.Controllers
                 "application/json"
             );
 
-            // Act
             var response = await _client.PostAsync("/api/Calculator/calculate", content);
 
-            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -82,7 +75,6 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task CalculatePrice_ReturnsBadRequest_ForInvalidSpecification()
         {
-            // Arrange
             var invalidSpecification = new
             {
                 Type = "InvalidType",
@@ -96,10 +88,8 @@ namespace Backend.Tests.Integration.Controllers
                 "application/json"
             );
 
-            // Act
             var response = await _client.PostAsync("/api/Calculator/calculate", content);
 
-            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
 

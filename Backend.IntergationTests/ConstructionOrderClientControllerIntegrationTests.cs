@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Text.Json;
 using System.Text;
-using Backend;
 using System.Text.Json.Serialization;
 using Backend.Conventer;
-using Backend.IntergationTests;
 
-namespace Backend.Tests.Integration.Controllers
+namespace Backend.IntergationTests
 {
     public class ConstructionOrderClientControllerIntegrationTests : IClassFixture<TestDbContextFactory>
     {
@@ -22,13 +20,10 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task GetAllOrders_ReturnsOrders_ForValidClientId()
         {
-            // Arrange
             var clientId = 21;
 
-            // Act
             var response = await _client.GetAsync($"/api/ConstructionOrderClient/all/{clientId}");
 
-            // Assert
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -47,13 +42,10 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task GetOrder_ReturnsOrder_ForValidOrderId()
         {
-            // Arrange
             var orderId = 10;
 
-            // Act
             var response = await _client.GetAsync($"/api/ConstructionOrderClient/{orderId}");
 
-            // Assert
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -73,7 +65,6 @@ namespace Backend.Tests.Integration.Controllers
         public async Task CreateOrder_ReturnsCreatedOrder_ForValidRequest()
         {
 
-            // Arrange
             var request = new
             {
                 Description = "Instalacja okien na parterze",
@@ -96,10 +87,8 @@ namespace Backend.Tests.Integration.Controllers
                 "application/json"
             );
 
-            // Act
             var response = await _client.PostAsync("/api/ConstructionOrderClient", content);
 
-            // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
             var options = new JsonSerializerOptions
@@ -119,28 +108,22 @@ namespace Backend.Tests.Integration.Controllers
         [Fact]
         public async Task DeleteOrder_ReturnsNoContent_ForValidClientAndOrderId()
         {
-            // Arrange
             var clientId = 1;
             var orderId = 10;
 
-            // Act
             var response = await _client.DeleteAsync($"/api/ConstructionOrderClient/{orderId}/{clientId}");
 
-            // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
         public async Task DeleteOrder_ReturnsForbidden_ForInvalidClient()
         {
-            // Arrange
-            var clientId = 999; // Invalid client
+            var clientId = 999; 
             var orderId = 10;
 
-            // Act
             var response = await _client.DeleteAsync($"/api/ConstructionOrderClient/{orderId}/{clientId}");
 
-            // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
 

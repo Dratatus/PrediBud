@@ -19,10 +19,6 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetAvailableOrders(int workerId)
         {
             var orders = await _constructionOrderService.GetAvailableOrdersAsync(workerId);
-            if (orders == null || !orders.Any())
-            {
-                return NotFound("No available orders found.");
-            }
 
             return Ok(orders);
         }
@@ -31,10 +27,6 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetMyOrders(int workerId)
         {
             var orders = await _constructionOrderService.GetOrdersByWorkerIdAsync(workerId);
-            if (orders == null || !orders.Any())
-            {
-                return NotFound($"No orders found for worker with ID {workerId}");
-            }
 
             return Ok(orders);
         }
