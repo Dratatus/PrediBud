@@ -1,7 +1,9 @@
-﻿using Backend.Data.Models.Orders.Material;
+﻿using Backend.Data.Consts;
+using Backend.Data.Models.Orders.Material;
 using Backend.Data.Models.Suppliers;
 using Backend.Data.Models.Users;
 using Backend.DTO.MaterialOrder;
+using Backend.Middlewares;
 using Backend.services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,8 +58,6 @@ namespace Backend.Controllers
         public async Task<IActionResult> DeleteOrder(int orderId, int userId)
         {
             var success = await _service.DeleteMaterialOrderAsync(orderId, userId);
-            if (!success)
-                return BadRequest("Unauthorized");
 
             return NoContent();
         }

@@ -1,26 +1,28 @@
-﻿using Backend.Data.Models.Common;
-using Backend.Data.Models.Orders.Material; 
+﻿using Backend.Data.Consts;
+using Backend.Data.Models.Common;
+using Backend.Data.Models.Orders.Material;
 using Backend.Data.Models.Suppliers;
-using Backend.DTO.MaterialOrder; 
+using Backend.DTO.MaterialOrder;
 using Backend.DTO.Users.Supplier;
-using Backend.Repositories; 
-using Backend.services; 
+using Backend.Middlewares;
+using Backend.Repositories;
+using Backend.services;
 using Moq;
 
 namespace Backend.Tests.Services
 {
     public class MaterialOrderServiceTests
     {
-        private readonly Mock<IMaterialOrderRepository> _mockRepo;
-        private readonly Mock<IUserRepository> _mockRepo2;
+        private readonly Mock<IMaterialOrderRepository> _repositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly MaterialOrderService _service;
 
         public MaterialOrderServiceTests()
         {
-            _mockRepo = new Mock<IMaterialOrderRepository>();
-            _mockRepo2 = new Mock<IUserRepository>();
+            _repositoryMock = new Mock<IMaterialOrderRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
 
-            _service = new MaterialOrderService(_mockRepo.Object, _mockRepo2.Object);
+            _service = new MaterialOrderService(_repositoryMock.Object, _userRepositoryMock.Object);
         }
 
         [Fact]
@@ -62,19 +64,19 @@ namespace Backend.Tests.Services
                 MaterialPriceId = 1380
             };
 
-            _mockRepo.Setup(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()))
-                     .Callback<MaterialOrder>(order => order.ID = 123) 
+            _repositoryMock.Setup(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()))
+                     .Callback<MaterialOrder>(order => order.ID = 123)
                      .Returns(Task.CompletedTask);
 
-            _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(123))
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(123))
                      .ReturnsAsync(createdEntity);
 
             var resultDto = await _service.CreateMaterialOrderAsync(inputDto);
 
-            _mockRepo.Verify(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()),
+            _repositoryMock.Verify(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()),
                              Times.Once);
 
-            _mockRepo.Verify(r => r.GetMaterialOrderByIdAsync(123), 
+            _repositoryMock.Verify(r => r.GetMaterialOrderByIdAsync(123),
                              Times.Once);
 
             Assert.NotNull(resultDto);
@@ -93,7 +95,7 @@ namespace Backend.Tests.Services
         public async Task GetMaterialOrderByIdAsync_ReturnsNull_IfNotFound()
         {
             int orderId = 999;
-            _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
                      .ReturnsAsync((MaterialOrder)null);
 
             var result = await _service.GetMaterialOrderByIdAsync(orderId);
@@ -102,91 +104,124 @@ namespace Backend.Tests.Services
         }
 
         [Fact]
-        public async Task UpdateMaterialOrderAsync_ReturnsFalse_IfEntityNotFound()
+        public async Task GetMaterialOrderByIdAsync_ShouldReturnDto()
         {
-            //var dto = new MaterialOrderDto { ID = 888 };
-            //_mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(dto.ID))
-            //         .ReturnsAsync((MaterialOrder)null);
-
-            //var success = await _service.UpdateMaterialOrderAsync(dto);
-
-            //Assert.False(success);
-            //_mockRepo.Verify(r => r.UpdateMaterialOrderAsync(It.IsAny<MaterialOrder>()),
-            //                 Times.Never);
-        }
-
-        [Fact]
-        public async Task UpdateMaterialOrderAsync_UpdatesEntity_IfFound()
-        {
-            // Arrange
-            var dto = new MaterialOrderDto
+            var orderId = 1;
+            var materialOrder = new MaterialOrder
             {
-                ID = 777,
-                UnitPriceNet = 100,
-                UnitPriceGross = 123,
-                Quantity = 2,
-                CreatedDate = new System.DateTime(2025, 1, 20),
-                UserId = 999,
-                MaterialPriceId = 55
-            };
-            var existing = new MaterialOrder
-            {
-                ID = 777
+                ID = orderId,
+                UnitPriceNet = 100m,
+                UnitPriceGross = 123m,
+                Quantity = 10,
+                UserId = 1,
+                SupplierId = 2,
+                Supplier = new Supplier
+                {
+                    Name = "Test Supplier",
+                    ContactEmail = "supplier@example.com",
+                    Address = new Address
+                    {
+                        City = "Test City",
+                        StreetName = "Test Street",
+                        PostCode = "12345"
+                    }
+                },
+                MaterialPriceId = 5,
+                MaterialPrice = new MaterialPrice
+                {
+                    PriceWithoutTax = 12.5m,
+                    SupplierId = 2
+                }
             };
 
-            _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(dto.ID))
-                     .ReturnsAsync(existing);
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
+                .ReturnsAsync(materialOrder);
 
-            //// Act
-            //var success = await _service.UpdateMaterialOrderAsync(dto);
+            var result = await _service.GetMaterialOrderByIdAsync(orderId);
 
-            //// Assert
-            //Assert.True(success);
-            //_mockRepo.Verify(r => r.UpdateMaterialOrderAsync(It.Is<MaterialOrder>(
-            //    mo => mo.ID == 777
-            //       && mo.UnitPriceNet == 100
-            //       && mo.UnitPriceGross == 123
-            //       && mo.Quantity == 2
-            //       && mo.CreatedDate == new System.DateTime(2025, 1, 20)
-            //       && mo.UserId == 999
-            //       && mo.MaterialPriceId == 55
-            //)), Times.Once);
+            Assert.NotNull(result);
+            Assert.Equal(orderId, result.ID);
+            Assert.Equal(materialOrder.UnitPriceNet, result.UnitPriceNet);
+            _repositoryMock.Verify(r => r.GetMaterialOrderByIdAsync(orderId), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteMaterialOrderAsync_ReturnsFalse_IfNotFound()
+        public async Task UpdateMaterialOrderAsync_ShouldUpdateOrder_WhenValid()
         {
-            // Arrange
-           // int orderId = 666;
-           // _mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
-           //          .ReturnsAsync((MaterialOrder)null);
+            var userId = 1;
+            var updateDto = new UpdateMaterialOrderDto
+            {
+                ID = 1,
+                UnitPriceNet = 150m,
+                UnitPriceGross = 180m,
+                Quantity = 5,
+                SupplierId = 2,
+                MaterialPriceId = 10
+            };
 
-           // Act
-           //var success = await _service.DeleteMaterialOrderAsync(orderId);
+            var existingOrder = new MaterialOrder
+            {
+                ID = updateDto.ID,
+                UnitPriceNet = 100m,
+                UnitPriceGross = 123m,
+                Quantity = 10,
+                UserId = userId,
+                SupplierId = 2,
+                MaterialPriceId = 5
+            };
 
-           // Assert
-           // Assert.False(success);
-           // _mockRepo.Verify(r => r.DeleteMaterialOrderAsync(It.IsAny<int>()), Times.Never);
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(updateDto.ID))
+                .ReturnsAsync(existingOrder);
+
+            _repositoryMock.Setup(r => r.UpdateMaterialOrderAsync(existingOrder))
+                .Returns(Task.CompletedTask);
+
+            var result = await _service.UpdateMaterialOrderAsync(updateDto, userId);
+
+            Assert.True(result);
+            Assert.Equal(updateDto.UnitPriceNet, existingOrder.UnitPriceNet);
+            Assert.Equal(updateDto.Quantity, existingOrder.Quantity);
+            _repositoryMock.Verify(r => r.GetMaterialOrderByIdAsync(updateDto.ID), Times.Once);
+            _repositoryMock.Verify(r => r.UpdateMaterialOrderAsync(existingOrder), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteMaterialOrderAsync_Deletes_IfFound()
+        public async Task DeleteMaterialOrderAsync_ShouldDeleteOrder_WhenValid()
         {
-            // Arrange
-            //int orderId = 11;
-            //var existing = new MaterialOrder
-            //{
-            //    ID = orderId
-            //};
-            //_mockRepo.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
-            //         .ReturnsAsync(existing);
+            var orderId = 1;
+            var userId = 1;
 
-            //// Act
-            //var success = await _service.DeleteMaterialOrderAsync(orderId);
+            var existingOrder = new MaterialOrder
+            {
+                ID = orderId,
+                UserId = userId
+            };
 
-            //// Assert
-            //Assert.True(success);
-            //_mockRepo.Verify(r => r.DeleteMaterialOrderAsync(orderId), Times.Once);
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
+                .ReturnsAsync(existingOrder);
+
+            _repositoryMock.Setup(r => r.DeleteMaterialOrderAsync(orderId))
+                .Returns(Task.CompletedTask);
+
+            var result = await _service.DeleteMaterialOrderAsync(orderId, userId);
+
+            Assert.True(result);
+            _repositoryMock.Verify(r => r.GetMaterialOrderByIdAsync(orderId), Times.Once);
+            _repositoryMock.Verify(r => r.DeleteMaterialOrderAsync(orderId), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteMaterialOrderAsync_ShouldThrowException_WhenOrderNotFound()
+        {
+            var orderId = 1;
+            var userId = 1;
+
+            _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
+                .ReturnsAsync((MaterialOrder)null);
+
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _service.DeleteMaterialOrderAsync(orderId, userId));
+            Assert.Equal(ErrorMessages.MaterialOrderNotFound, exception.Message);
+            Assert.Equal(404, exception.StatusCode);
         }
     }
 }

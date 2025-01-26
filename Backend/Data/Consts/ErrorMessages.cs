@@ -109,5 +109,22 @@
         public const string OrderNotFound = "The requested order was not found.";
         public const string InvalidOrder = "Invalid Order";
         public const string UnauthorizedOrderAccess = "You do not have permission to access this order.";
+        public const string NullMaterialOrderDto = "Material order data cannot be null.";
+        public const string InvalidUnitPriceNet = "Unit price (net) must be greater than zero.";
+        public const string InvalidUnitPriceGross = "Unit price (gross) must be greater than zero.";
+        public const string InvalidQuantity = "Quantity must be greater than zero.";
+        public const string InvalidCreatedDate = "Created date must be a valid date.";
+        public const string InvalidSupplierId = "Supplier ID must be greater than zero.";
+        public const string InvalidMaterialPriceId = "Material price ID must be greater than zero if provided.";
+        public const string NullUpdateMaterialOrderDto = "Update material order data cannot be null.";
+        public const string InvalidMaterialOrderId = "Material order ID must be greater than zero.";
+        public const string MaterialOrderNotFound = "Material order not found.";
+        public const string UnauthorizedAccess = "You are not authorized to update this material order.";
+        public const string InvalidWorkerId = "Invalid worker ID.";
+        public const string InvalidProposedPrice = "Invalid proposed price.";
+        public const string OrderNotNew = "Order is not new.";
+        public const string OrderNotInNegotiation = "Order is not in negotiation.";
+        public const string InvalidNegotiationAction = "You cannot perform this negotiation action.";
+        public const string OrderNotAccepted = "The order is not in the 'Accepted' status to perform this action";
     }
 }

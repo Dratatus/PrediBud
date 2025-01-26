@@ -35,7 +35,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task LoginAsync_ReturnsSuccess_WhenCredentialsAreValid()
         {
-            // Arrange
             var loginBody = new LoginBody
             {
                 Email = "test@example.com",
@@ -56,10 +55,8 @@ namespace Backend.Tests.Services
             _jwtTokenGeneratorMock.Setup(jwt => jwt.GenerateToken(user))
                 .Returns("token");
 
-            // Act
             var result = await _authService.LoginAsync(loginBody);
 
-            // Assert
             Assert.True(result.Success);
             Assert.Equal("token", result.Token);
         }
@@ -67,13 +64,11 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task LoginAsync_ThrowsApiException_WhenUserNotFound()
         {
-            // Arrange
             var loginBody = new LoginBody { Email = "test@example.com", Password = "password" };
 
             _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(loginBody.Email))
                 .ReturnsAsync((User)null);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.LoginAsync(loginBody));
             Assert.Equal(ErrorMessages.InvalidEmailOrPassword, exception.Message);
             Assert.Equal(StatusCodes.Status401Unauthorized, exception.StatusCode);
@@ -82,7 +77,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task LoginAsync_ThrowsApiException_WhenPasswordIsInvalid()
         {
-            // Arrange
             var loginBody = new LoginBody { Email = "test@example.com", Password = "password" };
 
             var user = new User
@@ -96,7 +90,6 @@ namespace Backend.Tests.Services
             _passwordValidationMock.Setup(pv => pv.ValidatePassword(loginBody.Password, user.Credentials.PasswordHash))
                 .Returns(false);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.LoginAsync(loginBody));
             Assert.Equal(ErrorMessages.InvalidEmailOrPassword, exception.Message);
             Assert.Equal(StatusCodes.Status401Unauthorized, exception.StatusCode);
@@ -105,7 +98,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task RegisterAsync_ReturnsSuccess_WhenUserIsRegisteredSuccessfully()
         {
-            // Arrange
             var registerBody = new RegisterUserBody
             {
                 Email = "newuser@example.com",
@@ -130,10 +122,8 @@ namespace Backend.Tests.Services
             _userRepositoryMock.Setup(repo => repo.AddUserAsync(It.IsAny<User>()))
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _authService.RegisterAsync(registerBody);
 
-            // Assert
             Assert.True(result.Success);
             Assert.Equal("token", result.Token);
         }
@@ -141,7 +131,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task RegisterAsync_ThrowsApiException_WhenUserAlreadyExists()
         {
-            // Arrange
             var registerBody = new RegisterUserBody
             {
                 Email = "newuser@example.com",
@@ -166,7 +155,6 @@ namespace Backend.Tests.Services
             _userRepositoryMock.Setup(repo => repo.GetByEmailAsync(registerBody.Email))
                 .ReturnsAsync(existingUser);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _authService.RegisterAsync(registerBody));
             Assert.Equal(ErrorMessages.UserAlreadyExists, exception.Message);
             Assert.Equal(StatusCodes.Status400BadRequest, exception.StatusCode);

@@ -3,6 +3,9 @@ using Backend.Data.Models.Notifications;
 using Backend.Repositories;
 using Backend.services;
 using Backend.Data.Models.Users;
+using Backend.Data.Consts;
+using Backend.Middlewares;
+using Backend.Validatiors.Negotiation;
 
 namespace Backend.Services
 {
@@ -23,8 +26,17 @@ namespace Backend.Services
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
 
-            if (order == null || order.Status != OrderStatus.New)
-                return false;
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (order.Status != OrderStatus.New)
+            {
+                throw new ApiException(ErrorMessages.OrderNotNew, StatusCodes.Status400BadRequest);
+            }
+
+            InitiateNegotiationValidator.Validate(workerId, proposedPrice);
 
             order.Status = OrderStatus.NegotiationInProgress;
             order.WorkerId = workerId;
@@ -49,22 +61,32 @@ namespace Backend.Services
         public async Task<bool> AcceptNegotiation(int orderId, int userId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
+
             var user = await _userRepository.GetUserByIdAsync(userId);
 
-            if (order == null || user == null || order.Status != OrderStatus.NegotiationInProgress)
-                return false;
+            if (user == null)
+            {
+                throw new ApiException(ErrorMessages.UserNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (order.Status != OrderStatus.NegotiationInProgress)
+            {
+                throw new ApiException(ErrorMessages.OrderNotInNegotiation, StatusCodes.Status400BadRequest);
+            }
+
+            AcceptNegotiationValidator.Validate(user);
 
             var isClient = user is Client && order.ClientId == userId;
             var isWorker = user is Worker && order.WorkerId == userId;
 
-
             if (!isClient && !isWorker)
-                return false;
-
-            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
-             (isWorker && order.LastActionBy == LastActionBy.Worker))
             {
-                return false;
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
             }
 
             order.Status = OrderStatus.Accepted;
@@ -96,33 +118,41 @@ namespace Backend.Services
         public async Task<bool> RejectNegotiation(int orderId, int rejectingUserId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
+
             var user = await _userRepository.GetUserByIdAsync(rejectingUserId);
+            if (user == null)
+            {
+                throw new ApiException(ErrorMessages.UserNotFound, StatusCodes.Status404NotFound);
+            }
 
             var isClient = user is Client && order.ClientId == rejectingUserId;
             var isWorker = user is Worker && order.WorkerId == rejectingUserId;
 
-            if (order == null || (isClient && order.ClientId != rejectingUserId) || (!isClient && order.WorkerId != rejectingUserId))
-                return false;
-
             if (!isClient && !isWorker)
-                return false;
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
+            }
 
             if ((isClient && order.LastActionBy == LastActionBy.Client) ||
-             (isWorker && order.LastActionBy == LastActionBy.Worker))
+                (isWorker && order.LastActionBy == LastActionBy.Worker))
             {
-                return false;
+                throw new ApiException(ErrorMessages.InvalidNegotiationAction, StatusCodes.Status400BadRequest);
             }
 
             order.BannedWorkerIds.Add(order.WorkerId.Value);
             order.Status = OrderStatus.New;
 
-            int bannedWordker = order.WorkerId.Value;
+            int bannedWorker = order.WorkerId.Value;
             int bannedClient = order.ClientId;
 
             order.WorkerId = null;
             order.WorkerProposedPrice = null;
 
-            var worker = await _userRepository.GetUserByIdAsync(bannedWordker) as Worker;
+            var worker = await _userRepository.GetUserByIdAsync(bannedWorker) as Worker;
 
             if (worker != null)
             {
@@ -138,7 +168,7 @@ namespace Backend.Services
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
             {
                 ClientId = isClient ? null : bannedClient,
-                WorkerId = isClient ? bannedWordker : null,
+                WorkerId = isClient ? bannedWorker : null,
                 Title = "Negotiation Rejected",
                 Description = isClient ? "Client has rejected the terms." : "Worker has rejected the terms.",
                 Status = NotificationStatus.NegotiationRejected,
@@ -149,13 +179,25 @@ namespace Backend.Services
             return true;
         }
 
+
         public async Task<bool> ContinueNegotiation(int orderId, int userId, decimal proposedPrice)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
 
-            if (order == null || user == null || order.Status != OrderStatus.NegotiationInProgress)
-                return false;
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ApiException(ErrorMessages.UserNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (order.Status != OrderStatus.NegotiationInProgress)
+            {
+                throw new ApiException(ErrorMessages.OrderNotInNegotiation, StatusCodes.Status400BadRequest);
+            }
 
             var isClient = user is Client && order.ClientId == userId;
             var isWorker = user is Worker && order.WorkerId == userId;
@@ -163,15 +205,21 @@ namespace Backend.Services
             if ((isClient && order.LastActionBy == LastActionBy.Client) ||
                 (isWorker && order.LastActionBy == LastActionBy.Worker))
             {
-                return false;
+                throw new ApiException(ErrorMessages.InvalidNegotiationAction, StatusCodes.Status400BadRequest);
             }
 
             if (isClient)
+            {
                 order.ClientProposedPrice = proposedPrice;
+            }
             else if (isWorker)
+            {
                 order.WorkerProposedPrice = proposedPrice;
+            }
             else
-                return false;
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
+            }
 
             order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
 
@@ -194,17 +242,33 @@ namespace Backend.Services
         public async Task<bool> CompleteOrder(int orderId, int userId)
         {
             var order = await _orderRepository.GetOrderWithSpecificationByIdAsync(orderId);
-            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
+            }
 
-            if (order == null || order.Status != OrderStatus.Accepted)
-                return false;
+            if (order.Status != OrderStatus.Accepted)
+            {
+                throw new ApiException(ErrorMessages.OrderNotAccepted, StatusCodes.Status400BadRequest);
+            }
+
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ApiException(ErrorMessages.UserNotFound, StatusCodes.Status404NotFound);
+            }
 
             var isClient = user is Client && order.ClientId == userId;
             var isWorker = user is Worker && order.WorkerId == userId;
 
-            order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
+            if (!isClient && !isWorker)
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
+            }
 
+            order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
             order.Status = OrderStatus.Completed;
+
             await _orderRepository.SaveChangesAsync();
 
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
@@ -212,7 +276,9 @@ namespace Backend.Services
                 ClientId = isWorker ? order.ClientId : null,
                 WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
                 Title = "Order Completed",
-                Description = isClient ? "The client has marked the order as completed." : "The worker has marked the order as completed.",
+                Description = isClient
+                    ? "The client has marked the order as completed."
+                    : "The worker has marked the order as completed.",
                 Status = NotificationStatus.OrderCompleted,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now

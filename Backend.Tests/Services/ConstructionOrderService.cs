@@ -41,7 +41,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task GetOrdersByClientIdAsync_ReturnsOrdersForGivenClient()
         {
-            // Arrange
             var clientId = 1;
 
             var mockOrders = new List<ConstructionOrder>
@@ -69,10 +68,8 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.GetOrdersByClientIdAsync(clientId))
                 .ReturnsAsync(mockOrders);
 
-            // Act
             var result = await _service.GetOrdersByClientIdAsync(clientId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal(mockOrders.First().ID, result.First().ID);
@@ -86,7 +83,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task GetOrdersByWorkerIdAsync_ReturnsOrdersForGivenWorker()
         {
-            // Arrange
             var workerId = 2;
 
             var mockOrders = new List<ConstructionOrder>
@@ -115,10 +111,8 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.GetOrdersByWorkerIdAsync(workerId))
                 .ReturnsAsync(mockOrders);
 
-            // Act
             var result = await _service.GetOrdersByWorkerIdAsync(workerId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal(mockOrders.First().ID, result.First().ID);
@@ -131,7 +125,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task GetAvailableOrdersAsync_ReturnsAvailableOrders()
         {
-            // Arrange
             var workerId = 1;
             var orders = new List<ConstructionOrder>
             {
@@ -142,10 +135,8 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.GetAvailableOrdersAsync(workerId))
                 .ReturnsAsync(orders);
 
-            // Act
             var result = await _service.GetAvailableOrdersAsync(workerId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count());
             Assert.Contains(result, o => o.ID == 1 && o.Description == "Order 1");
@@ -155,17 +146,14 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task GetOrderByIdAsync_ReturnsOrder_WhenOrderExists()
         {
-            // Arrange
             var orderId = 1;
             var order = new ConstructionOrder { ID = orderId, Description = "Test Order" };
 
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync(order);
 
-            // Act
             var result = await _service.GetOrderByIdAsync(orderId);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(orderId, result.ID);
             Assert.Equal("Test Order", result.Description);
@@ -174,13 +162,11 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task GetOrderByIdAsync_ThrowsApiException_WhenOrderNotFound()
         {
-            // Arrange
             var orderId = 1;
 
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync((ConstructionOrder)null);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.GetOrderByIdAsync(orderId));
             Assert.Equal(ErrorMessages.OrderNotFound, exception.Message);
             Assert.Equal(404, exception.StatusCode);
@@ -189,7 +175,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task CreateOrderAsync_CreatesOrder_WhenRequestIsValid()
         {
-            // Arrange
             var request = new CreateOrderRequest
             {
                 Description = "New Order",
@@ -217,10 +202,8 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.SaveChangesAsync())
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _service.CreateOrderAsync(request);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(request.Description, result.Description);
             Assert.Equal(request.ConstructionType, result.ConstructionType);
@@ -232,7 +215,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task CreateOrderAsync_ThrowsApiException_WhenUserIsNotClient()
         {
-            // Arrange
             var request = new CreateOrderRequest
             {
                 Description = "New Order",
@@ -249,7 +231,6 @@ namespace Backend.Tests.Services
             _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync(request.ClientId))
                 .ReturnsAsync(nonClientUser);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.CreateOrderAsync(request));
             Assert.Equal(ErrorMessages.OnlyClientCanCreateOrder, exception.Message);
             Assert.Equal(403, exception.StatusCode);
@@ -258,7 +239,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task AcceptOrderAsync_UpdatesOrderStatusAndSendsNotification_WhenOrderIsValid()
         {
-            // Arrange
             var orderId = 1;
             var workerId = 2;
             var order = new ConstructionOrder
@@ -274,10 +254,8 @@ namespace Backend.Tests.Services
             _notificationServiceMock.Setup(service => service.SendNotificationAsync(It.IsAny<ConstructionOrderNotification>()))
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _service.AcceptOrderAsync(orderId, workerId);
 
-            // Assert
             Assert.True(result);
             Assert.Equal(OrderStatus.Accepted, order.Status);
             Assert.Equal(workerId, order.WorkerId);
@@ -294,14 +272,12 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task AcceptOrderAsync_ThrowsApiException_WhenOrderNotFound()
         {
-            // Arrange
             var orderId = 1;
             var workerId = 2;
 
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync((ConstructionOrder)null);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.AcceptOrderAsync(orderId, workerId));
             Assert.Equal(ErrorMessages.InvalidOrder, exception.Message);
             Assert.Equal(StatusCodes.Status400BadRequest, exception.StatusCode);
@@ -310,7 +286,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task AcceptOrderAsync_ThrowsApiException_WhenOrderIsNotNew()
         {
-            // Arrange
             var orderId = 1;
             var workerId = 2;
             var order = new ConstructionOrder
@@ -323,7 +298,6 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync(order);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.AcceptOrderAsync(orderId, workerId));
             Assert.Equal(ErrorMessages.InvalidOrder, exception.Message);
             Assert.Equal(StatusCodes.Status400BadRequest, exception.StatusCode);
@@ -332,7 +306,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task DeleteOrderAsync_DeletesOrder_WhenClientIsAuthorized()
         {
-            // Arrange
             var clientId = 3;
             var orderId = 1;
             var order = new ConstructionOrder
@@ -347,10 +320,8 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.DeleteAsync(order))
                 .Returns(Task.CompletedTask);
 
-            // Act
             var result = await _service.DeleteOrderAsync(clientId, orderId);
 
-            // Assert
             Assert.True(result);
 
             _orderRepositoryMock.Verify(repo => repo.DeleteAsync(order), Times.Once);
@@ -360,14 +331,12 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task DeleteOrderAsync_ThrowsApiException_WhenOrderNotFound()
         {
-            // Arrange
             var clientId = 3;
             var orderId = 1;
 
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync((ConstructionOrder)null);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.DeleteOrderAsync(clientId, orderId));
             Assert.Equal(ErrorMessages.OrderNotFound, exception.Message);
             Assert.Equal(StatusCodes.Status404NotFound, exception.StatusCode);
@@ -376,7 +345,6 @@ namespace Backend.Tests.Services
         [Fact]
         public async Task DeleteOrderAsync_ThrowsApiException_WhenClientIsNotAuthorized()
         {
-            // Arrange
             var clientId = 3;
             var orderId = 1;
             var order = new ConstructionOrder
@@ -388,7 +356,6 @@ namespace Backend.Tests.Services
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync(order);
 
-            // Act & Assert
             var exception = await Assert.ThrowsAsync<ApiException>(() => _service.DeleteOrderAsync(clientId, orderId));
             Assert.Equal(ErrorMessages.UnauthorizedOrderAccess, exception.Message);
             Assert.Equal(StatusCodes.Status403Forbidden, exception.StatusCode);

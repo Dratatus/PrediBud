@@ -1,8 +1,11 @@
-﻿using Backend.Data.Models.Common;
+﻿using Backend.Data.Consts;
+using Backend.Data.Models.Common;
 using Backend.Data.Models.Orders.Material;
 using Backend.DTO.MaterialOrder;
 using Backend.DTO.Users.Supplier;
+using Backend.Middlewares;
 using Backend.Repositories;
+using Backend.Validatiors.Orders.Material;
 
 namespace Backend.services
 {
@@ -18,6 +21,8 @@ namespace Backend.services
         }
         public async Task<MaterialOrderDto> CreateMaterialOrderAsync(MaterialOrderDto dto)
         {
+            MaterialOrderDtoValidator.Validate(dto);
+
             var entity = MapToEntity(dto);
 
             await _repository.AddMaterialOrderAsync(entity);
@@ -44,10 +49,19 @@ namespace Backend.services
 
         public async Task<bool> UpdateMaterialOrderAsync(UpdateMaterialOrderDto dto, int userId)
         {
+            UpdateMaterialOrderDtoValidator.Validate(dto);
+
             var existing = await _repository.GetMaterialOrderByIdAsync(dto.ID);
 
-            if (existing == null || existing.UserId != userId)
-                return false;
+            if (existing == null)
+            {
+                throw new ApiException(ErrorMessages.MaterialOrderNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (existing.UserId != userId)
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
+            }
 
             existing.UnitPriceNet = dto.UnitPriceNet;
             existing.UnitPriceGross = dto.UnitPriceGross;
@@ -62,8 +76,15 @@ namespace Backend.services
         {
             var existing = await _repository.GetMaterialOrderByIdAsync(orderId);
 
-            if (existing == null || existing.UserId != userId)
-                return false;
+            if (existing == null)
+            {
+                throw new ApiException(ErrorMessages.MaterialOrderNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (existing.UserId != userId)
+            {
+                throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
+            }
 
             await _repository.DeleteMaterialOrderAsync(orderId);
             return true;

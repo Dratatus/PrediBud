@@ -19,7 +19,6 @@ namespace Backend.IntergationTests
     {
         protected override IHost CreateHost(IHostBuilder builder)
         {
-            // 1. Konfigurujemy InMemory w ConfigureServices (tak jak wcześniej).
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(
@@ -34,10 +33,8 @@ namespace Backend.IntergationTests
                 });
             });
 
-            // 2. Tworzymy host. Teraz powstaje finalny ServiceProvider, który obsłuży testy.
             var host = base.CreateHost(builder);
 
-            // 3. Seedujemy dane W TYM SAMYM kontenerze, którego użyje HttpClient
             using (var scope = host.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<PrediBudDBContext>();
@@ -52,11 +49,6 @@ namespace Backend.IntergationTests
 
         private void SeedTestData(PrediBudDBContext db)
         {
-            // ... tutaj normalnie Twoje wstawianie danych
-            //   (Klienci #1, #2; zamówienia #9, #10 itd.)
-            //
-            // -- przykładowy fragment --
-
             var clientAddress = new Address
             {
                 ID = 1,
@@ -102,14 +94,12 @@ namespace Backend.IntergationTests
             var client1 = new Client
             {
                 ID = 1,
-                // ...
             };
             db.Set<Client>().Add(client1);
 
             var client2 = new Client
             {
                 ID = 2,
-                // ...
             };
             db.Set<Client>().Add(client2);
 
@@ -134,7 +124,6 @@ namespace Backend.IntergationTests
                 ID = 10,
                 ClientId = 1,
                 Description = "Instalacja testowa #10",
-                // ...
                 ConstructionSpecificationId = windowsSpec.ID
             };
             db.Set<ConstructionOrder>().Add(order10);
@@ -169,6 +158,152 @@ namespace Backend.IntergationTests
 
             db.Set<ConstructionOrder>().Add(order11);
             db.Set<ConstructionOrder>().Add(order12);
+
+            var order27 = new ConstructionOrder
+            {
+                ID = 27,
+                ClientId = 21,
+                Client = client,
+                WorkerId = worker1.ID, 
+                Worker = worker1,
+                Description = "Negotiation test #27 (New)",
+                Status = OrderStatus.New,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec
+            };
+            db.Set<ConstructionOrder>().Add(order27);
+
+            var order28 = new ConstructionOrder
+            {
+                ID = 28,
+                ClientId = 21,
+                Client = client,
+                WorkerId = worker1.ID,
+                Worker = worker1,
+                Description = "Negotiation test #28 (NegotiationInProgress)",
+                Status = OrderStatus.NegotiationInProgress,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec,
+                WorkerProposedPrice = 1500m
+            };
+            db.Set<ConstructionOrder>().Add(order28);
+
+            var order29 = new ConstructionOrder
+            {
+                ID = 29,
+                ClientId = 21,
+                Client = client,
+                WorkerId = worker1.ID,
+                Worker = worker1,
+                Description = "Negotiation test #29 (Accepted)",
+                Status = OrderStatus.Accepted,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec,
+                AgreedPrice = 2000m
+            };
+            db.Set<ConstructionOrder>().Add(order29);
+
+            var order71 = new ConstructionOrder
+            {
+                ID = 71,
+                ClientId = 21,   
+                WorkerId = 20,    
+                Description = "Negotiation test #71 (New)",
+                Status = OrderStatus.New,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec
+            };
+            db.Set<ConstructionOrder>().Add(order71);
+
+            var order72 = new ConstructionOrder
+            {
+                ID = 72,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #72 (NegotiationInProgress)",
+                Status = OrderStatus.NegotiationInProgress,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                LastActionBy = LastActionBy.Worker,
+                ConstructionSpecification = windowsSpec,
+                WorkerProposedPrice = 1500m
+            };
+            db.Set<ConstructionOrder>().Add(order72);
+
+            var order73 = new ConstructionOrder
+            {
+                ID = 73,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #73 (Accepted)",
+                Status = OrderStatus.Accepted,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec,
+                AgreedPrice = 2000m
+            };
+            db.Set<ConstructionOrder>().Add(order73);
+
+            var order74 = new ConstructionOrder
+            {
+                ID = 74,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #74 (Already in Negotiation)",
+                Status = OrderStatus.NegotiationInProgress, 
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec,
+                WorkerProposedPrice = 999m
+            };
+            db.Set<ConstructionOrder>().Add(order74);
+
+            var order75 = new ConstructionOrder
+            {
+                ID = 75,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #75 (Not Accepted, e.g. New)",
+                Status = OrderStatus.New,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                ConstructionSpecification = windowsSpec
+            };
+            db.Set<ConstructionOrder>().Add(order75);
+
+            var order76 = new ConstructionOrder
+            {
+                ID = 76,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #72 (NegotiationInProgress)",
+                Status = OrderStatus.NegotiationInProgress,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                LastActionBy = LastActionBy.Worker,
+                ConstructionSpecification = windowsSpec,
+                WorkerProposedPrice = 1500m
+            };
+            db.Set<ConstructionOrder>().Add(order76);      
+            
+            var order77 = new ConstructionOrder
+            {
+                ID = 77,
+                ClientId = 21,
+                WorkerId = 20,
+                Description = "Negotiation test #72 (NegotiationInProgress)",
+                Status = OrderStatus.NegotiationInProgress,
+                ConstructionType = ConstructionType.Windows,
+                ConstructionSpecificationId = windowsSpec.ID,
+                LastActionBy = LastActionBy.Client,
+                ConstructionSpecification = windowsSpec,
+                WorkerProposedPrice = 1500m
+            };
+            db.Set<ConstructionOrder>().Add(order77);
 
             db.SaveChanges();
         }
