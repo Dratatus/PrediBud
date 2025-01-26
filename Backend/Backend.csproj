@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Validatiors\Orders\NewFolder1\" />
   </ItemGroup>
 
 </Project>

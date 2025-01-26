@@ -43,7 +43,7 @@ namespace Backend.Repositories
         public async Task<ConstructionOrder> GetOrderWithSpecificationByIdAsync(int id)
         {
             return await _context.ConstructionOrders
-                .Include(o => o.ConstructionSpecification)
+                //.Include(o => o.ConstructionSpecification)
                 .FirstOrDefaultAsync(o => o.ID == id);
         }
         public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)
