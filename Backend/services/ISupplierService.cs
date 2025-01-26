@@ -2,6 +2,6 @@
 {
     public interface ISupplierService
     {
-        Task UpdateSuppliersAsync(string jsonFilePath);
+        Task UpdateSuppliersAsync();
     }
 }

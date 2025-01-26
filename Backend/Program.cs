@@ -2,6 +2,7 @@ using Backend.Conventer;
 using Backend.Data.Context;
 using Backend.Factories;
 using Backend.Middlewares;
+using Backend.Providers;
 using Backend.Repositories;
 using Backend.services;
 using Backend.services.Calculator;
@@ -21,7 +22,6 @@ namespace Backend
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
@@ -29,15 +29,12 @@ namespace Backend
                 options.JsonSerializerOptions.Converters.Add(new ConstructionSpecificationJsonConverter());
             });
 
-            // Configure Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Configure Database Context
             builder.Services.AddDbContext<PrediBudDBContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("PrediBudConnection")));
 
-            // Add repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IConstructionOrderRepository, ConstructionOrderRepository>();
             builder.Services.AddScoped<IConstructionOrderNotificationRepository, ConstructionOrderNotificationRepository>();
@@ -45,21 +42,24 @@ namespace Backend
             builder.Services.AddScoped<IMaterialPriceRepository, MaterialPriceRepository>();
 
 
-            // Add services
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IConstructionOrderService, ConstructionOrderService>();
-            builder.Services.AddScoped<INegotiationService, NegotiationService>(); 
+            builder.Services.AddScoped<INegotiationService, NegotiationService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<ISupplierService, SupplierService>();
             builder.Services.AddScoped<IMaterialOrderService, MaterialOrderService>();
             builder.Services.AddScoped<ICalculatorService, CalculatorService>();
+            builder.Services.AddScoped<ISupplierService, SupplierService>();
+            builder.Services.AddScoped<ISupplierDataProvider>(sp =>
+            {
+                var path = Path.Combine(sp.GetRequiredService<IHostEnvironment>().ContentRootPath, "Data", "suppliers.json");
+                return new JsonFileSupplierDataProvider(path);
+            });
 
+            builder.Services.AddScoped<ISupplierService, SupplierService>();
 
-            // Add additional utilities
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-            // Add factory
             builder.Services.AddScoped<IConstructionSpecificationFactory, ConstructionSpecificationFactory>();
 
             builder.Services.AddHangfire(config => config
@@ -84,7 +84,6 @@ namespace Backend
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHangfireDashboard();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -102,9 +101,9 @@ namespace Backend
             {
                 var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
                 recurringJobManager.AddOrUpdate<ISupplierService>(
-                    "UpdateSuppliers",
-                    service => service.UpdateSuppliersAsync("Data/suppliers.json"),
-                    Cron.Minutely);
+                "UpdateSuppliers",
+                service => service.UpdateSuppliersAsync(),
+                Cron.Minutely);
             }
 
             app.Run();
