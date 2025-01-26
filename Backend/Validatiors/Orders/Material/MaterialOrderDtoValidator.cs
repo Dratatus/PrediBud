@@ -28,11 +28,6 @@ namespace Backend.Validatiors.Orders.Material
                 throw new ApiException(ErrorMessages.InvalidQuantity, StatusCodes.Status400BadRequest);
             }
 
-            if (dto.CreatedDate == default)
-            {
-                throw new ApiException(ErrorMessages.InvalidCreatedDate, StatusCodes.Status400BadRequest);
-            }
-
             if (dto.UserId <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidUserId, StatusCodes.Status400BadRequest);

@@ -6,6 +6,8 @@ using Backend.Data.Models.Constructions.Specyfication.Windows;
 using Backend.Data.Models.Credidentials;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
+using Backend.Data.Models.Orders.Material;
+using Backend.Data.Models.Suppliers;
 using Backend.Data.Models.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -65,8 +67,26 @@ namespace Backend.IntergationTests
                 PostCode = "67890"
             };
 
+            var supplier1Address = new Address
+            {
+                ID = 3,
+                City = "Supplier City 1",
+                StreetName = "Supplier Street 1",
+                PostCode = "55555"
+            };
+
+            var supplier2Address = new Address
+            {
+                ID = 4,
+                City = "Supplier City 2",
+                StreetName = "Supplier Street 2",
+                PostCode = "66666"
+            };
+
             db.Set<Address>().Add(clientAddress);
             db.Set<Address>().Add(workerAddress);
+            db.Set<Address>().Add(supplier1Address);
+            db.Set<Address>().Add(supplier2Address);
 
             var client = new Client
             {
@@ -102,6 +122,27 @@ namespace Backend.IntergationTests
                 ID = 2,
             };
             db.Set<Client>().Add(client2);
+
+            var supplier1 = new Supplier
+            {
+                ID = 1,
+                Name = "Supplier 1",
+                ContactEmail = "supplier1@example.com",
+                AddressId = supplier1Address.ID,
+                Address = supplier1Address
+            };
+
+            var supplier2 = new Supplier
+            {
+                ID = 2,
+                Name = "Supplier 2",
+                ContactEmail = "supplier2@example.com",
+                AddressId = supplier2Address.ID,
+                Address = supplier2Address
+            };
+
+            db.Set<Supplier>().Add(supplier1);
+            db.Set<Supplier>().Add(supplier2);
 
             var windowsSpec = new WindowsSpecification
             {
@@ -304,6 +345,90 @@ namespace Backend.IntergationTests
                 WorkerProposedPrice = 1500m
             };
             db.Set<ConstructionOrder>().Add(order77);
+
+            var materialPrice1 = new MaterialPrice
+            {
+                ID = 1,
+                MaterialType = MaterialType.Wood,
+                MaterialCategory = ConstructionType.PartitionWall,
+                PriceWithoutTax = 50.0m,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1
+            };
+
+            var materialPrice2 = new MaterialPrice
+            {
+                ID = 2,
+                MaterialType = MaterialType.Glass,
+                MaterialCategory = ConstructionType.Windows,
+                PriceWithoutTax = 120.0m,
+                SupplierId = supplier2.ID,
+                Supplier = supplier2
+            };
+
+            db.Set<MaterialPrice>().Add(materialPrice1);
+            db.Set<MaterialPrice>().Add(materialPrice2);
+
+            var materialOrder1 = new MaterialOrder
+            {
+                ID = 101,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            };
+
+            var materialOrder2 = new MaterialOrder
+            {
+                ID = 102,
+                UnitPriceNet = 120.0m,
+                UnitPriceGross = 147.6m,
+                Quantity = 5,
+                UserId = 20, 
+                SupplierId = supplier2.ID,
+                Supplier = supplier2,
+                MaterialPriceId = materialPrice2.ID,
+                MaterialPrice = materialPrice2,
+                CreatedDate = DateTime.UtcNow.AddDays(-3)
+            };
+
+            var materialOrder3 = new MaterialOrder
+            {
+                ID = 103,
+                UnitPriceNet = 75.0m,
+                UnitPriceGross = 92.25m,
+                Quantity = 8,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-1)
+            };
+
+            var materialOrder4 = new MaterialOrder
+            {
+                ID = 104,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            };
+
+            db.Set<MaterialOrder>().Add(materialOrder1);
+            db.Set<MaterialOrder>().Add(materialOrder2);
+            db.Set<MaterialOrder>().Add(materialOrder3);
+            db.Set<MaterialOrder>().Add(materialOrder4);
 
             db.SaveChanges();
         }
