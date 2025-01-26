@@ -12,6 +12,7 @@ using Backend.Data.Models.MaterialPrices.ShellOpen;
 using Backend.Data.Models.MaterialPrices.Stairs;
 using Backend.Data.Models.MaterialPrices.Windows;
 using Backend.Data.Models.Suppliers;
+using Backend.Providers;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -20,22 +21,19 @@ namespace Backend.services
     public class SupplierService : ISupplierService
     {
         private readonly PrediBudDBContext _context;
+        private readonly ISupplierDataProvider _dataProvider;
 
-        public SupplierService(PrediBudDBContext context)
+        public SupplierService(PrediBudDBContext context, ISupplierDataProvider dataProvider)
         {
             _context = context;
+            _dataProvider = dataProvider;
         }
 
-        public async Task UpdateSuppliersAsync(string jsonFilePath)
+        public async Task UpdateSuppliersAsync()
         {
             try
             {
-                var json = await File.ReadAllTextAsync(jsonFilePath);
-                var settings = new JsonSerializerSettings
-                {
-                    Converters = { new MaterialPriceJsonConverter() },
-                };
-                var suppliers = JsonConvert.DeserializeObject<List<Supplier>>(json, settings);
+                var suppliers = await _dataProvider.GetSuppliersAsync();
 
                 if (suppliers == null || !suppliers.Any())
                 {
