@@ -126,5 +126,11 @@
         public const string OrderNotInNegotiation = "Order is not in negotiation.";
         public const string InvalidNegotiationAction = "You cannot perform this negotiation action.";
         public const string OrderNotAccepted = "The order is not in the 'Accepted' status to perform this action";
+        public const string InvalidMaterialType = "Invalid material type specified";
+        public const string InvalidFinishMaterial = "Invalid finish material type specified";
+        public const string InvalidShellOpenCeiling = "Ceiling area must be greater than 0.";
+        public const string InvalidLoadBearingWallMaterial = "Load bearing wall material type is invalid.";
+        public const string InvalidPartitionWallMaterial = "Partition wall material type is invalid.";
+        public const string InvalidRoofMaterial = "Roof material type is invalid.";
     }
 }

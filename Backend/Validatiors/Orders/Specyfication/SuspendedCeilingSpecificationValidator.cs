@@ -13,6 +13,11 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
                 throw new ApiException(ErrorMessages.InvalidSuspendedCeilingDetails, StatusCodes.Status400BadRequest);
             }
 
+            if (details.Material == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
+
             if (details.Area <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidSuspendedCeilingArea, StatusCodes.Status400BadRequest);

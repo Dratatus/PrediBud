@@ -73,7 +73,8 @@ namespace Backend.IntergationTests
                 {
                     Amount = 5.0,
                     Height = 3.0,
-                    Width = 1.2
+                    Width = 1.2,
+                    Material = 3,
                 },
                 PlacementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
                 RequestedStartTime = DateTime.UtcNow,

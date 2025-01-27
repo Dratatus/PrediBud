@@ -55,14 +55,11 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task GetOrderById_ReturnsNotFound_WhenInvalidId()
         {
-            var orderId = 999; 
+            var orderId = 1231412312; 
 
             var response = await _client.GetAsync($"/api/MaterialOrder/{orderId}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            Assert.Contains($"Order with ID {orderId} not found.", responseBody);
         }
 
         [Fact]

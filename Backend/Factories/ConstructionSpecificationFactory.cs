@@ -97,7 +97,7 @@ namespace Backend.Factories
             {
                 Length = details.Length,
                 Width = details.Width,
-                RailingMaterial = details.RailingMaterial
+                RailingMaterial = details.RailingMaterial.Value
             };
         }
 
@@ -109,7 +109,7 @@ namespace Backend.Factories
             {
                 Area = details.Area,
                 Height = details.Height,
-                Material = details.Material
+                Material = details.Material.Value
             };
         }
 
@@ -122,7 +122,7 @@ namespace Backend.Factories
                 Amount = details.Amount,
                 Height = details.Height,
                 Width = details.Width,
-                Material = details.Material
+                Material = details.Material.Value
             };
         }
 
@@ -133,8 +133,8 @@ namespace Backend.Factories
             return new FacadeSpecification
             {
                 SurfaceArea = details.SurfaceArea,
-                InsulationType = details.InsulationType,
-                FinishMaterial = details.FinishMaterial
+                InsulationType = details.InsulationType.Value,
+                FinishMaterial = details.FinishMaterial.Value
             };
         }
 
@@ -145,7 +145,7 @@ namespace Backend.Factories
             return new FlooringSpecification
             {
                 Area = details.Area,
-                Material = details.Material
+                Material = details.Material.Value
             };
         }
         private FoundationSpecification CreateFoundationSpecification(FoundationSpecificationDetails details)
@@ -167,7 +167,7 @@ namespace Backend.Factories
             return new InsulationOfAtticSpecification
             {
                 Area = details.Area,
-                Material = details.Material,
+                Material = details.Material.Value,
                 Thickness = details.Thickness
             };
         }
@@ -179,7 +179,7 @@ namespace Backend.Factories
             return new PaintingSpecification
             {
                 WallSurfaceArea = details.WallSurfaceArea,
-                PaintType = details.PaintType,
+                PaintType = details.PaintType.Value,
                 NumberOfCoats = details.NumberOfCoats
             };
         }
@@ -191,7 +191,7 @@ namespace Backend.Factories
             return new PlasteringSpecification
             {
                 WallSurfaceArea = details.WallSurfaceArea,
-                PlasterType = details.PlasterType
+                PlasterType = details.PlasterType.Value
             };
         }
 
@@ -212,14 +212,14 @@ namespace Backend.Factories
                     Height = details.LoadBearingWallHeight,
                     Width = details.LoadBearingWallWidth,
                     Thickness = details.LoadBearingWallThickness,
-                    Material = details.LoadBearingWallMaterial
+                    Material = details.LoadBearingWallMaterial.Value
                 },
                 PartitionWall = new PartitionWallSpecification
                 {
                     Height = details.PartitionWallHeight,
                     Width = details.PartitionWallWidth,
                     Thickness = details.PartitionWallThickness,
-                    Material = details.PartitionWallMaterial
+                    Material = details.PartitionWallMaterial.Value
                 },
                 Chimney = new ChimneySpecification
                 {
@@ -232,12 +232,12 @@ namespace Backend.Factories
                 Celling = new CeilingSpecification
                 {
                     Area = details.CeilingArea,
-                    Material = details.CeilingMaterial
+                    Material = details.CeilingMaterial.Value
                 },
                 Roof = new RoofSpecification
                 {
                     Area = details.RoofArea,
-                    Material = details.RoofMaterial,
+                    Material = details.RoofMaterial.Value,
                     Pitch = details.RoofPitch
                 },
                 ImagesUrl = details.ImagesUrl
@@ -253,7 +253,7 @@ namespace Backend.Factories
                 NumberOfSteps = details.NumberOfSteps,
                 Height = details.Height,
                 Width = details.Width,
-                Material = details.Material
+                Material = details.Material.Value
             };
         }
 
@@ -265,7 +265,8 @@ namespace Backend.Factories
             {
                 Amount = details.Amount,
                 Height = details.Height,
-                Width = details.Width
+                Width = details.Width,
+                Material = details.Material.Value
             };
         }
     }

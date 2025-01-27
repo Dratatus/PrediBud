@@ -6,6 +6,6 @@ namespace Backend.DTO.Specyfication
     {
         public decimal Area { get; set; }
         public decimal Height { get; set; }
-        public SuspendedCeilingMaterial Material { get; set; }
+        public SuspendedCeilingMaterial? Material { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 {
     public enum StaircaseMaterial
     {
+        Unknown,
         Wood,      
         Metal,      
         Concrete,   

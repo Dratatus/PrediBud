@@ -12,6 +12,10 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
             {
                 throw new ApiException(ErrorMessages.InvalidWindowsDetails, StatusCodes.Status400BadRequest);
             }
+            if (details.Material == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
 
             if (details.Amount <= 0)
             {

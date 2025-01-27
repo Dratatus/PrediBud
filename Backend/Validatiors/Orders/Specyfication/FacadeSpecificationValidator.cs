@@ -13,6 +13,16 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
                 throw new ApiException(ErrorMessages.InvalidFacadeDetails, StatusCodes.Status400BadRequest);
             }
 
+            if (details.InsulationType == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
+
+            if (details.FinishMaterial == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidFinishMaterial, StatusCodes.Status400BadRequest);
+            }
+
             if (details.SurfaceArea <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidFacadeSurfaceArea, StatusCodes.Status400BadRequest);

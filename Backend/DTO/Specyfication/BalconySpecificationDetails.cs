@@ -6,6 +6,6 @@ namespace Backend.DTO.Specyfication
     {
         public decimal Length { get; set; }
         public decimal Width { get; set; }
-        public RailingMaterial RailingMaterial { get; set; }
+        public RailingMaterial? RailingMaterial { get; set; }
     }
 }
