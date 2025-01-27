@@ -13,6 +13,11 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
                 throw new ApiException(ErrorMessages.InvalidPaintingDetails, StatusCodes.Status400BadRequest);
             }
 
+            if (details.PaintType == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
+
             if (details.WallSurfaceArea <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidPaintingWallSurfaceArea, StatusCodes.Status400BadRequest);

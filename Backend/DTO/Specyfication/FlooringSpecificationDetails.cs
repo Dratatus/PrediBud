@@ -5,6 +5,6 @@ namespace Backend.DTO.Specyfication
     public class FlooringSpecificationDetails
     {
         public decimal Area { get; set; }
-        public FlooringMaterial Material { get; set; }
+        public FlooringMaterial? Material { get; set; }
     }
 }

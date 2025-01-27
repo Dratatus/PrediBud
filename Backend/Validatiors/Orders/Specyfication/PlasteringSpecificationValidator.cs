@@ -13,10 +13,16 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
                 throw new ApiException(ErrorMessages.InvalidPlasteringDetails, StatusCodes.Status400BadRequest);
             }
 
+            if (details.PlasterType == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
+
             if (details.WallSurfaceArea <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidPlasteringWallSurfaceArea, StatusCodes.Status400BadRequest);
             }
+
         }
     }
 }

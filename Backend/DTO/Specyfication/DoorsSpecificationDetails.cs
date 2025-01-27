@@ -7,6 +7,6 @@ namespace Backend.DTO.Specyfication
         public int Amount { get; set; }
         public decimal Height { get; set; }
         public decimal Width { get; set; }
-        public DoorMaterial Material { get; set; }
+        public DoorMaterial? Material { get; set; }
     }
 }

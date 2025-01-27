@@ -13,6 +13,11 @@ namespace Backend.Validatiors.ConstructionOrder.Specyfication
                 throw new ApiException(ErrorMessages.InvalidStaircaseDetails, StatusCodes.Status400BadRequest);
             }
 
+            if (details.Material == null)
+            {
+                throw new ApiException(ErrorMessages.InvalidMaterialType, StatusCodes.Status400BadRequest);
+            }
+
             if (details.NumberOfSteps <= 0)
             {
                 throw new ApiException(ErrorMessages.InvalidStaircaseNumberOfSteps, StatusCodes.Status400BadRequest);

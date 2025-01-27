@@ -7,6 +7,6 @@ namespace Backend.DTO.Specyfication
         public int NumberOfSteps { get; set; }
         public decimal Height { get; set; }
         public decimal Width { get; set; }
-        public StaircaseMaterial Material { get; set; }
+        public StaircaseMaterial? Material { get; set; }
     }
 }
