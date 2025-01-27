@@ -1,10 +1,5 @@
 ﻿using Backend.Data.Context;
 using Backend.Data.Models.Users;
-using Backend.DTO;
-using Backend.DTO.Auth;
-using Backend.services;
-using Backend.Validation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
@@ -16,6 +11,12 @@ namespace Backend.Repositories
         public UserRepository(PrediBudDBContext context)
         {
             _context = context;
+        }
+
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.ID == userId);
         }
 
         public async Task<User> GetByEmailAsync(string email)
@@ -40,6 +41,16 @@ namespace Backend.Repositories
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> HasMaterialOrdersAsync(int userId)
+        {
+            return await _context.MaterialOrders.AnyAsync(mo => mo.UserId == userId);
+        }
+
+        public async Task<bool> HasConstructionOrdersAsync(int userId)
+        {
+            return await _context.ConstructionOrders.AnyAsync(co => co.ClientId == userId || co.WorkerId == userId);
         }
 
     }

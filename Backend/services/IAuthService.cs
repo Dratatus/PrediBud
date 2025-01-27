@@ -7,6 +7,6 @@ namespace Backend.services
     {
         Task<AuthResult> LoginAsync(LoginBody request);
         Task<AuthResult> RegisterAsync(RegisterUserBody request);
-        Task<AuthResult> DeleteUserAsync(int userId);
+        Task DeleteUserAsync(int userId);
     }
 }

@@ -2,9 +2,11 @@
 {
     public enum NotificationStatus
     {
-        Pending,
-        InProgress,
-        Completed,
-        Cancelled
+        OrderAccepted,              
+        NegotiationStarted,          
+        NegotiationRejected,        
+        ContinuedNegotiation,         
+        NewOrderCreated,             
+        OrderCompleted             
     }
 }
