@@ -15,32 +15,32 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-        const response = await axios.post('http://10.0.2.2:5142/api/auth/login', {
-            email: email,
-            password: password,
-        });
+      const response = await axios.post('http://10.0.2.2:5142/api/auth/login', { email, password });
 
-        const token = response.data.token;
-        console.log('Login successful:', token);
+      console.log(response);
 
-        const decodedToken = decodeJWT(token);
-        console.log('Decoded Token:', decodedToken);
+      const token = response.data.token;
+      console.log('Login successful:', token);
 
-        const userName = decodedToken?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-        const userRole = decodedToken?.UserType;
+      const decodedToken = decodeJWT(token);
+      console.log('Decoded Token:', decodedToken);
 
-        console.log('User Name:', userName);
-        console.log('User Role:', userRole);
+      const userName = decodedToken?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
+      const userRole = decodedToken?.UserType;
 
-        navigation.navigate('UserProfile', {
-            userRole: userRole,
-            userName: userName,
-        });
+      console.log('User Name:', userName);
+      console.log('User Role:', userRole);
+
+      navigation.navigate('UserProfile', {
+          userRole: userRole,
+          userName: userName,
+      });
 
     } catch (error: any) {
-        console.error('Error during login:', error.response?.data || error.message);
+      console.error('Error during login:', error.response?.data || error.message);
+      console.error('Error during login:', error);
     }
-};
+  };
 
   const decodeJWT = (token: string) => {
   try {
@@ -113,13 +113,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 60,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0d0',
   },
   logo: {
     width: 100,
     height: 100,
     marginBottom: 20,
     marginTop: 20,
+    borderRadius: 100
   },
   title: {
     fontSize: 30,
