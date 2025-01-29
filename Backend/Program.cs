@@ -103,7 +103,7 @@ namespace Backend
                 recurringJobManager.AddOrUpdate<ISupplierService>(
                 "UpdateSuppliers",
                 service => service.UpdateSuppliersAsync(),
-                Cron.Minutely);
+                Cron.Daily);
             }
 
             app.Run();
