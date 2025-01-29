@@ -132,5 +132,7 @@
         public const string InvalidLoadBearingWallMaterial = "Load bearing wall material type is invalid.";
         public const string InvalidPartitionWallMaterial = "Partition wall material type is invalid.";
         public const string InvalidRoofMaterial = "Roof material type is invalid.";
+        public const string NotificationNotFound = "Notification not found";
+        public const string NotificationsNotFound = "Notifications not found";
     }
 }

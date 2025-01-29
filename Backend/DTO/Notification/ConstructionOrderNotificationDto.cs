@@ -1,17 +1,13 @@
-﻿using Backend.Data.Models.Users;
+﻿using Backend.Data.Models.Notifications;
 
-namespace Backend.Data.Models.Notifications
+namespace Backend.DTO.Notification
 {
-    public class ConstructionOrderNotification
+    public class ConstructionOrderNotificationDto
     {
         public int ID { get; set; }
         public NotificationStatus Status { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public int? WorkerId { get; set; }
-        public Worker Worker { get; set; }
-        public int? ClientId { get; set; }
-        public Client Client { get; set; }
         public bool IsRead { get; set; }
         public int ConstructionOrderID { get; set; }
         public DateTime Date { get; set; }

@@ -44,6 +44,8 @@ namespace Backend.Repositories
         {
             return await _context.ConstructionOrders
                 .Include(o => o.ConstructionSpecification)
+                .Include(co => co.Client)
+                .Include(co => co.Worker)
                 .FirstOrDefaultAsync(o => o.ID == id);
         }
         public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)

@@ -20,6 +20,38 @@ namespace Backend.Repositories
             await _context.ConstructionOrderNotifications.AddAsync(notification);
         }
 
+        public async Task<ConstructionOrderNotification> GetByIdAsync(int notificationId)
+        {
+            return await _context.ConstructionOrderNotifications
+                .FirstOrDefaultAsync(n => n.ID == notificationId);
+        }
+
+        public async Task<IEnumerable<ConstructionOrderNotification>> GetNotificationsByUserIdAsync(int userId)
+        {
+            return await _context.ConstructionOrderNotifications
+                .Where(n => n.ClientId == userId || n.WorkerId == userId)
+                .OrderByDescending(n => n.Date)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ConstructionOrderNotification>> GetUnreadNotificationsByUserIdAsync(int userId)
+        {
+            return await _context.ConstructionOrderNotifications
+                .Where(n => (n.ClientId == userId || n.WorkerId == userId) && !n.IsRead)
+                .OrderByDescending(n => n.Date)
+                .ToListAsync();
+        }
+
+        public async Task DeleteAsync(ConstructionOrderNotification notification)
+        {
+            _context.ConstructionOrderNotifications.Remove(notification);
+        }
+
+        public async Task DeleteAllAsync(IEnumerable<ConstructionOrderNotification> notifications)
+        {
+            _context.ConstructionOrderNotifications.RemoveRange(notifications);
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

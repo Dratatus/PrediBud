@@ -173,6 +173,13 @@ namespace Backend.services.Construction
                     ContactDetails = order.Client.ContactDetails,
                     AddressId = order.Client.AddressId,
                     Address = order.Client.Address
+                },   
+                Worker = order.Worker == null ? null : new WorkerDto
+                {
+                    ID = order.Worker.ID,
+                    ContactDetails = order.Worker.ContactDetails,
+                    AddressId = order.Worker.AddressId,
+                    Address = order.Worker.Address
                 },
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId,
