@@ -5,8 +5,9 @@ using System.Text.Json;
 using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Conventer;
+using Backend.IntergationTests.Data;
 
-namespace Backend.IntergationTests
+namespace Backend.IntergationTests.Controllers
 {
     public class ConstructionOrderClientControllerIntegrationTests : IClassFixture<TestDbContextFactory>
     {
@@ -120,8 +121,8 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task DeleteOrder_ReturnsForbidden_ForInvalidClient()
         {
-            var clientId = 999; 
-            var orderId = 10;
+            var clientId = 999;
+            var orderId = 77;
 
             var response = await _client.DeleteAsync($"/api/ConstructionOrderClient/{orderId}/{clientId}");
 

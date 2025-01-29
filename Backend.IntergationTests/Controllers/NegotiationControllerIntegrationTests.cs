@@ -1,11 +1,12 @@
 ﻿using Backend.Conventer;
 using Backend.Data.Consts;
+using Backend.IntergationTests.Data;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Backend.IntergationTests
+namespace Backend.IntergationTests.Controllers
 {
     public class NegotiationControllerIntegrationTests : IClassFixture<TestDbContextFactory>
     {
@@ -53,7 +54,7 @@ namespace Backend.IntergationTests
 
             var response = await _client.PostAsync($"/api/Negotiation/{orderId}/initiate", content);
 
-            response.EnsureSuccessStatusCode(); 
+            response.EnsureSuccessStatusCode();
             var respString = await response.Content.ReadAsStringAsync();
             Assert.Contains("Negotiation has been initiated", respString);
         }
@@ -74,7 +75,7 @@ namespace Backend.IntergationTests
         public async Task AcceptNegotiation_ReturnsOk_WhenOrderIsNegotiationInProgress()
         {
             var orderId = 72;
-            var requestBody = new { ClientId = 21 }; 
+            var requestBody = new { ClientId = 21 };
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync($"/api/Negotiation/{orderId}/accept", content);
@@ -88,7 +89,7 @@ namespace Backend.IntergationTests
         public async Task RejectNegotiation_ReturnsOk_WhenOrderIsNegotiationInProgress()
         {
             var orderId = 77;
-            var requestBody = new { UserId = 20 }; 
+            var requestBody = new { UserId = 20 };
             var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync($"/api/Negotiation/{orderId}/reject", content);

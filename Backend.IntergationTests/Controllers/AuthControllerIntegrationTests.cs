@@ -1,10 +1,11 @@
 using Backend.Data.Models.Common;
 using Backend.DTO.Auth;
+using Backend.IntergationTests.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Text;
 
-namespace Backend.IntergationTests
+namespace Backend.IntergationTests.Controllers
 {
     public class AuthControllerIntegrationTests : IClassFixture<TestDbContextFactory>
     {
