@@ -116,7 +116,7 @@ namespace Backend.IntergationTests.Controllers
 
             var userId = 21;
 
-            var response = await _client.PutAsync($"/api/MaterialOrder?userId={userId}", content);
+            var response = await _client.PutAsync($"/api/MaterialOrder/{userId}", content);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
@@ -142,7 +142,7 @@ namespace Backend.IntergationTests.Controllers
 
             var userId = 999;
 
-            var response = await _client.PutAsync($"/api/MaterialOrder?userId={userId}", content);
+            var response = await _client.PutAsync($"/api/MaterialOrder/{userId}", content);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -159,7 +159,7 @@ namespace Backend.IntergationTests.Controllers
             var orderId = 108;
             var userId = 21;
 
-            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}?userId={userId}");
+            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}/{userId}");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
@@ -170,7 +170,7 @@ namespace Backend.IntergationTests.Controllers
             var orderId = 107;
             var userId = 999;
 
-            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}?userId={userId}");
+            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}/{userId}");
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();

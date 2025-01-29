@@ -10,9 +10,10 @@ using Backend.DTO.Users.Worker;
 using Backend.Factories;
 using Backend.Middlewares;
 using Backend.Repositories;
+using Backend.services.Notification;
 using Backend.Validatiors.Orders.Construction;
 
-namespace Backend.services
+namespace Backend.services.Construction
 {
     public class ConstructionOrderService : IConstructionOrderService
     {

@@ -6,12 +6,13 @@ using Backend.DTO;
 using Backend.DTO.Auth;
 using Backend.Middlewares;
 using Backend.Repositories;
+using Backend.services.Token;
 using Backend.Validatiors.DeleteUser;
 using Backend.Validatiors.Login;
 
-namespace Backend.services
+namespace Backend.services.Auth
 {
-    public class AuthService: IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;

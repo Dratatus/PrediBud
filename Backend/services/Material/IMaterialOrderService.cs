@@ -1,7 +1,7 @@
 ﻿using Backend.Data.Models.Orders.Material;
 using Backend.DTO.MaterialOrder;
 
-namespace Backend.services
+namespace Backend.services.Material
 {
     public interface IMaterialOrderService
     {

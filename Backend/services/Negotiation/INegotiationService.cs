@@ -1,5 +1,4 @@
-﻿
-namespace Backend.services
+﻿namespace Backend.services.Negotiation
 {
     public interface INegotiationService
     {

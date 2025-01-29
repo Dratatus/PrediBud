@@ -1,6 +1,6 @@
 ﻿using Backend.Data.Models.Users;
 
-namespace Backend.services
+namespace Backend.services.Token
 {
     public interface IJwtTokenGenerator
     {

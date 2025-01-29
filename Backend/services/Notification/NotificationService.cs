@@ -1,10 +1,9 @@
 ﻿using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Users;
 using Backend.Repositories;
-using Backend.services;
 using System.Threading.Tasks;
 
-namespace Backend.Services
+namespace Backend.services.Notification
 {
     public class NotificationService : INotificationService
     {

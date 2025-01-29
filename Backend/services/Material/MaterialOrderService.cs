@@ -7,7 +7,7 @@ using Backend.Middlewares;
 using Backend.Repositories;
 using Backend.Validatiors.Orders.Material;
 
-namespace Backend.services
+namespace Backend.services.Material
 {
     public class MaterialOrderService : IMaterialOrderService
     {

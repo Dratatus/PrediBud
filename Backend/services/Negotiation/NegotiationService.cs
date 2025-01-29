@@ -1,13 +1,13 @@
 ﻿using Backend.Data.Models.Orders;
 using Backend.Data.Models.Notifications;
 using Backend.Repositories;
-using Backend.services;
 using Backend.Data.Models.Users;
 using Backend.Data.Consts;
 using Backend.Middlewares;
 using Backend.Validatiors.Negotiation;
+using Backend.services.Notification;
 
-namespace Backend.Services
+namespace Backend.services.Negotiation
 {
     public class NegotiationService : INegotiationService
     {
@@ -137,8 +137,8 @@ namespace Backend.Services
                 throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
             }
 
-            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
-                (isWorker && order.LastActionBy == LastActionBy.Worker))
+            if (isClient && order.LastActionBy == LastActionBy.Client ||
+                isWorker && order.LastActionBy == LastActionBy.Worker)
             {
                 throw new ApiException(ErrorMessages.InvalidNegotiationAction, StatusCodes.Status400BadRequest);
             }
@@ -202,8 +202,8 @@ namespace Backend.Services
             var isClient = user is Client && order.ClientId == userId;
             var isWorker = user is Worker && order.WorkerId == userId;
 
-            if ((isClient && order.LastActionBy == LastActionBy.Client) ||
-                (isWorker && order.LastActionBy == LastActionBy.Worker))
+            if (isClient && order.LastActionBy == LastActionBy.Client ||
+                isWorker && order.LastActionBy == LastActionBy.Worker)
             {
                 throw new ApiException(ErrorMessages.InvalidNegotiationAction, StatusCodes.Status400BadRequest);
             }
