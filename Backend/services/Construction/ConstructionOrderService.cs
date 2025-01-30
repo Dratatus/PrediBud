@@ -1,9 +1,11 @@
 ﻿using Backend.Data.Consts;
+using Backend.Data.Models.Common;
 using Backend.Data.Models.Notifications;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
 using Backend.Data.Models.Users;
 using Backend.DTO.ConstructionOrderDto;
+using Backend.DTO.Orders;
 using Backend.DTO.Request;
 using Backend.DTO.Users.Client;
 using Backend.DTO.Users.Worker;
@@ -50,7 +52,6 @@ namespace Backend.services.Construction
                 WorkerProposedPrice = order.WorkerProposedPrice,
                 AgreedPrice = order.AgreedPrice,
                 TotalPrice = order.TotalPrice,
-                ClientId = order.ClientId,
                 Client = order.Client == null ? null : new ClientDto
                 {
                     ID = order.Client.ID,
@@ -58,7 +59,6 @@ namespace Backend.services.Construction
                     AddressId = order.Client.AddressId,
                     Address = order.Client.Address
                 },
-                WorkerId = order.WorkerId,
                 Worker = order.Worker == null ? null : new WorkerDto
                 {
                     ID = order.Worker.ID,
@@ -67,6 +67,12 @@ namespace Backend.services.Construction
                     AddressId = order.Worker.AddressId,
                     Address = order.Worker.Address
                 },
+                Address = order.Address != null ? new OrderAddressDto
+                {
+                    City = order.Address.City,
+                    PostCode = order.Address.PostCode,
+                    StreetName = order.Address.StreetName
+                } : null,
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId
 
@@ -91,7 +97,6 @@ namespace Backend.services.Construction
                 WorkerProposedPrice = order.WorkerProposedPrice,
                 AgreedPrice = order.AgreedPrice,
                 TotalPrice = order.TotalPrice,
-                ClientId = order.ClientId,
                 Client = order.Client == null ? null : new ClientDto
                 {
                     ID = order.Client.ID,
@@ -99,7 +104,6 @@ namespace Backend.services.Construction
                     AddressId = order.Client.AddressId,
                     Address = order.Client.Address
                 },
-                WorkerId = order.WorkerId,
                 Worker = order.Worker == null ? null : new WorkerDto
                 {
                     ID = order.Worker.ID,
@@ -107,6 +111,12 @@ namespace Backend.services.Construction
                     ContactDetails = order.Worker.ContactDetails,
                     AddressId = order.Worker.AddressId,
                     Address = order.Worker.Address
+                },
+                Address = new OrderAddressDto
+                {
+                    City = order.Address.City,
+                    PostCode = order.Address.PostCode,
+                    StreetName = order.Address.StreetName
                 },
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId
@@ -131,7 +141,6 @@ namespace Backend.services.Construction
                 WorkerProposedPrice = order.WorkerProposedPrice,
                 AgreedPrice = order.AgreedPrice,
                 TotalPrice = order.TotalPrice,
-                ClientId = order.ClientId,
                 Client = order.Client == null ? null : new ClientDto
                 {
                     ID = order.Client.ID,
@@ -141,6 +150,12 @@ namespace Backend.services.Construction
                 },
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId,
+                Address = new OrderAddressDto
+                {
+                    City = order.Address.City,
+                    PostCode = order.Address.PostCode,
+                    StreetName = order.Address.StreetName
+                }
             }).ToList();
         }
         public async Task<ConstructionOrderDto> GetOrderByIdAsync(int id)
@@ -166,7 +181,13 @@ namespace Backend.services.Construction
                 WorkerProposedPrice = order.WorkerProposedPrice,
                 AgreedPrice = order.AgreedPrice,
                 TotalPrice = order.TotalPrice,
-                ClientId = order.ClientId,
+                Worker = order.Worker == null ? null : new WorkerDto
+                {
+                    ID = order.Worker.ID,
+                    ContactDetails = order.Worker.ContactDetails,
+                    AddressId = order.Worker.AddressId,
+                    Address = order.Worker.Address
+                },
                 Client = order.Client == null ? null : new ClientDto
                 {
                     ID = order.Client.ID,
@@ -176,6 +197,12 @@ namespace Backend.services.Construction
                 },
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId,
+                Address = new OrderAddressDto
+                {
+                    City = order.Address.City,
+                    PostCode = order.Address.PostCode,
+                    StreetName = order.Address.StreetName
+                }
             };
 
 
@@ -204,7 +231,8 @@ namespace Backend.services.Construction
                 RequestedStartTime = request.RequestedStartTime,
                 ClientProposedPrice = request.ClientProposedPrice,
                 ClientId = request.ClientId,
-                ConstructionSpecification = specification
+                ConstructionSpecification = specification,
+                Address = new OrderAddress { City = request.Address.City, PostCode = request.Address.PostCode, StreetName = request.Address.StreetName }
             };
 
             await _orderRepository.AddAsync(order);
@@ -214,12 +242,21 @@ namespace Backend.services.Construction
             {
                 ID = order.ID,
                 Description = order.Description,
-                ClientId = order.ClientId,
                 ConstructionType = order.ConstructionType,
                 RequestedStartTime = order.RequestedStartTime,
                 ClientProposedPrice = order.ClientProposedPrice,
                 PlacementPhotos = order.placementPhotos,
-                ConstructionSpecification = specification
+                ConstructionSpecification = specification,
+                Client = new ClientDto
+                {
+                    ID = order.Client.ID
+                },
+                Address = new OrderAddressDto
+                {
+                    City = order.Address.City,
+                    PostCode = order.Address.PostCode,
+                    StreetName = order.Address.StreetName
+                }
             };
         }
 

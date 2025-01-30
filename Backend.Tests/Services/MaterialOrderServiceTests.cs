@@ -2,7 +2,7 @@
 using Backend.Data.Models.Common;
 using Backend.Data.Models.Orders.Material;
 using Backend.Data.Models.Suppliers;
-using Backend.DTO.MaterialOrder;
+using Backend.DTO.Orders.Material;
 using Backend.DTO.Users.Supplier;
 using Backend.Middlewares;
 using Backend.Repositories;
@@ -15,14 +15,16 @@ namespace Backend.Tests.Services
     {
         private readonly Mock<IMaterialOrderRepository> _repositoryMock;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IMaterialPriceRepository> _materialPriceRepositoryMock;
         private readonly MaterialOrderService _service;
 
         public MaterialOrderServiceTests()
         {
             _repositoryMock = new Mock<IMaterialOrderRepository>();
             _userRepositoryMock = new Mock<IUserRepository>();
+            _materialPriceRepositoryMock = new Mock<IMaterialPriceRepository>();
 
-            _service = new MaterialOrderService(_repositoryMock.Object, _userRepositoryMock.Object);
+            _service = new MaterialOrderService(_repositoryMock.Object, _userRepositoryMock.Object, _materialPriceRepositoryMock.Object);
         }
 
         [Fact]
@@ -37,12 +39,12 @@ namespace Backend.Tests.Services
                 CreatedDate = new System.DateTime(2025, 1, 16, 21, 39, 16),
                 UserId = 1,
                 SupplierId = 45,
-                Supplier = new SupplierDto
-                {
-                    Name = "BestMaterials",
-                    ContactEmail = "info@test.com",
-                },
-                MaterialPriceId = 1380
+                //Supplier = new SupplierDto
+                //{
+                //    Name = "BestMaterials",
+                //    ContactEmail = "info@test.com",
+                //},
+                //MaterialPriceId = 1380
             };
 
             var createdEntity = new MaterialOrder

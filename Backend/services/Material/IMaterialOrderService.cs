@@ -1,13 +1,13 @@
 ﻿using Backend.Data.Models.Orders.Material;
-using Backend.DTO.MaterialOrder;
+using Backend.DTO.Orders.Material;
 
 namespace Backend.services.Material
 {
     public interface IMaterialOrderService
     {
-        Task<MaterialOrderDto> CreateMaterialOrderAsync(MaterialOrderDto dto);
-        Task<MaterialOrderDto> GetMaterialOrderByIdAsync(int orderId);
-        Task<IEnumerable<MaterialOrderDto>> GetAllMaterialOrdersAsync();
+        Task<MaterialOrderDetailsDto> CreateMaterialOrderAsync(MaterialOrderDto dto);
+        Task<MaterialOrderDetailsDto> GetMaterialOrderByIdAsync(int orderId);
+        Task<IEnumerable<MaterialOrderDetailsDto>> GetAllMaterialOrdersAsync();
         Task<bool> UpdateMaterialOrderAsync(UpdateMaterialOrderDto dto, int userId);
         Task<bool> DeleteMaterialOrderAsync(int orderId, int userId);
     }

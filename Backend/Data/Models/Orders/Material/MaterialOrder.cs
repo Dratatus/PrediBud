@@ -1,6 +1,7 @@
 ﻿using Backend.Data.Models.Constructions;
 using Backend.Data.Models.Suppliers;
 using Backend.Data.Models.Users;
+using Backend.DTO.Orders;
 
 namespace Backend.Data.Models.Orders.Material
 {
@@ -15,6 +16,8 @@ namespace Backend.Data.Models.Orders.Material
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public int UserId { get; set; }
         public User User { get; set; }
+        public int OrderAddressId { get; set; }
+        public OrderAddress Address { get; set; }
         public int SupplierId { get; set; }
         public Supplier Supplier { get; set; }
         public int? MaterialPriceId { get; set; }
