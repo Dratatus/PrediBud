@@ -1,4 +1,4 @@
-﻿using Backend.DTO.MaterialOrder;
+﻿using Backend.DTO.Orders.Material;
 using Backend.services.Material;
 using Microsoft.AspNetCore.Mvc;
 

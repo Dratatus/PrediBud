@@ -1,10 +1,10 @@
-﻿using Backend.DTO.MaterialOrder;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Backend.Data.Consts;
 using Backend.IntergationTests.Data;
+using Backend.DTO.Orders.Material;
 
 namespace Backend.IntergationTests.Controllers
 {

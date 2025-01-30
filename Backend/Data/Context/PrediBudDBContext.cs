@@ -34,6 +34,7 @@ using Backend.Data.Models.Constructions.Specyfication.Foundation;
 using Backend.Data.Models.Constructions.Specyfication.Roof;
 using Backend.Data.Models.Constructions.Specyfication.Windows;
 using Backend.Data.Models.MaterialPrices.Windows;
+using Backend.Data.Models.Orders;
 
 namespace Backend.Data.Context
 {
@@ -46,8 +47,8 @@ namespace Backend.Data.Context
         public DbSet<MaterialNotification> MaterialNotifications { get; set; }
         public DbSet<ConstructionOrderNotification> ConstructionOrderNotifications { get; set; }
         public DbSet<ConstructionOrder> ConstructionOrders { get; set; }
-        public DbSet<MaterialOrder> MaterialOrders { get; set; } 
-        public DbSet<MaterialPrice> MaterialPrices { get; set; } 
+        public DbSet<MaterialOrder> MaterialOrders { get; set; }
+        public DbSet<MaterialPrice> MaterialPrices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,6 +93,18 @@ namespace Backend.Data.Context
                .HasForeignKey(co => co.WorkerId)
                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<OrderAddress>()
+              .HasOne(a => a.ConstructionOrder)
+              .WithOne(o => o.Address)
+              .HasForeignKey<OrderAddress>(a => a.ConstructionOrderId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderAddress>()
+                .HasOne(a => a.MaterialOrder)
+                .WithOne(m => m.Address)
+                .HasForeignKey<OrderAddress>(a => a.MaterialOrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<MaterialOrder>()
                 .HasOne(mo => mo.User)
                 .WithMany(u => u.MaterialOrders)
@@ -106,7 +119,7 @@ namespace Backend.Data.Context
 
             modelBuilder.Entity<MaterialOrder>()
                  .HasOne(mo => mo.MaterialPrice)
-                 .WithMany() 
+                 .WithMany()
                  .HasForeignKey(mo => mo.MaterialPriceId)
                  .OnDelete(DeleteBehavior.Restrict);
 
@@ -142,11 +155,11 @@ namespace Backend.Data.Context
                 .HasValue<ShellOpenSpecification>(ConstructionType.ShellOpen)
                 .HasValue<StaircaseSpecification>(ConstructionType.Staircase)
                 .HasValue<WindowsSpecification>(ConstructionType.Windows)
-                .HasValue<ChimneySpecification>(ConstructionType.Chimney) 
+                .HasValue<ChimneySpecification>(ConstructionType.Chimney)
                 .HasValue<CeilingSpecification>(ConstructionType.Ceiling)
-                .HasValue<PartitionWallSpecification>(ConstructionType.PartitionWall) 
-                .HasValue<FoundationSpecification>(ConstructionType.Foundation) 
-                .HasValue<LoadBearingWallSpecification>(ConstructionType.LoadBearingWall) 
+                .HasValue<PartitionWallSpecification>(ConstructionType.PartitionWall)
+                .HasValue<FoundationSpecification>(ConstructionType.Foundation)
+                .HasValue<LoadBearingWallSpecification>(ConstructionType.LoadBearingWall)
                 .HasValue<VentilationSystemSpecification>(ConstructionType.VentilationSystem)
                 .HasValue<RoofSpecification>(ConstructionType.Roof);
 

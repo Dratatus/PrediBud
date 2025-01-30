@@ -114,6 +114,7 @@ namespace Backend.IntergationTests.Data
             var client1 = new Client
             {
                 ID = 1,
+                Address = new Address { ID = 15 },
             };
             db.Set<Client>().Add(client1);
 
@@ -436,7 +437,7 @@ namespace Backend.IntergationTests.Data
                 MaterialPriceId = materialPrice1.ID,
                 MaterialPrice = materialPrice1,
                 CreatedDate = DateTime.UtcNow.AddDays(-5)
-            };     
+            };
             var materialOrder6 = new MaterialOrder
             {
                 ID = 107,
@@ -449,7 +450,7 @@ namespace Backend.IntergationTests.Data
                 MaterialPriceId = materialPrice1.ID,
                 MaterialPrice = materialPrice1,
                 CreatedDate = DateTime.UtcNow.AddDays(-5)
-            };          
+            };
             var materialOrder7 = new MaterialOrder
             {
                 ID = 108,
@@ -462,7 +463,7 @@ namespace Backend.IntergationTests.Data
                 MaterialPriceId = materialPrice1.ID,
                 MaterialPrice = materialPrice1,
                 CreatedDate = DateTime.UtcNow.AddDays(-5)
-            }; 
+            };
             var materialOrder8 = new MaterialOrder
             {
                 ID = 109,

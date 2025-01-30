@@ -1,7 +1,9 @@
 ﻿using Backend.Data.Consts;
-using Backend.Data.Models.Common;
+using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Material;
-using Backend.DTO.MaterialOrder;
+using Backend.DTO.Orders;
+using Backend.DTO.Orders.Material;
+using Backend.DTO.Price;
 using Backend.DTO.Users.Supplier;
 using Backend.Middlewares;
 using Backend.Repositories;
@@ -12,28 +14,41 @@ namespace Backend.services.Material
     public class MaterialOrderService : IMaterialOrderService
     {
         private readonly IMaterialOrderRepository _repository;
+        private readonly IMaterialPriceRepository _materialPriceRepository;
         private readonly IUserRepository _userRepository;
 
-        public MaterialOrderService(IMaterialOrderRepository repository, IUserRepository userRepository)
+        public MaterialOrderService(IMaterialOrderRepository repository, IUserRepository userRepository, IMaterialPriceRepository materialPriceRepository)
         {
             _repository = repository;
             _userRepository = userRepository;
+            _materialPriceRepository = materialPriceRepository;
         }
-        public async Task<MaterialOrderDto> CreateMaterialOrderAsync(MaterialOrderDto dto)
+        public async Task<MaterialOrderDetailsDto> CreateMaterialOrderAsync(MaterialOrderDto dto)
         {
             MaterialOrderDtoValidator.Validate(dto);
+
+            var materialPrice = await _materialPriceRepository.GetMaterialPriceByIdAsync(dto.MaterialPriceId.Value);
+
+            if (materialPrice == null)
+            {
+                throw new ApiException(ErrorMessages.MaterialNotFound, StatusCodes.Status404NotFound);
+            }
+
+            if (materialPrice.SupplierId != dto.SupplierId)
+            {
+                throw new ApiException(ErrorMessages.MaterialDoesNotBelongToSupplier, StatusCodes.Status400BadRequest);
+            }
 
             var entity = MapToEntity(dto);
 
             await _repository.AddMaterialOrderAsync(entity);
-
             var createdEntity = await _repository.GetMaterialOrderByIdAsync(entity.ID);
 
             var createdDto = MapToDto(createdEntity);
             return createdDto;
         }
 
-        public async Task<MaterialOrderDto> GetMaterialOrderByIdAsync(int orderId)
+        public async Task<MaterialOrderDetailsDto> GetMaterialOrderByIdAsync(int orderId)
         {
             var entity = await _repository.GetMaterialOrderByIdAsync(orderId);
             if (entity == null) return null;
@@ -41,7 +56,7 @@ namespace Backend.services.Material
             return MapToDto(entity);
         }
 
-        public async Task<IEnumerable<MaterialOrderDto>> GetAllMaterialOrdersAsync()
+        public async Task<IEnumerable<MaterialOrderDetailsDto>> GetAllMaterialOrdersAsync()
         {
             var entities = await _repository.GetAllMaterialOrdersAsync();
             return entities.Select(e => MapToDto(e));
@@ -67,6 +82,9 @@ namespace Backend.services.Material
             existing.UnitPriceGross = dto.UnitPriceGross;
             existing.Quantity = dto.Quantity;
             existing.MaterialPriceId = dto.MaterialPriceId;
+            existing.Address.City = dto.Address.City;
+            existing.Address.PostCode = dto.Address.PostCode;
+            existing.Address.StreetName = dto.Address.StreetName;
 
             await _repository.UpdateMaterialOrderAsync(existing);
             return true;
@@ -89,11 +107,11 @@ namespace Backend.services.Material
             await _repository.DeleteMaterialOrderAsync(orderId);
             return true;
         }
-        private MaterialOrderDto MapToDto(MaterialOrder entity)
+        private MaterialOrderDetailsDto MapToDto(MaterialOrder entity)
         {
             if (entity == null) return null;
 
-            return new MaterialOrderDto
+            return new MaterialOrderDetailsDto
             {
                 ID = entity.ID,
                 UnitPriceNet = entity.UnitPriceNet,
@@ -102,18 +120,27 @@ namespace Backend.services.Material
                 TotalPriceNet = entity.TotalPriceNet,
                 TotalPriceGross = entity.TotalPriceGross,
                 CreatedDate = entity.CreatedDate,
-
                 UserId = entity.UserId,
                 SupplierId = entity.SupplierId,
-                Supplier = new SupplierDto
+                Supplier = entity.Supplier != null ? new SupplierDto
                 {
                     Name = entity.Supplier.Name,
                     ContactEmail = entity.Supplier.ContactEmail,
                     Address = entity.Supplier.Address
-                },
+                } : null,
                 MaterialPriceId = entity.MaterialPriceId,
-                MaterialPrice = entity.MaterialPrice
-
+                MaterialPrice = entity.MaterialPrice != null ? new MaterialPriceDto
+                {
+                    MaterialType = entity.MaterialPrice.MaterialType,
+                    MaterialCategory = entity.MaterialPrice.MaterialCategory,
+                    PriceWithoutTax = entity.MaterialPrice.PriceWithoutTax
+                } : null,
+                Address = entity.Address != null ? new OrderAddressDto
+                {
+                    City = entity.Address.City,
+                    PostCode = entity.Address.PostCode,
+                    StreetName = entity.Address.StreetName
+                } : null
             };
         }
 
@@ -130,8 +157,14 @@ namespace Backend.services.Material
                 CreatedDate = dto.CreatedDate,
 
                 UserId = dto.UserId,
-                SupplierId = dto.Supplier.ID,
-                MaterialPriceId = dto.MaterialPriceId
+                SupplierId = dto.SupplierId,
+                MaterialPriceId = dto.MaterialPriceId,
+                Address = new OrderAddress
+                {
+                    City = dto.Address.City,
+                    PostCode = dto.Address.PostCode,
+                    StreetName = dto.Address.StreetName
+                }
             };
         }
     }

@@ -114,19 +114,31 @@ namespace Backend.services.Calculator
         {
             BalconySpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapRailingMaterialToMaterialType(spec.RailingMaterial);
-            var materialPrice = await _context.MaterialPrices
-           .OfType<BalconyMaterialPrice>()
-           .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+            decimal pricePerMeter;
 
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m 
+                    : spec.ClientProvidedPrice.Value; 
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapRailingMaterialToMaterialType(spec.RailingMaterial);
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<BalconyMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerMeter = materialPrice.PricePerMeter;
             }
 
             var perimeter = 2 * (spec.Length + spec.Width);
-            var priceWithoutTax = perimeter * materialPrice.PricePerMeter;
+            var priceWithoutTax = perimeter * pricePerMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -140,18 +152,30 @@ namespace Backend.services.Calculator
         {
             CeilingSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapCeilingMaterialToMaterialType(spec.Material);
-            var materialPrice = await _context.MaterialPrices
-                .OfType<CeilingMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+            decimal pricePerSquareMeter;
 
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapCeilingMaterialToMaterialType(spec.Material);
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<CeilingMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
-
-            var priceWithoutTax = spec.Area * materialPrice.PricePerSquareMeter;
+            var priceWithoutTax = spec.Area * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -165,17 +189,30 @@ namespace Backend.services.Calculator
         {
             SuspendedCeilingSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapSuspendedCeilingMaterialToMaterialType(spec.Material);
-            var materialPrice = await _context.MaterialPrices
-                .OfType<SuspendedCeilingMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+            decimal pricePerSquareMeter;
 
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapSuspendedCeilingMaterialToMaterialType(spec.Material);
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<SuspendedCeilingMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
-            var priceWithoutTax = spec.Area * materialPrice.PricePerSquareMeter;
+            var priceWithoutTax = spec.Area * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -184,20 +221,34 @@ namespace Backend.services.Calculator
                 PriceWithTax = priceWithTax
             };
         }
+
         private async Task<CalculatedPrice> CalculateChimneyPriceAsync(ChimneySpecification spec)
         {
             ChimneySpecificationValidator.Validate(spec);
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<ChimneyMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialCategory == spec.Type);
+            decimal pricePerCubicMeter;
 
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerCubicMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<ChimneyMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerCubicMeter = materialPrice.PricePerCubicMeter;
             }
 
-            var priceWithoutTax = spec.Count * materialPrice.PricePerCubicMeter;
+            var priceWithoutTax = spec.Count * pricePerCubicMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -211,38 +262,44 @@ namespace Backend.services.Calculator
         {
             DoorsSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapDoorMaterialToMaterialType(spec.Material);
+            decimal pricePerDoor;
 
-            var materialPrices = await _context.MaterialPrices
-                .OfType<DoorsMaterialPrice>()
-                .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
-                .ToListAsync();
-
-            if (materialPrices == null || !materialPrices.Any())
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.DoorsMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                pricePerDoor = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapDoorMaterialToMaterialType(spec.Material);
+
+                var materialPrices = await _context.MaterialPrices
+                    .OfType<DoorsMaterialPrice>()
+                    .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
+                    .ToListAsync();
+
+                if (materialPrices == null || !materialPrices.Any())
+                {
+                    throw new ApiException(ErrorMessages.DoorsMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                }
+
+                var closestPrice = materialPrices
+                    .OrderBy(mp => Math.Abs(mp.Height - spec.Height) + Math.Abs(mp.Width - spec.Width))
+                    .FirstOrDefault();
+
+                if (closestPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.ClosestMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                var baseArea = closestPrice.Height * closestPrice.Width;
+                var userArea = spec.Height * spec.Width;
+                var priceAdjustmentFactor = userArea / baseArea;
+                pricePerDoor = closestPrice.PricePerDoor * priceAdjustmentFactor;
             }
 
-            var closestPrice = materialPrices
-                .OrderBy(mp => Math.Abs(mp.Height - spec.Height)
-                             + Math.Abs(mp.Width - spec.Width))
-                .FirstOrDefault();
-
-            if (closestPrice == null)
-            {
-                throw new ApiException(ErrorMessages.ClosestMaterialPriceNotFound, StatusCodes.Status404NotFound);
-            }
-
-            var heightDifference = (spec.Height - closestPrice.Height);
-            var widthDifference = (spec.Width - closestPrice.Width);
-
-            var baseArea = closestPrice.Height * closestPrice.Width;
-            var userArea = spec.Height * spec.Width;
-
-            var priceAdjustmentFactor = userArea / baseArea;
-            var adjustedPricePerDoor = closestPrice.PricePerDoor * priceAdjustmentFactor;
-
-            var priceWithoutTax = spec.Amount * adjustedPricePerDoor;
+            var priceWithoutTax = spec.Amount * pricePerDoor;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -252,36 +309,45 @@ namespace Backend.services.Calculator
             };
         }
 
+
         private async Task<CalculatedPrice> CalculateFacadePriceAsync(FacadeSpecification spec)
         {
             FacadeSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapInsulationTypeFacadeToMaterialType(spec.InsulationType);
+            decimal insulationPricePerM2, finishPricePerM2;
 
-            var insulationPrice = await _context.MaterialPrices
-                .OfType<FacadeMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            var finishMaterialType = MaterialTypeMapper.MapFinishMaterialFacadeToMaterialType(spec.FinishMaterial);
-
-            var finishPrice = await _context.MaterialPrices
-                .OfType<FacadeMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == finishMaterialType && mp.MaterialCategory == spec.Type);
-
-            if (insulationPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.InsulationPriceNotFound, StatusCodes.Status404NotFound);
+                insulationPricePerM2 = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+                finishPricePerM2 = insulationPricePerM2; // Możesz dodać drugi parametr, jeśli klient chce podać osobno dla izolacji i wykończenia
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapInsulationTypeFacadeToMaterialType(spec.InsulationType);
+                var insulationPrice = await _context.MaterialPrices
+                    .OfType<FacadeMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                var finishMaterialType = MaterialTypeMapper.MapFinishMaterialFacadeToMaterialType(spec.FinishMaterial);
+                var finishPrice = await _context.MaterialPrices
+                    .OfType<FacadeMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == finishMaterialType && mp.MaterialCategory == spec.Type);
+
+                if (insulationPrice == null || finishPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.MaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                insulationPricePerM2 = insulationPrice.PricePerSquareMeter;
+                finishPricePerM2 = finishPrice.PricePerSquareMeterFinish;
             }
 
-            if (finishPrice == null)
-            {
-                throw new ApiException(ErrorMessages.FinishPriceNotFound, StatusCodes.Status404NotFound);
-            }
-
-            var insulationCostWithoutTax = spec.SurfaceArea * insulationPrice.PricePerSquareMeter;
+            var insulationCostWithoutTax = spec.SurfaceArea * insulationPricePerM2;
             var insulationCostWithTax = insulationCostWithoutTax * 1.23m;
 
-            var finishCostWithoutTax = spec.SurfaceArea * finishPrice.PricePerSquareMeterFinish;
+            var finishCostWithoutTax = spec.SurfaceArea * finishPricePerM2;
             var finishCostWithTax = finishCostWithoutTax * 1.23m;
 
             var totalCostWithoutTax = insulationCostWithoutTax + finishCostWithoutTax;
@@ -294,22 +360,35 @@ namespace Backend.services.Calculator
             };
         }
 
+
         private async Task<CalculatedPrice> CalculateFlooringPriceAsync(FlooringSpecification spec)
         {
             FlooringSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapFlooringMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<FlooringMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.FlooringMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapFlooringMaterialToMaterialType(spec.Material);
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<FlooringMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.FlooringMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
-            var costWithoutTax = spec.Area * materialPrice.PricePerSquareMeter;
+            var costWithoutTax = spec.Area * pricePerSquareMeter;
             var costWithTax = costWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -318,23 +397,36 @@ namespace Backend.services.Calculator
                 PriceWithTax = costWithTax
             };
         }
+
 
         private async Task<CalculatedPrice> CalculateFoundationPriceAsync(FoundationSpecification spec)
         {
             FoundationSpecificationValidator.Validate(spec);
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<FoundationMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == MaterialType.Concrete && mp.MaterialCategory == spec.Type);
+            decimal pricePerCubicMeter;
 
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.FoundationMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerCubicMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<FoundationMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == MaterialType.Concrete && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.FoundationMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerCubicMeter = materialPrice.PricePerCubicMeter;
             }
 
             var volume = spec.Length * spec.Width * spec.Depth;
-
-            var costWithoutTax = volume * materialPrice.PricePerCubicMeter;
+            var costWithoutTax = volume * pricePerCubicMeter;
             var costWithTax = costWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -344,34 +436,46 @@ namespace Backend.services.Calculator
             };
         }
 
+
         private async Task<CalculatedPrice> CalculateInsulationOfAtticPriceAsync(InsulationOfAtticSpecification spec)
         {
             InsulationOfAtticSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapInsulationInsulationOfAtticMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrices = await _context.MaterialPrices
-                .OfType<InsulationOfAtticMaterialPrice>()
-                .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
-                .ToListAsync();
-
-            if (!materialPrices.Any())
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.InsulationMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapInsulationInsulationOfAtticMaterialToMaterialType(spec.Material);
+
+                var materialPrices = await _context.MaterialPrices
+                    .OfType<InsulationOfAtticMaterialPrice>()
+                    .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
+                    .ToListAsync();
+
+                if (!materialPrices.Any())
+                {
+                    throw new ApiException(ErrorMessages.InsulationMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                }
+
+                var closestPrice = materialPrices
+                    .OrderBy(mp => Math.Abs(mp.Thickness - spec.Thickness))
+                    .FirstOrDefault();
+
+                if (closestPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.ClosestInsulationMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = closestPrice.PricePerSquareMeter * (spec.Thickness / closestPrice.Thickness);
             }
 
-            var closestPrice = materialPrices
-                .OrderBy(mp => Math.Abs(mp.Thickness - spec.Thickness))
-                .FirstOrDefault();
-
-            if (closestPrice == null)
-            {
-                throw new ApiException(ErrorMessages.ClosestInsulationMaterialPriceNotFound, StatusCodes.Status404NotFound);
-            }
-
-            var priceAdjustmentFactor = spec.Thickness / closestPrice.Thickness;
-
-            var priceWithoutTax = spec.Area * closestPrice.PricePerSquareMeter * priceAdjustmentFactor;
+            var priceWithoutTax = spec.Area * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -385,21 +489,32 @@ namespace Backend.services.Calculator
         {
             PaintingSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapPaintTypeToMaterialType(spec.PaintType);
+            decimal pricePerLiter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<PaintingMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.PaintingMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerLiter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapPaintTypeToMaterialType(spec.PaintType);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<PaintingMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.PaintingMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerLiter = materialPrice.PricePerLiter;
             }
 
-            var totalPaintRequired = (spec.WallSurfaceArea * spec.NumberOfCoats) / materialPrice.CoveragePerLiter;
-
-            var priceWithoutTax = totalPaintRequired * materialPrice.PricePerLiter;
-
+            var totalPaintRequired = (spec.WallSurfaceArea * spec.NumberOfCoats) / 10;
+            var priceWithoutTax = totalPaintRequired * pricePerLiter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -413,19 +528,31 @@ namespace Backend.services.Calculator
         {
             PlasteringSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapPlasterTypeToMaterialType(spec.PlasterType);
+            decimal pricePerSquareMeter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<PlasteringMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.PlasteringMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapPlasterTypeToMaterialType(spec.PlasterType);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<PlasteringMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.PlasteringMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
-            var priceWithoutTax = spec.WallSurfaceArea * materialPrice.PricePerSquareMeter;
-
+            var priceWithoutTax = spec.WallSurfaceArea * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -439,28 +566,39 @@ namespace Backend.services.Calculator
         {
             StaircaseSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapStaircaseMaterialToMaterialType(spec.Material);
+            decimal pricePerStep;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<StaircaseMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.StaircaseMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerStep = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapStaircaseMaterialToMaterialType(spec.Material);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<StaircaseMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.StaircaseMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                var heightFactor = materialPrice.StandardStepHeight.HasValue
+                    ? spec.Height / materialPrice.StandardStepHeight.Value
+                    : 1m;
+
+                var widthFactor = materialPrice.StandardStepWidth.HasValue
+                    ? spec.Width / materialPrice.StandardStepWidth.Value
+                    : 1m;
+
+                pricePerStep = materialPrice.PricePerStep * heightFactor * widthFactor;
             }
 
-            var heightFactor = materialPrice.StandardStepHeight.HasValue
-                ? spec.Height / materialPrice.StandardStepHeight.Value
-                : 1m;
-
-            var widthFactor = materialPrice.StandardStepWidth.HasValue
-                ? spec.Width / materialPrice.StandardStepWidth.Value
-                : 1m;
-
-            var adjustedPricePerStep = materialPrice.PricePerStep * heightFactor * widthFactor;
-
-            var priceWithoutTax = spec.NumberOfSteps * adjustedPricePerStep;
+            var priceWithoutTax = spec.NumberOfSteps * pricePerStep;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -474,16 +612,29 @@ namespace Backend.services.Calculator
         {
             VentilationSystemSpecificationValidator.Validate(spec);
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<VentilationSystemMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialCategory == spec.Type);
+            decimal pricePerUnit;
 
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.VentilationSystemMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerUnit = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<VentilationSystemMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.VentilationSystemMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerUnit = materialPrice.PricePerUnit;
             }
 
-            var priceWithoutTax = spec.Count * materialPrice.PricePerUnit;
+            var priceWithoutTax = spec.Count * pricePerUnit;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -497,20 +648,33 @@ namespace Backend.services.Calculator
         {
             LoadBearingWallSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapLoadBearingWallMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<LoadBearingWallMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.LoadBearingWallMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapLoadBearingWallMaterialToMaterialType(spec.Material);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<LoadBearingWallMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.LoadBearingWallMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
             var wallArea = spec.Height * spec.Width;
 
-            var priceWithoutTax = wallArea * materialPrice.PricePerSquareMeter;
+            var priceWithoutTax = wallArea * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -524,20 +688,33 @@ namespace Backend.services.Calculator
         {
             PartitionWallSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapPartitionWallMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<PartitionWallMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.PartitionWallMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapPartitionWallMaterialToMaterialType(spec.Material);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<PartitionWallMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.PartitionWallMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
             var wallArea = spec.Height.Value * spec.Width.Value;
 
-            var priceWithoutTax = wallArea * materialPrice.PricePerSquareMeter;
+            var priceWithoutTax = wallArea * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -551,37 +728,42 @@ namespace Backend.services.Calculator
         {
             WindowsSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapWindowsMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrices = await _context.MaterialPrices
-                .OfType<WindowsMaterialPrice>()
-                .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
-                .ToListAsync();
-
-            if (!materialPrices.Any())
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.WindowsMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapWindowsMaterialToMaterialType(spec.Material);
+
+                var materialPrices = await _context.MaterialPrices
+                    .OfType<WindowsMaterialPrice>()
+                    .Where(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type)
+                    .ToListAsync();
+
+                if (!materialPrices.Any())
+                {
+                    throw new ApiException(ErrorMessages.WindowsMaterialPricesNotFound, StatusCodes.Status404NotFound);
+                }
+
+                var closestPrice = materialPrices
+                    .OrderBy(mp => Math.Abs(mp.StandardHeight - spec.Height) + Math.Abs(mp.StandardWidth - spec.Width))
+                    .FirstOrDefault();
+
+                if (closestPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.ClosestMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = closestPrice.PricePerSquareMeter;
             }
 
-            var closestPrice = materialPrices
-                .OrderBy(mp => Math.Abs(mp.StandardHeight - spec.Height) + Math.Abs(mp.StandardWidth - spec.Width))
-                .FirstOrDefault();
-
-            if (closestPrice == null)
-            {
-                throw new ApiException(ErrorMessages.ClosestMaterialPriceNotFound, StatusCodes.Status404NotFound);
-            }
-
-            var standardArea = closestPrice.StandardHeight * closestPrice.StandardWidth;
-            var customArea = spec.Height * spec.Width;
-            var areaDifference = customArea - standardArea;
-
-            var basePriceWithoutTax = closestPrice.PricePerSquareMeter * standardArea;
-            var additionalCost = areaDifference > 0
-                ? closestPrice.PricePerSquareMeter * areaDifference
-                : 0;
-
-            var priceWithoutTax = (basePriceWithoutTax + additionalCost) * spec.Amount;
+            var standardArea = spec.Height * spec.Width;
+            var priceWithoutTax = standardArea * pricePerSquareMeter * spec.Amount;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice
@@ -595,21 +777,34 @@ namespace Backend.services.Calculator
         {
             RoofSpecificationValidator.Validate(spec);
 
-            var materialType = MaterialTypeMapper.MapRoofMaterialToMaterialType(spec.Material);
+            decimal pricePerSquareMeter;
 
-            var materialPrice = await _context.MaterialPrices
-                .OfType<RoofMaterialPrice>()
-                .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
-
-            if (materialPrice == null)
+            if (spec.ClientProvidedPrice.HasValue)
             {
-                throw new ApiException(ErrorMessages.RoofMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                pricePerSquareMeter = spec.IsPriceGross == true
+                    ? spec.ClientProvidedPrice.Value / 1.23m
+                    : spec.ClientProvidedPrice.Value;
+            }
+            else
+            {
+                var materialType = MaterialTypeMapper.MapRoofMaterialToMaterialType(spec.Material);
+
+                var materialPrice = await _context.MaterialPrices
+                    .OfType<RoofMaterialPrice>()
+                    .FirstOrDefaultAsync(mp => mp.MaterialType == materialType && mp.MaterialCategory == spec.Type);
+
+                if (materialPrice == null)
+                {
+                    throw new ApiException(ErrorMessages.RoofMaterialPriceNotFound, StatusCodes.Status404NotFound);
+                }
+
+                pricePerSquareMeter = materialPrice.PricePerSquareMeter;
             }
 
             var pitchFactor = 1 + (decimal)Math.Tan((double)(spec.Pitch) * Math.PI / 180.0);
             var effectiveArea = spec.Area * pitchFactor;
 
-            var priceWithoutTax = effectiveArea * materialPrice.PricePerSquareMeter;
+            var priceWithoutTax = effectiveArea * pricePerSquareMeter;
             var priceWithTax = priceWithoutTax * 1.23m;
 
             return new CalculatedPrice

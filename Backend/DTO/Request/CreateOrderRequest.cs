@@ -1,4 +1,6 @@
-﻿using Backend.Data.Models.Constructions;
+﻿using Backend.Data.Models.Common;
+using Backend.Data.Models.Constructions;
+using Backend.DTO.Users.PersonalInfo;
 
 namespace Backend.DTO.Request
 {
@@ -8,8 +10,9 @@ namespace Backend.DTO.Request
         public ConstructionType ConstructionType { get; set; }
         public object SpecificationDetails { get; set; } 
         public string[] PlacementPhotos { get; set; }
-        public DateTime? RequestedStartTime { get; set; }
+        public DateOnly? RequestedStartTime { get; set; }
         public decimal? ClientProposedPrice { get; set; }
+        public AddressDto Address { get; set; }
         public int ClientId { get; set; }
     }
 }

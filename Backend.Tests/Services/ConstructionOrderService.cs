@@ -7,6 +7,7 @@ using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
 using Backend.Data.Models.Users;
 using Backend.DTO.Request;
+using Backend.DTO.Users.PersonalInfo;
 using Backend.Factories;
 using Backend.Middlewares;
 using Backend.Repositories;
@@ -53,7 +54,7 @@ namespace Backend.Tests.Services
                     Status = OrderStatus.New,
                     ConstructionType = ConstructionType.Foundation,
                     placementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
-                    RequestedStartTime = DateTime.UtcNow.AddDays(5),
+                    RequestedStartTime = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                     ClientProposedPrice = 1000m,
                     ClientId = clientId,
                     Client = new Client
@@ -95,7 +96,7 @@ namespace Backend.Tests.Services
                     Status = OrderStatus.NegotiationInProgress,
                     ConstructionType = ConstructionType.Painting,
                     placementPhotos = new[] { "photo1.jpg" },
-                    RequestedStartTime = DateTime.UtcNow.AddDays(3),
+                    RequestedStartTime =DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
                     WorkerProposedPrice = 1500m,
                     WorkerId = workerId,
                     Worker = new Worker
@@ -182,9 +183,15 @@ namespace Backend.Tests.Services
                 ConstructionType = ConstructionType.Foundation,
                 SpecificationDetails = new { Length = 10.0m, Width = 5.0m, Depth = 1.5m },
                 PlacementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
-                RequestedStartTime = DateTime.Now.AddDays(7),
+                RequestedStartTime = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                 ClientProposedPrice = 1000.0m,
-                ClientId = 1
+                ClientId = 1,
+                Address = new AddressDto
+                {
+                    City = "Warszawa",
+                    PostCode = "00-001",
+                    StreetName = "Marszałkowska 10"
+                }
             };
 
             var client = new Client { ID = 1 };
@@ -208,7 +215,7 @@ namespace Backend.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(request.Description, result.Description);
             Assert.Equal(request.ConstructionType, result.ConstructionType);
-            Assert.Equal(request.ClientId, result.ClientId);
+            Assert.Equal(request.ClientId, result.Client.ID);
             Assert.NotNull(result.ConstructionSpecification);
             Assert.IsType<FoundationSpecification>(result.ConstructionSpecification);
         }
@@ -222,7 +229,7 @@ namespace Backend.Tests.Services
                 ConstructionType = ConstructionType.Foundation,
                 SpecificationDetails = new { Length = 10.0m, Width = 5.0m, Depth = 1.5m },
                 PlacementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
-                RequestedStartTime = DateTime.Now.AddDays(7),
+                RequestedStartTime = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                 ClientProposedPrice = 1000.0m,
                 ClientId = 2
             };

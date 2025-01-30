@@ -13,9 +13,9 @@ namespace Backend.Data.Models.Orders.Construction
         public OrderStatus Status { get; set; }
         public ConstructionType ConstructionType { get; set; }
         public string[] placementPhotos { get; set; }
-        public DateTime? RequestedStartTime { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateOnly? RequestedStartTime { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
 
         public decimal? ClientProposedPrice { get; set; }
         public decimal? WorkerProposedPrice { get; set; }
@@ -28,6 +28,8 @@ namespace Backend.Data.Models.Orders.Construction
 
         public Worker Worker { get; set; }
         public LastActionBy LastActionBy { get; set; } = LastActionBy.None;
+        public int AddressId { get; set; }
+        public OrderAddress Address { get; set; }
         public int ConstructionSpecificationId { get; set; }
         public ConstructionSpecification ConstructionSpecification { get; set; }
 
