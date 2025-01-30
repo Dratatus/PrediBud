@@ -1,269 +1,169 @@
 import React, { useState } from 'react';
-import {   View,   Text,   TextInput,   TouchableOpacity,   StyleSheet,   Image,   ScrollView,   Button } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
-import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
-
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'ConstructionOrder'>;
 
 const ConstructionOrderScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProps>();
-  const route = useRoute();
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList, 'ConstructionOrder'>>();
+  const [description, setDescription] = useState<string>('');
+  const [dimensions, setDimensions] = useState<{ height: string; width: string; thickness: string }>({
+    height: '',
+    width: '',
+    thickness: '',
+  });
+  const [constructionType, setConstructionType] = useState<string>('1'); // Default enum value as string
+  const [proposedPrice, setProposedPrice] = useState<string>('');
+  const [requestedStartTime, setRequestedStartTime] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [placementPhotos, setPlacementPhotos] = useState<string[]>([]);
 
-  // Pobieranie danych z route.params
-  const { 
-    objectType, 
-    dimensions: initialDimensions, 
-    proposedPrice: initialProposedPrice, 
-    startDate: initialStartDate, 
-    address: initialAddress 
-  } = route.params as {
-    objectType: string;
-    dimensions: string;
-    proposedPrice: string;
-    startDate: string;
-    address: string;
-  };
-
-  // Stan ogólny
-  const [description, setDescription] = useState('');
-  const [images, setImages] = useState<string[]>([]);
-  const [proposedPrice, setProposedPrice] = useState(initialProposedPrice || '');
-  const [startDate, setStartDate] = useState(initialStartDate || '');
-  const [address, setAddress] = useState(initialAddress || '');
-
-  // Stan pól specyficznych dla danego typu (SpecificationDetails)
-  const [fields, setFields] = useState<any>({});
-
-  const handleBack = () => {
-    navigation.goBack();
-  };
-
-  const handlePickImage = async () => {
+  const handleAddPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 1,
     });
 
-    if (!result.canceled) {
-      const uri = result.assets.map((asset) => asset.uri);
-      setImages((prev) => [...prev, ...uri]);
+    if (!result.canceled && result.assets) {
+      setPlacementPhotos([...placementPhotos, ...result.assets.map((asset) => asset.uri)]);
     }
   };
 
-  // Funkcja, która renderuje dynamiczne pola w zależności od wybranego typu
-  const renderSpecificationFields = () => {
-    switch (objectType) {
-      case 'Balcony':
-        return (
-          <>
-            <Text style={styles.label}>Length (m)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={(text) => setFields({ ...fields, Length: parseFloat(text) })}
-            />
-            <Text style={styles.label}>Width (m)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={(text) => setFields({ ...fields, Width: parseFloat(text) })}
-            />
-            <Text style={styles.label}>Material</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                style={styles.picker}
-                selectedValue={fields.RailingMaterial}
-                onValueChange={(value) => setFields({ ...fields, RailingMaterial: value })}
-              >
-                <Picker.Item label="Steel" value="Steel" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Glass" value="Glass" />
-                <Picker.Item label="Aluminum" value="Aluminum" />
-                <Picker.Item label="Wrought Iron" value="WroughtIron" />
-              </Picker>
-            </View>
-          </>
-        );
+  const handleSubmit = async () => {
+    const specificationDetails =
+      constructionType === '1' // Example for "LoadBearingWall"
+        ? {
+            height: dimensions.height,
+            width: dimensions.width,
+            thickness: dimensions.thickness,
+            material: 1, // Default material value, replace with actual logic
+          }
+        : constructionType === '5' // Example for "Chimney"
+        ? { count: dimensions.height } // Replace logic as needed
+        : null;
 
-      case 'Ceiling':
-        return (
-          <>
-            <Text style={styles.label}>Ceiling Surface Area (m²)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              onChangeText={(text) => setFields({ ...fields, Area: parseFloat(text) })}
-            />
-            <Text style={styles.label}>Material</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={fields.Material}
-                onValueChange={(value) => setFields({ ...fields, Material: value })}
-              >
-                <Picker.Item label="Concrete" value="Concrete" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Steel" value="Steel" />
-                <Picker.Item label="Composite" value="Composite" />
-                <Picker.Item label="Prefabricated Concrete" value="PrefabricatedConcrete" />
-              </Picker>
-            </View>
-          </>
-        );
-
-      // ... tutaj wstaw kolejne case'y dla pozostałych rodzajów (SuspendedCeiling, Chimney, Doors, itp.)
-      
-      default:
-        return null;
+    if (!specificationDetails) {
+      console.error('Invalid specificationDetails for selected constructionType');
+      return;
     }
-  };
 
-  const handleCreateOrder = async () => {
-    // Budujemy obiekt, który backend oczekuje
     const orderData = {
-      Description: description,
-      ConstructionType: objectType, // Ważne, by nazwa klucza pasowała do pola w .NET
-      SpecificationDetails: fields,  // To jest nasz obiekt z dynamicznymi polami
-      PlacementPhotos: images,
-      RequestedStartTime: startDate,
-      ClientProposedPrice: proposedPrice ? parseFloat(proposedPrice) : undefined,
-      ClientId: 1, // Pobierz rzeczywiste ID klienta z kontekstu/Redux/sesji
-      Address: address,
+      description,
+      constructionType: parseInt(constructionType, 10), // Ensure enum value
+      specificationDetails,
+      placementPhotos,
+      requestedStartTime,
+      clientProposedPrice: proposedPrice ? parseFloat(proposedPrice) : null,
+      clientId: 1, // Replace with actual client ID
+      address,
     };
 
-    console.log("Order data being sent:", orderData);
+    console.log('Sending data to backend:', orderData);
 
     try {
-      const response = await fetch('http://10.0.2.2:5142/api/ConstructionOrderClient', {
+      const response = await fetch('http://10.0.2.2:5142/api/Orders', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log('Order created successfully:', result);
-
-        // Przejście na ekran z listą zleceń
+        console.log('Order created successfully');
         navigation.navigate('MyOrders');
       } else {
-        const error = await response.json();
-        console.error('Failed to create order:', error);
-        alert(error.message || 'Failed to create order');
+        console.error('Failed to create order:', await response.text());
       }
-    } catch (err) {
-      console.error('Error:', err);
-      alert('An error occurred while creating the order.');
+    } catch (error) {
+      console.error('Error while creating order:', error);
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>{'<'} Back</Text>
       </TouchableOpacity>
 
-      <View style={styles.headerContainer}>
-        <Image
-          source={require('../assets/icons/calculator.png')}
-          style={styles.headerIcon}
-        />
-        <Text style={styles.headerText}>ORDER</Text>
-      </View>
+      <Text style={styles.title}>Create Construction Order</Text>
 
-      {/* Object Type - Non-editable */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>OBJECT</Text>
+      <Text style={styles.label}>Construction Type</Text>
+      <TextInput
+        style={styles.input}
+        value={constructionType}
+        onChangeText={setConstructionType}
+        placeholder="Enter construction type (e.g., 1 for LoadBearingWall)"
+        keyboardType="numeric"
+      />
+
+      <Text style={styles.label}>Description</Text>
+      <TextInput
+        style={styles.input}
+        value={description}
+        onChangeText={setDescription}
+        placeholder="Enter order description"
+      />
+
+      <Text style={styles.label}>Dimensions</Text>
+      <View style={styles.row}>
         <TextInput
-          style={styles.inputField}
-          value={objectType}
-          editable={false}
+          style={[styles.input, styles.smallInput]}
+          value={dimensions.height}
+          onChangeText={(text) => setDimensions({ ...dimensions, height: text })}
+          placeholder="Height"
+          keyboardType="numeric"
         />
-      </View>
-
-      {/* Dimensions - Non-editable (o ile chcesz to jeszcze wyświetlać) */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>PARAMETERS</Text>
         <TextInput
-          style={styles.inputField}
-          value={initialDimensions || 'N/A'}
-          editable={false}
+          style={[styles.input, styles.smallInput]}
+          value={dimensions.width}
+          onChangeText={(text) => setDimensions({ ...dimensions, width: text })}
+          placeholder="Width"
+          keyboardType="numeric"
         />
-      </View>
-
-      {/* Dynamiczne pola w zależności od objectType */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>SPECIFICATION DETAILS</Text>
-        {renderSpecificationFields()}
-      </View>
-
-      {/* Description */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>DESCRIPTION</Text>
         <TextInput
-          style={styles.inputField}
-          placeholder="Details about the order"
-          value={description}
-          onChangeText={setDescription}
-          multiline
-        />
-      </View>
-
-      {/* Photo of Placement */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>PHOTO OF PLACEMENT</Text>
-        <View style={styles.imagePickerContainer}>
-          <Button title="Pick Images" onPress={handlePickImage} />
-          <View style={styles.imagePreviewContainer}>
-            {images.map((image, index) => (
-              <Image key={index} source={{ uri: image }} style={styles.imagePreview} />
-            ))}
-          </View>
-        </View>
-      </View>
-
-      {/* Proposed Price */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>YOUR PROPOSED PRICE FOR COMPLETING THE ORDER (OPTIONAL)</Text>
-        <TextInput
-          style={styles.inputField}
-          placeholder="Enter proposed price"
-          value={proposedPrice}
-          onChangeText={setProposedPrice}
+          style={[styles.input, styles.smallInput]}
+          value={dimensions.thickness}
+          onChangeText={(text) => setDimensions({ ...dimensions, thickness: text })}
+          placeholder="Thickness"
           keyboardType="numeric"
         />
       </View>
 
-      {/* Desired Start Date */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>DESIRED START DATE</Text>
-        <TextInput
-          style={styles.inputField}
-          placeholder="DD.MM.YYYY"
-          value={startDate}
-          onChangeText={setStartDate}
-        />
+      <Text style={styles.label}>Proposed Price</Text>
+      <TextInput
+        style={styles.input}
+        value={proposedPrice}
+        onChangeText={setProposedPrice}
+        placeholder="Enter proposed price (optional)"
+        keyboardType="numeric"
+      />
+
+      <Text style={styles.label}>Requested Start Time</Text>
+      <TextInput
+        style={styles.input}
+        value={requestedStartTime}
+        onChangeText={setRequestedStartTime}
+        placeholder="YYYY-MM-DD"
+      />
+
+      <Text style={styles.label}>Address</Text>
+      <TextInput
+        style={styles.input}
+        value={address}
+        onChangeText={setAddress}
+        placeholder="Enter client address"
+      />
+
+      <Text style={styles.label}>Placement Photos</Text>
+      <Button title="Add Photos" onPress={handleAddPhoto} />
+      <View style={styles.photosContainer}>
+        {placementPhotos.map((uri, index) => (
+          <Image key={index} source={{ uri }} style={styles.photo} />
+        ))}
       </View>
 
-      {/* Address */}
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>ADDRESS</Text>
-        <TextInput
-          style={styles.inputField}
-          placeholder="Enter address"
-          value={address}
-          onChangeText={setAddress}
-        />
-      </View>
-
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.orderButton} onPress={handleCreateOrder}>
-        <Text style={styles.orderButtonText}>CREATE AN ORDER</Text>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Create Order</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -272,8 +172,8 @@ const ConstructionOrderScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9b234',
     padding: 20,
+    backgroundColor: '#f9b234',
   },
   backButton: {
     position: 'absolute',
@@ -289,82 +189,54 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
-  headerContainer: {
-    alignItems: 'center',
-    marginTop: 90,
-    marginBottom: 30,
-  },
-  headerIcon: {
-    width: 80,
-    height: 80,
-    marginBottom: 10,
-  },
-  headerText: {
-    fontSize: 28,
+  title: {
+    fontSize: 32,
     fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  inputBlock: {
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
     backgroundColor: '#fff8e1',
-    borderRadius: 10,
-    padding: 15,
     marginBottom: 15,
   },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  inputField: {
-    fontSize: 16,
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 5,
-  },
-  imagePickerContainer: {
-    alignItems: 'center',
-  },
-  imagePreviewContainer: {
+  row: {
     flexDirection: 'row',
-    marginTop: 10,
-    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
-  imagePreview: {
-    width: 50,
-    height: 50,
+  smallInput: {
+    flex: 0.3,
+  },
+  photosContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  photo: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
     margin: 5,
   },
-  orderButton: {
-    backgroundColor: '#000',
+  submitButton: {
+    backgroundColor: '#4CAF50',
     paddingVertical: 15,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 20,
   },
-  orderButtonText: {
+  submitButtonText: {
     color: '#fff',
-    fontSize: 18,
     fontWeight: 'bold',
-  },
-
-  // Dodatkowe style do dynamicznych pól
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 8,
-    marginBottom: 10,
-  },
-  pickerContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  picker: {
-    width: '100%',
   },
 });
 

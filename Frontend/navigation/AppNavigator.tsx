@@ -15,6 +15,7 @@ import MaterialsScreen from '../screens/MaterialsScreen';
 import OrderMaterialScreen from '../screens/OrderMaterialScreen'; // Import OrderMaterialScreen
 import CostSummaryScreen from '../screens/CostSummaryScreen'; // Import CostSummaryScreen
 import ConstructionOrderScreen from '../screens/ConstructionOrderScreen'; // Import ConstructionOrderScreen
+import { SpecificationDetails } from '../screens/CalculatorScreen';
 
 export type StackParamList = {
   Welcome: undefined;
@@ -34,22 +35,22 @@ export type StackParamList = {
   Materials: undefined;
   CostSummary: {
     constructionType: string;
-    material: string;
-    structure: string;
-    dimensions: string;
-    taxes: string;
-    pricePerMaterial: string;
-    totalCost: number; // Dodano totalCost do typowania
+    specificationDetails: SpecificationDetails; // Dodanie tego klucza
+    includeTax: boolean;
+    totalCost: number;
   };
+  
   OrderMaterial: { materialId: string }; // Typowanie dla OrderMaterial
   ConstructionOrder: {
-    objectType: string;
-    description: string;
-    dimensions: string;
-    proposedPrice: number;
-    startDate: string;
-    address: string;
-  }; // Typowanie dla ConstructionOrder
+    description: string | null;
+    constructionType: string;
+    specificationDetails: SpecificationDetails;
+    placementPhotos: string[] | null;
+    requestedStartTime: string | null;
+    clientProposedPrice: number;
+    clientId: number | null;
+  };
+  
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
