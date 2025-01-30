@@ -1,6 +1,6 @@
 ﻿using Backend.Data.Models.Notifications;
 
-namespace Backend.services
+namespace Backend.services.Notification
 {
     public interface INotificationService
     {

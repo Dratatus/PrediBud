@@ -5,8 +5,13 @@ using Backend.Middlewares;
 using Backend.Providers;
 using Backend.Repositories;
 using Backend.services;
+using Backend.services.Auth;
 using Backend.services.Calculator;
-using Backend.Services;
+using Backend.services.Construction;
+using Backend.services.Material;
+using Backend.services.Negotiation;
+using Backend.services.Notification;
+using Backend.services.Token;
 using Backend.Validatiors.Login;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -103,7 +108,7 @@ namespace Backend
                 recurringJobManager.AddOrUpdate<ISupplierService>(
                 "UpdateSuppliers",
                 service => service.UpdateSuppliersAsync(),
-                Cron.Minutely);
+                Cron.Daily);
             }
 
             app.Run();

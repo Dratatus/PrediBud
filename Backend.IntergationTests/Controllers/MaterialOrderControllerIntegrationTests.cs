@@ -4,8 +4,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Backend.Data.Consts;
+using Backend.IntergationTests.Data;
 
-namespace Backend.IntergationTests
+namespace Backend.IntergationTests.Controllers
 {
     public class MaterialOrderControllerIntegrationTests : IClassFixture<TestDbContextFactory>
     {
@@ -39,7 +40,7 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task GetOrderById_ReturnsOrder_WhenValidId()
         {
-            var orderId = 104; 
+            var orderId = 104;
 
             var response = await _client.GetAsync($"/api/MaterialOrder/{orderId}");
 
@@ -55,7 +56,7 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task GetOrderById_ReturnsNotFound_WhenInvalidId()
         {
-            var orderId = 1231412312; 
+            var orderId = 1231412312;
 
             var response = await _client.GetAsync($"/api/MaterialOrder/{orderId}");
 
@@ -70,7 +71,7 @@ namespace Backend.IntergationTests
                 UnitPriceNet = 10.0m,
                 UnitPriceGross = 12.3m,
                 Quantity = 5,
-                UserId = 21, 
+                UserId = 21,
                 Supplier = new { ID = 2, Name = "Supplier 1" },
                 SupplierId = 2,
                 MaterialPriceId = 1
@@ -99,7 +100,7 @@ namespace Backend.IntergationTests
         {
             var request = new
             {
-                ID = 101, 
+                ID = 106,
                 UnitPriceNet = 15.0m,
                 UnitPriceGross = 18.45m,
                 Quantity = 10,
@@ -115,7 +116,7 @@ namespace Backend.IntergationTests
 
             var userId = 21;
 
-            var response = await _client.PutAsync($"/api/MaterialOrder?userId={userId}", content);
+            var response = await _client.PutAsync($"/api/MaterialOrder/{userId}", content);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
@@ -125,7 +126,7 @@ namespace Backend.IntergationTests
         {
             var request = new
             {
-                ID = 101, 
+                ID = 101,
                 UnitPriceNet = 15.0m,
                 UnitPriceGross = 18.45m,
                 Quantity = 10,
@@ -139,9 +140,9 @@ namespace Backend.IntergationTests
                 "application/json"
             );
 
-            var userId = 999; 
+            var userId = 999;
 
-            var response = await _client.PutAsync($"/api/MaterialOrder?userId={userId}", content);
+            var response = await _client.PutAsync($"/api/MaterialOrder/{userId}", content);
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -155,10 +156,10 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task DeleteOrder_ReturnsNoContent_WhenSuccessful()
         {
-            var orderId = 101;
-            var userId = 21; 
+            var orderId = 108;
+            var userId = 21;
 
-            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}?userId={userId}");
+            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}/{userId}");
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
@@ -166,10 +167,10 @@ namespace Backend.IntergationTests
         [Fact]
         public async Task DeleteOrder_ReturnsForbidden_WhenNotOwner()
         {
-            var orderId = 101; 
-            var userId = 999; 
+            var orderId = 107;
+            var userId = 999;
 
-            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}?userId={userId}");
+            var response = await _client.DeleteAsync($"/api/MaterialOrder/{orderId}/{userId}");
 
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             var responseBody = await response.Content.ReadAsStringAsync();

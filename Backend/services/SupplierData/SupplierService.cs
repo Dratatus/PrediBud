@@ -123,12 +123,12 @@ namespace Backend.services
 
                 case FoundationMaterialPrice foundationPrice when newMaterialPrice is FoundationMaterialPrice newFoundationPrice:
                     foundationPrice.PricePerCubicMeter = newFoundationPrice.PricePerCubicMeter;
-                    break;  
+                    break;
 
                 case ChimneyMaterialPrice chimneyMaterialPrice when newMaterialPrice is ChimneyMaterialPrice newFoundationPrice:
                     chimneyMaterialPrice.PricePerCubicMeter = newFoundationPrice.PricePerCubicMeter;
                     break;
-                     
+
                 case CeilingMaterialPrice ceilingMaterialPrice when newMaterialPrice is CeilingMaterialPrice newFoundationPrice:
                     ceilingMaterialPrice.PricePerSquareMeter = newFoundationPrice.PricePerSquareMeter;
                     break;

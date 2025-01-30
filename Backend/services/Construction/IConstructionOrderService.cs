@@ -2,7 +2,7 @@
 using Backend.DTO.ConstructionOrderDto;
 using Backend.DTO.Request;
 
-namespace Backend.services
+namespace Backend.services.Construction
 {
     public interface IConstructionOrderService
     {

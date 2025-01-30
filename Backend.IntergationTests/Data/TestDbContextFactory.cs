@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Backend.IntergationTests
+namespace Backend.IntergationTests.Data
 {
     public class TestDbContextFactory : WebApplicationFactory<Program>
     {
@@ -205,7 +205,7 @@ namespace Backend.IntergationTests
                 ID = 27,
                 ClientId = 21,
                 Client = client,
-                WorkerId = worker1.ID, 
+                WorkerId = worker1.ID,
                 Worker = worker1,
                 Description = "Negotiation test #27 (New)",
                 Status = OrderStatus.New,
@@ -250,8 +250,8 @@ namespace Backend.IntergationTests
             var order71 = new ConstructionOrder
             {
                 ID = 71,
-                ClientId = 21,   
-                WorkerId = 20,    
+                ClientId = 21,
+                WorkerId = 20,
                 Description = "Negotiation test #71 (New)",
                 Status = OrderStatus.New,
                 ConstructionType = ConstructionType.Windows,
@@ -295,7 +295,7 @@ namespace Backend.IntergationTests
                 ClientId = 21,
                 WorkerId = 20,
                 Description = "Negotiation test #74 (Already in Negotiation)",
-                Status = OrderStatus.NegotiationInProgress, 
+                Status = OrderStatus.NegotiationInProgress,
                 ConstructionType = ConstructionType.Windows,
                 ConstructionSpecificationId = windowsSpec.ID,
                 ConstructionSpecification = windowsSpec,
@@ -329,8 +329,8 @@ namespace Backend.IntergationTests
                 ConstructionSpecification = windowsSpec,
                 WorkerProposedPrice = 1500m
             };
-            db.Set<ConstructionOrder>().Add(order76);      
-            
+            db.Set<ConstructionOrder>().Add(order76);
+
             var order77 = new ConstructionOrder
             {
                 ID = 77,
@@ -389,7 +389,7 @@ namespace Backend.IntergationTests
                 UnitPriceNet = 120.0m,
                 UnitPriceGross = 147.6m,
                 Quantity = 5,
-                UserId = 20, 
+                UserId = 20,
                 SupplierId = supplier2.ID,
                 Supplier = supplier2,
                 MaterialPriceId = materialPrice2.ID,
@@ -424,11 +424,68 @@ namespace Backend.IntergationTests
                 MaterialPrice = materialPrice1,
                 CreatedDate = DateTime.UtcNow.AddDays(-5)
             };
+            var materialOrder5 = new MaterialOrder
+            {
+                ID = 106,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            };     
+            var materialOrder6 = new MaterialOrder
+            {
+                ID = 107,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            };          
+            var materialOrder7 = new MaterialOrder
+            {
+                ID = 108,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            }; 
+            var materialOrder8 = new MaterialOrder
+            {
+                ID = 109,
+                UnitPriceNet = 50.0m,
+                UnitPriceGross = 61.5m,
+                Quantity = 10,
+                UserId = 21,
+                SupplierId = supplier1.ID,
+                Supplier = supplier1,
+                MaterialPriceId = materialPrice1.ID,
+                MaterialPrice = materialPrice1,
+                CreatedDate = DateTime.UtcNow.AddDays(-5)
+            };
+
 
             db.Set<MaterialOrder>().Add(materialOrder1);
             db.Set<MaterialOrder>().Add(materialOrder2);
             db.Set<MaterialOrder>().Add(materialOrder3);
             db.Set<MaterialOrder>().Add(materialOrder4);
+            db.Set<MaterialOrder>().Add(materialOrder5);
+            db.Set<MaterialOrder>().Add(materialOrder6);
+            db.Set<MaterialOrder>().Add(materialOrder7);
+            db.Set<MaterialOrder>().Add(materialOrder8);
 
             db.SaveChanges();
         }

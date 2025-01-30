@@ -1,5 +1,5 @@
 ﻿using Backend.DTO.MaterialOrder;
-using Backend.services;
+using Backend.services.Material;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -42,7 +42,7 @@ namespace Backend.Controllers
             return Ok(dtos);
         }
 
-        [HttpPut]
+        [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateOrder(int userId, [FromBody] UpdateMaterialOrderDto updatedDto)
         {
             await _service.UpdateMaterialOrderAsync(updatedDto, userId);
@@ -50,7 +50,7 @@ namespace Backend.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{orderId}")]
+        [HttpDelete("{orderId}/{userId}")]
         public async Task<IActionResult> DeleteOrder(int orderId, int userId)
         {
             await _service.DeleteMaterialOrderAsync(orderId, userId);

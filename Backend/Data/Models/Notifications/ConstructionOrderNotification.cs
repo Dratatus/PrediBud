@@ -8,7 +8,6 @@ namespace Backend.Data.Models.Notifications
         public NotificationStatus Status { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string Icon { get; set; }
         public int? WorkerId { get; set; }
         public Worker Worker { get; set; }
         public int? ClientId { get; set; }
