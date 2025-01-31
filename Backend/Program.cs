@@ -5,8 +5,13 @@ using Backend.Middlewares;
 using Backend.Providers;
 using Backend.Repositories;
 using Backend.services;
+using Backend.services.Auth;
 using Backend.services.Calculator;
-using Backend.Services;
+using Backend.services.Construction;
+using Backend.services.Material;
+using Backend.services.Negotiation;
+using Backend.services.Notification;
+using Backend.services.Token;
 using Backend.Validatiors.Login;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -44,6 +49,7 @@ namespace Backend
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IConstructionOrderService, ConstructionOrderService>();
+            builder.Services.AddScoped<IMaterialPriceService, MaterialPriceService>();
             builder.Services.AddScoped<INegotiationService, NegotiationService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IMaterialOrderService, MaterialOrderService>();

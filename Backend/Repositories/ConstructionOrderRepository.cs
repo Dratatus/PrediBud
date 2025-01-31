@@ -19,6 +19,7 @@ namespace Backend.Repositories
         public async Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId)
         {
             return await _context.ConstructionOrders
+                .Include(o => o.Address)
                 .Include(co => co.Client)
                 .ThenInclude(client => client.Address)
                 .Include(co => co.Worker)
@@ -31,6 +32,7 @@ namespace Backend.Repositories
         public async Task<IEnumerable<ConstructionOrder>> GetOrdersByWorkerIdAsync(int workerId)
         {
             return await _context.ConstructionOrders
+                .Include(o => o.Address)
                 .Include(co => co.Client)
                 .ThenInclude(client => client.Address)
                 .Include(co => co.Worker)
@@ -43,14 +45,20 @@ namespace Backend.Repositories
         public async Task<ConstructionOrder> GetOrderWithSpecificationByIdAsync(int id)
         {
             return await _context.ConstructionOrders
-                //.Include(o => o.ConstructionSpecification)
+                .Include(o => o.Client)
+                .ThenInclude(client => client.Address)
+                .Include(o => o.Worker)
+                 .ThenInclude(worker => worker.Address)
+                .Include(o => o.ConstructionSpecification)
+                .Include(o => o.Address)
                 .FirstOrDefaultAsync(o => o.ID == id);
         }
         public async Task<IEnumerable<ConstructionOrder>> GetAvailableOrdersAsync(int workerId)
         {
             return await _context.ConstructionOrders
                 .Include(o => o.Client) 
-                .Include(o => o.ConstructionSpecification) 
+                .Include(o => o.ConstructionSpecification)
+                .Include(o => o.Address)
                 .Where(o => o.Status == OrderStatus.New && !o.BannedWorkerIds.Contains(workerId))
                 .ToListAsync();
         }

@@ -1,5 +1,5 @@
 ﻿using Backend.DTO.Request;
-using Backend.services;
+using Backend.services.Negotiation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers

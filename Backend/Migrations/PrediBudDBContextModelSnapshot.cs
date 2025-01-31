@@ -84,9 +84,6 @@ namespace Backend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -118,9 +115,6 @@ namespace Backend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
@@ -145,6 +139,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("AgreedPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -166,17 +163,17 @@ namespace Backend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("LastActionBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("RequestedStartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly?>("RequestedStartTime")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -219,6 +216,9 @@ namespace Backend.Migrations
                     b.Property<int?>("MaterialPriceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderAddressId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -243,6 +243,42 @@ namespace Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MaterialOrders");
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Orders.OrderAddress", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ConstructionOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaterialOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ConstructionOrderId")
+                        .IsUnique()
+                        .HasFilter("[ConstructionOrderId] IS NOT NULL");
+
+                    b.HasIndex("MaterialOrderId")
+                        .IsUnique()
+                        .HasFilter("[MaterialOrderId] IS NOT NULL");
+
+                    b.ToTable("OrderAddress");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Suppliers.MaterialPrice", b =>
@@ -1149,6 +1185,23 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Backend.Data.Models.Orders.OrderAddress", b =>
+                {
+                    b.HasOne("Backend.Data.Models.Orders.Construction.ConstructionOrder", "ConstructionOrder")
+                        .WithOne("Address")
+                        .HasForeignKey("Backend.Data.Models.Orders.OrderAddress", "ConstructionOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Backend.Data.Models.Orders.Material.MaterialOrder", "MaterialOrder")
+                        .WithOne("Address")
+                        .HasForeignKey("Backend.Data.Models.Orders.OrderAddress", "MaterialOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ConstructionOrder");
+
+                    b.Navigation("MaterialOrder");
+                });
+
             modelBuilder.Entity("Backend.Data.Models.Suppliers.MaterialPrice", b =>
                 {
                     b.HasOne("Backend.Data.Models.Suppliers.Supplier", "Supplier")
@@ -1302,7 +1355,14 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Data.Models.Orders.Construction.ConstructionOrder", b =>
                 {
+                    b.Navigation("Address");
+
                     b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Backend.Data.Models.Orders.Material.MaterialOrder", b =>
+                {
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Backend.Data.Models.Suppliers.Supplier", b =>

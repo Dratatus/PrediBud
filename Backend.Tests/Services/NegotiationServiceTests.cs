@@ -5,8 +5,8 @@ using Backend.Data.Models.Orders.Construction;
 using Backend.Data.Models.Users;
 using Backend.Middlewares;
 using Backend.Repositories;
-using Backend.services;
-using Backend.Services;
+using Backend.services.Negotiation;
+using Backend.services.Notification;
 using Moq;
 
 namespace Backend.Tests.Services
