@@ -74,10 +74,21 @@ namespace Backend
                 UseRecommendedIsolationLevel = true,
                 DisableGlobalLocks = true
             }));
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
             builder.Services.AddHangfireServer();
 
 
-            builder.WebHost.UseUrls("http://localhost:5142", "https://localhost:7290");
+            builder.WebHost.UseUrls("http://192.168.1.24:5142/", "http://0.0.0.0:5142");
+
+
 
             var app = builder.Build();
 
@@ -90,6 +101,8 @@ namespace Backend
                 app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseAuthorization();
 
