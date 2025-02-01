@@ -1,7 +1,7 @@
 ﻿using Backend.Data.Models.Suppliers;
 using Backend.DTO.Users.Supplier;
 
-namespace Backend.DTO.MaterialOrder
+namespace Backend.DTO.Orders.Material
 {
     public class UpdateMaterialOrderDto
     {
@@ -12,5 +12,6 @@ namespace Backend.DTO.MaterialOrder
         public decimal Quantity { get; set; }
         public int SupplierId { get; set; }
         public int? MaterialPriceId { get; set; }
+        public OrderAddressDto Address { get; set; }
     }
 }

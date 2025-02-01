@@ -1,10 +1,10 @@
-﻿using Backend.DTO.MaterialOrder;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Backend.Data.Consts;
 using Backend.IntergationTests.Data;
+using Backend.DTO.Orders.Material;
 
 namespace Backend.IntergationTests.Controllers
 {
@@ -73,8 +73,9 @@ namespace Backend.IntergationTests.Controllers
                 Quantity = 5,
                 UserId = 21,
                 Supplier = new { ID = 2, Name = "Supplier 1" },
-                SupplierId = 2,
-                MaterialPriceId = 1
+                SupplierId = 1,
+                MaterialPriceId = 1,
+                Address = new { City = "Kraków", PostCode = "34-423", StreetName = "Dębicka 8A" }
             };
 
             var content = new StringContent(
@@ -106,6 +107,7 @@ namespace Backend.IntergationTests.Controllers
                 Quantity = 10,
                 MaterialPriceId = 2,
                 SupplierId = 2,
+                Address = new { City = "Kraków", PostCode = "34-423", StreetName = "Dębicka 8A" }
             };
 
             var content = new StringContent(
@@ -132,6 +134,7 @@ namespace Backend.IntergationTests.Controllers
                 Quantity = 10,
                 MaterialPriceId = 2,
                 SupplierId = 2,
+                Address = new { City = "Kraków", PostCode = "34-423", StreetName = "Dębicka 8A" }
             };
 
             var content = new StringContent(
