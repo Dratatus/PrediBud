@@ -249,7 +249,7 @@ namespace Backend.services.Construction
                 ConstructionSpecification = specification,
                 Client = new ClientDto
                 {
-                    ID = order.Client.ID
+                    ID = order.ClientId
                 },
                 Address = new OrderAddressDto
                 {

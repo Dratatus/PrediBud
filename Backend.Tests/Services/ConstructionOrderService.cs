@@ -106,7 +106,8 @@ namespace Backend.Tests.Services
                         ContactDetails = new ContactDetails { Phone = "+43 3432 23 332", Name = "Daniel" },
                         AddressId = 2,
                         Address = new Address { City = "WorkerCity" }
-                    }
+                    }, 
+                    Address = new OrderAddress { ID =1 }
                 }
             };
 
@@ -130,8 +131,8 @@ namespace Backend.Tests.Services
             var workerId = 1;
             var orders = new List<ConstructionOrder>
             {
-                new ConstructionOrder { ID = 1, Description = "Order 1", Status = OrderStatus.New },
-                new ConstructionOrder { ID = 2, Description = "Order 2", Status = OrderStatus.New }
+                new ConstructionOrder { ID = 1, Description = "Order 1", Status = OrderStatus.New, Address = new OrderAddress { ID =1 }  },
+                new ConstructionOrder { ID = 2, Description = "Order 2", Status = OrderStatus.New, Address = new OrderAddress { ID =2 }   }
             };
 
             _orderRepositoryMock.Setup(repo => repo.GetAvailableOrdersAsync(workerId))
@@ -149,7 +150,7 @@ namespace Backend.Tests.Services
         public async Task GetOrderByIdAsync_ReturnsOrder_WhenOrderExists()
         {
             var orderId = 1;
-            var order = new ConstructionOrder { ID = orderId, Description = "Test Order" };
+            var order = new ConstructionOrder { ID = orderId, Description = "Test Order", Address = new OrderAddress { ID = 1 } };
 
             _orderRepositoryMock.Setup(repo => repo.GetOrderWithSpecificationByIdAsync(orderId))
                 .ReturnsAsync(order);
@@ -231,7 +232,13 @@ namespace Backend.Tests.Services
                 PlacementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
                 RequestedStartTime = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                 ClientProposedPrice = 1000.0m,
-                ClientId = 2
+                ClientId = 2,
+                Address = new AddressDto
+                {
+                    City = "Warszawa",
+                    PostCode = "00-001",
+                    StreetName = "Marszałkowska 10"
+                }
             };
 
             var nonClientUser = new Worker { ID = 2 };
