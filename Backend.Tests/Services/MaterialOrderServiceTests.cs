@@ -1,8 +1,10 @@
 ﻿using Backend.Data.Consts;
 using Backend.Data.Models.Common;
+using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Material;
 using Backend.Data.Models.Suppliers;
-using Backend.DTO.MaterialOrder;
+using Backend.DTO.Orders;
+using Backend.DTO.Orders.Material;
 using Backend.DTO.Users.Supplier;
 using Backend.Middlewares;
 using Backend.Repositories;
@@ -15,14 +17,16 @@ namespace Backend.Tests.Services
     {
         private readonly Mock<IMaterialOrderRepository> _repositoryMock;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IMaterialPriceRepository> _materialPriceRepositoryMock;
         private readonly MaterialOrderService _service;
 
         public MaterialOrderServiceTests()
         {
             _repositoryMock = new Mock<IMaterialOrderRepository>();
             _userRepositoryMock = new Mock<IUserRepository>();
+            _materialPriceRepositoryMock = new Mock<IMaterialPriceRepository>();
 
-            _service = new MaterialOrderService(_repositoryMock.Object, _userRepositoryMock.Object);
+            _service = new MaterialOrderService(_repositoryMock.Object, _userRepositoryMock.Object, _materialPriceRepositoryMock.Object);
         }
 
         [Fact]
@@ -37,12 +41,8 @@ namespace Backend.Tests.Services
                 CreatedDate = new System.DateTime(2025, 1, 16, 21, 39, 16),
                 UserId = 1,
                 SupplierId = 45,
-                Supplier = new SupplierDto
-                {
-                    Name = "BestMaterials",
-                    ContactEmail = "info@test.com",
-                },
-                MaterialPriceId = 1380
+                MaterialPriceId = 2,
+                Address = new OrderAddressDto { City = "Karków", PostCode = "34-222", StreetName = "Baczyńskiego 20B" }
             };
 
             var createdEntity = new MaterialOrder
@@ -63,6 +63,15 @@ namespace Backend.Tests.Services
                 },
                 MaterialPriceId = 1380
             };
+
+            _materialPriceRepositoryMock
+                .Setup(r => r.GetMaterialPriceByIdAsync(2))
+                .ReturnsAsync(new MaterialPrice
+                {
+                    ID = 2,
+                    SupplierId = 45,
+                    Supplier = new Supplier { ID = 45 }
+                });
 
             _repositoryMock.Setup(r => r.AddMaterialOrderAsync(It.IsAny<MaterialOrder>()))
                      .Callback<MaterialOrder>(order => order.ID = 123)
@@ -156,7 +165,8 @@ namespace Backend.Tests.Services
                 UnitPriceGross = 180m,
                 Quantity = 5,
                 SupplierId = 2,
-                MaterialPriceId = 10
+                MaterialPriceId = 10,
+                Address = new OrderAddressDto { City = "Kraków", PostCode = "33-299", StreetName = "Dębicka 24B" }
             };
 
             var existingOrder = new MaterialOrder
@@ -167,7 +177,8 @@ namespace Backend.Tests.Services
                 Quantity = 10,
                 UserId = userId,
                 SupplierId = 2,
-                MaterialPriceId = 5
+                MaterialPriceId = 5,
+                Address =  new OrderAddress { ID = 1}
             };
 
             _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(updateDto.ID))

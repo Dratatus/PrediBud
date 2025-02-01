@@ -1,4 +1,5 @@
 ﻿using Backend.Data.Consts;
+using Backend.Data.Models.Common;
 using Backend.Data.Models.Constructions;
 using Backend.DTO.Request;
 using Backend.Middlewares;
@@ -31,6 +32,21 @@ public static class CreateOrderRequestValidator
         if (!Enum.IsDefined(typeof(ConstructionType), request.ConstructionType))
         {
             throw new ApiException(string.Format(ErrorMessages.UnsupportedConstructionType, request.ConstructionType), StatusCodes.Status400BadRequest);
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Address.City))
+        {
+            throw new ApiException(ErrorMessages.AddressCityRequired, StatusCodes.Status400BadRequest);
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Address.PostCode))
+        {
+            throw new ApiException(ErrorMessages.AddressPostCodeRequired, StatusCodes.Status400BadRequest);
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Address.StreetName))
+        {
+            throw new ApiException(ErrorMessages.AddressStreetNameRequired, StatusCodes.Status400BadRequest);
         }
     }
 }

@@ -132,6 +132,12 @@
         public const string InvalidLoadBearingWallMaterial = "Load bearing wall material type is invalid.";
         public const string InvalidPartitionWallMaterial = "Partition wall material type is invalid.";
         public const string InvalidRoofMaterial = "Roof material type is invalid.";
+        public const string AddressCannotBeNull = "Address cannot be null.";
+        public const string AddressCityRequired = "City is required.";
+        public const string AddressPostCodeRequired = "Post code is required.";
+        public const string AddressStreetNameRequired = "Street name is required.";
+        public const string MaterialNotFound = "The specified material does not exist.";
+        public const string MaterialDoesNotBelongToSupplier = "The specified material does not belong to the given supplier.";
         public const string NotificationNotFound = "Notification not found";
         public const string NotificationsNotFound = "Notifications not found";
     }

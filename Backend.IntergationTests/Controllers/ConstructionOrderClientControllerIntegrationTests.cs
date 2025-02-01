@@ -78,9 +78,15 @@ namespace Backend.IntergationTests.Controllers
                     Material = 3,
                 },
                 PlacementPhotos = new[] { "photo1.jpg", "photo2.jpg" },
-                RequestedStartTime = DateTime.UtcNow,
+                RequestedStartTime = DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd"),
                 ClientProposedPrice = 1500.0m,
-                ClientId = 1
+                ClientId = 1,
+                Address = new
+                {
+                    City = "Warszawa",
+                    PostCode = "00-001",
+                    StreetName = "Marszałkowska 10"
+                }
             };
 
             var content = new StringContent(
@@ -104,7 +110,7 @@ namespace Backend.IntergationTests.Controllers
 
             Assert.NotNull(createdOrder);
             Assert.Equal(request.Description, createdOrder.Description);
-            Assert.Equal(request.ClientId, createdOrder.ClientId);
+            Assert.Equal(request.ClientId, createdOrder.Client.ID);
         }
 
         [Fact]

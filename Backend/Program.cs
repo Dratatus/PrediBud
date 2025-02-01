@@ -49,6 +49,7 @@ namespace Backend
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IConstructionOrderService, ConstructionOrderService>();
+            builder.Services.AddScoped<IMaterialPriceService, MaterialPriceService>();
             builder.Services.AddScoped<INegotiationService, NegotiationService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IMaterialOrderService, MaterialOrderService>();
@@ -108,7 +109,7 @@ namespace Backend
                 recurringJobManager.AddOrUpdate<ISupplierService>(
                 "UpdateSuppliers",
                 service => service.UpdateSuppliersAsync(),
-                Cron.Daily);
+                Cron.Minutely);
             }
 
             app.Run();

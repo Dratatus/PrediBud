@@ -91,7 +91,7 @@ namespace Backend.services.Negotiation
 
             order.Status = OrderStatus.Accepted;
             order.AgreedPrice = isClient ? order.WorkerProposedPrice : order.ClientProposedPrice;
-            order.StartDate = DateTime.Now;
+            order.StartDate = order.RequestedStartTime;
 
             if (isWorker && user is Worker worker)
             {
@@ -267,6 +267,7 @@ namespace Backend.services.Negotiation
             }
 
             order.LastActionBy = isClient ? LastActionBy.Client : LastActionBy.Worker;
+            order.EndDate = DateOnly.FromDateTime(DateTime.Now);
             order.Status = OrderStatus.Completed;
 
             await _orderRepository.SaveChangesAsync();
