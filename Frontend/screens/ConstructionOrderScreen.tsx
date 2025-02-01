@@ -1,65 +1,238 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
 
+const CONSTRUCTION_TYPE_ENUM = {
+  partitionwall: 0,
+  foundation: 1,
+  windows: 2,
+  doors: 3,
+  facade: 4,
+  flooring: 5,
+  suspendedceiling: 6,
+  insulationofattic: 7,
+  plastering: 8,
+  painting: 9,
+  staircase: 10,
+  balcony: 11,
+  shellopen: 12,
+  chimney: 13,
+  loadbearingwall: 14,
+  ventilationsystem: 15,
+  roof: 16,
+  ceiling: 17,
+};
+
+const FIELD_CONFIGS: Record<string, string[]> = {
+  partitionwall: ['height', 'width', 'thickness', 'material'],
+  foundation: ['length', 'width', 'depth'],
+  windows: ['amount', 'height', 'width', 'material'],
+  doors: ['amount', 'height', 'width', 'material'],
+  facade: ['surfacearea', 'insulationtype', 'finishmaterial'],
+  flooring: ['area', 'material'],
+  suspendedceiling: ['area', 'height', 'material'],
+  insulationofattic: ['area', 'thickness', 'material'],
+  plastering: ['wallsurfacearea', 'plastertype'],
+  painting: ['wallsurfacearea', 'painttype', 'numberofcoats'],
+  staircase: ['numberofsteps', 'height', 'width', 'material'],
+  balcony: ['length', 'width', 'railingmaterial'],
+  shellopen: [],
+  chimney: ['count'],
+  loadbearingwall: ['height', 'width', 'thickness', 'material'],
+  ventilationsystem: ['count'],
+  roof: ['area', 'pitch', 'material'],
+  ceiling: ['area', 'material'],
+};
+
+const ADDRESS_LABELS: Record<string, string> = {
+  postCode: 'Post code',
+  city: 'City',
+  streetName: 'Street name',
+};
+
+// Nowy słownik etykiet dla pól Specification Details
+const FIELD_LABELS: Record<string, string> = {
+  height: "Height (m)",
+  width: "Width (m)",
+  thickness: "Thickness (m)",
+  material: "Material",
+  length: "Length (m)",
+  depth: "Depth (m)",
+  amount: "Amount",
+  surfacearea: "Surface area (m²)",
+  insulationtype: "Insulation type",
+  finishmaterial: "Finish material",
+  area: "Area (m²)",
+  pitch: "Pitch (°)",
+  wallsurfacearea: "Wall surface area (m²)",
+  plastertype: "Plaster type",
+  painttype: "Paint type",
+  numberofcoats: "Number of coats",
+  numberofsteps: "Number of steps",
+  railingmaterial: "Railing material",
+  count: "Count"
+};
+
+// Funkcja formatująca nazwy typu konstrukcji, aby były ładniejsze w dropdownie
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: 'Partition Wall',
+    foundation: 'Foundation',
+    windows: 'Windows',
+    doors: 'Doors',
+    facade: 'Facade',
+    flooring: 'Flooring',
+    suspendedceiling: 'Suspended Ceiling',
+    insulationofattic: 'Insulation of Attic',
+    plastering: 'Plastering',
+    painting: 'Painting',
+    staircase: 'Staircase',
+    balcony: 'Balcony',
+    shellopen: 'Shell Open',
+    chimney: 'Chimney',
+    loadbearingwall: 'Load Bearing Wall',
+    ventilationsystem: 'Ventilation System',
+    roof: 'Roof',
+    ceiling: 'Ceiling',
+  };
+  return mapping[type] || type;
+};
+
+/**
+ * Zwraca obiekt z opcjami (enum) dla danego typu konstrukcji oraz pola.
+ */
+const getEnumOptions = (constructionType: string, field: string): Record<string, string> | null => {
+  switch (constructionType) {
+    case 'partitionwall':
+      if (field === 'material')
+        return { '0': 'Drywall', '1': 'Brick', '2': 'Aerated Concrete', '3': 'Wood', '4': 'Glass' };
+      break;
+    case 'windows':
+      if (field === 'material')
+        return { '0': 'Unknown', '1': 'Wood', '2': 'PVC', '3': 'Aluminum', '4': 'Steel', '5': 'Composite' };
+      break;
+    case 'doors':
+      if (field === 'material')
+        return { '0': 'Wood', '1': 'Steel', '2': 'PVC', '3': 'Aluminum', '4': 'Glass' };
+      break;
+    case 'flooring':
+      if (field === 'material')
+        return { '0': 'Laminate', '1': 'Hardwood', '2': 'Vinyl', '3': 'Tile', '4': 'Carpet' };
+      break;
+    case 'suspendedceiling':
+      if (field === 'material')
+        return { '0': 'Drywall', '1': 'Mineral Fiber', '2': 'Metal', '3': 'PVC', '4': 'Wood', '5': 'Glass Fiber', '6': 'Composite' };
+      break;
+    case 'insulationofattic':
+      if (field === 'material')
+        return { '0': 'Mineral Wool', '1': 'Styrofoam', '2': 'Polyurethane Foam', '3': 'Cellulose', '4': 'Fiberglass', '5': 'Rock Wool' };
+      break;
+    case 'plastering':
+      if (field === 'plastertype')
+        return { '0': 'Gypsum', '1': 'Cement', '2': 'Lime', '3': 'Lime Cement', '4': 'Clay', '5': 'Acrylic', '6': 'Silicone', '7': 'Silicate' };
+      break;
+    case 'painting':
+      if (field === 'painttype')
+        return { '0': 'Acrylic', '1': 'Latex', '2': 'Oil Based', '3': 'Water Based', '4': 'Epoxy', '5': 'Enamel', '6': 'Chalk', '7': 'Matte', '8': 'Satin', '9': 'Glossy' };
+      break;
+    case 'staircase':
+      if (field === 'material')
+        return { '0': 'Unknown', '1': 'Wood', '2': 'Metal', '3': 'Concrete', '4': 'Stone', '5': 'Glass', '6': 'Composite', '7': 'Marble', '8': 'Granite' };
+      break;
+    case 'balcony':
+      if (field === 'railingmaterial')
+        return { '0': 'Steel', '1': 'Wood', '2': 'Glass', '3': 'Aluminum', '4': 'Wrought Iron' };
+      break;
+    case 'loadbearingwall':
+      if (field === 'material')
+        return { '0': 'Concrete', '1': 'Brick', '2': 'Aerated Concrete', '3': 'Stone', '4': 'Wood' };
+      break;
+    case 'roof':
+      if (field === 'material')
+        return { '0': 'Tile', '1': 'Metal Sheet', '2': 'Asphalt Shingle', '3': 'Thatch', '4': 'Slate', '5': 'PVC', '6': 'Composite' };
+      break;
+    case 'ceiling':
+      if (field === 'material')
+        return { '0': 'Concrete', '1': 'Wood', '2': 'Steel', '3': 'Composite', '4': 'Prefabricated Concrete' };
+      break;
+    case 'facade':
+      if (field === 'insulationtype')
+        return { '0': 'Styrofoam', '1': 'Mineral Wool', '2': 'Polyurethane Foam', '3': 'Fiberglass' };
+      if (field === 'finishmaterial')
+        return { '0': 'Plaster', '1': 'Brick', '2': 'Stone', '3': 'Wood', '4': 'Metal Siding' };
+      break;
+  }
+  return null;
+};
+
 const ConstructionOrderScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList, 'ConstructionOrder'>>();
+  const route = useRoute<RouteProp<StackParamList, 'ConstructionOrder'>>();
+
   const [description, setDescription] = useState<string>('');
-  const [dimensions, setDimensions] = useState<{ height: string; width: string; thickness: string }>({
-    height: '',
-    width: '',
-    thickness: '',
-  });
-  const [constructionType, setConstructionType] = useState<string>('1'); // Default enum value as string
-  const [proposedPrice, setProposedPrice] = useState<string>('');
-  const [requestedStartTime, setRequestedStartTime] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
+  const [constructionType, setConstructionType] = useState<string>('partitionwall');
+  const [specificationDetails, setSpecificationDetails] = useState<Record<string, string>>({});
+  const [proposedPrice, setProposedPrice] = useState<number | null>(null);
+  // Wybrana data – domyślnie dzisiejsza
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [placementPhotos, setPlacementPhotos] = useState<string[]>([]);
+  const [address, setAddress] = useState<{ postCode: string; city: string; streetName: string }>({
+    postCode: '',
+    city: '',
+    streetName: '',
+  });
+  const [clientId, setClientId] = useState<number>(0);
+
+  useEffect(() => {
+    if (route.params) {
+      setConstructionType((route.params.constructionType || 'partitionwall').toLowerCase());
+      const specDetails = route.params.specificationDetails || {};
+      const convertedSpecDetails: Record<string, string> = Object.fromEntries(
+        Object.entries(specDetails).map(([key, value]) => [
+          key.toLowerCase(),
+          value !== null && value !== undefined ? value.toString() : ''
+        ])
+      );
+      setSpecificationDetails(convertedSpecDetails);
+      setProposedPrice(route.params.clientProposedPrice || null);
+    }
+  }, [route.params]);
 
   const handleAddPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
     });
-
     if (!result.canceled && result.assets) {
       setPlacementPhotos([...placementPhotos, ...result.assets.map((asset) => asset.uri)]);
     }
   };
 
   const handleSubmit = async () => {
-    const specificationDetails =
-      constructionType === '1' // Example for "LoadBearingWall"
-        ? {
-            height: dimensions.height,
-            width: dimensions.width,
-            thickness: dimensions.thickness,
-            material: 1, // Default material value, replace with actual logic
-          }
-        : constructionType === '5' // Example for "Chimney"
-        ? { count: dimensions.height } // Replace logic as needed
-        : null;
-
-    if (!specificationDetails) {
-      console.error('Invalid specificationDetails for selected constructionType');
-      return;
-    }
+    const constructionTypeNumber = CONSTRUCTION_TYPE_ENUM[constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM];
+    const convertedSpecDetails = Object.fromEntries(
+      Object.entries(specificationDetails).map(([key, value]) => [key, Number(value)])
+    );
+    const requestedStartTimeString = selectedDate.toISOString().split('T')[0];
 
     const orderData = {
       description,
-      constructionType: parseInt(constructionType, 10), // Ensure enum value
-      specificationDetails,
+      constructionType: constructionTypeNumber,
+      specificationDetails: convertedSpecDetails,
       placementPhotos,
-      requestedStartTime,
-      clientProposedPrice: proposedPrice ? parseFloat(proposedPrice) : null,
-      clientId: 1, // Replace with actual client ID
+      requestedStartTime: requestedStartTimeString,
+      clientProposedPrice: proposedPrice,
+      clientId,
       address,
     };
 
-    console.log('Sending data to backend:', orderData);
+    console.log('Data sent to backend:', orderData);
 
     try {
       const response = await fetch('http://10.0.2.2:5142/api/Orders', {
@@ -67,9 +240,7 @@ const ConstructionOrderScreen: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       });
-
       if (response.ok) {
-        console.log('Order created successfully');
         navigation.navigate('MyOrders');
       } else {
         console.error('Failed to create order:', await response.text());
@@ -85,16 +256,53 @@ const ConstructionOrderScreen: React.FC = () => {
         <Text style={styles.backButtonText}>{'<'} Back</Text>
       </TouchableOpacity>
 
+      {/* Obrazek kalkulatora nad tytułem */}
+      <Image source={require('../assets/icons/calculator.png')} style={styles.icon} />
+
       <Text style={styles.title}>Create Construction Order</Text>
 
       <Text style={styles.label}>Construction Type</Text>
-      <TextInput
-        style={styles.input}
-        value={constructionType}
-        onChangeText={setConstructionType}
-        placeholder="Enter construction type (e.g., 1 for LoadBearingWall)"
-        keyboardType="numeric"
-      />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={constructionType}
+          onValueChange={(value) => {
+            setConstructionType(value);
+            setSpecificationDetails({});
+          }}
+        >
+          {Object.keys(CONSTRUCTION_TYPE_ENUM).map((key) => (
+            <Picker.Item key={key} label={formatConstructionType(key)} value={key} />
+          ))}
+        </Picker>
+      </View>
+
+      <Text style={styles.label}>Specification Details</Text>
+      {FIELD_CONFIGS[constructionType as keyof typeof FIELD_CONFIGS]?.map((field: string) => {
+        const enumOptions = getEnumOptions(constructionType, field);
+        return (
+          <View key={field} style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>{FIELD_LABELS[field] || field}</Text>
+            {enumOptions ? (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={specificationDetails[field] || Object.keys(enumOptions)[0]}
+                  onValueChange={(value) => setSpecificationDetails({ ...specificationDetails, [field]: value })}
+                >
+                  {Object.entries(enumOptions).map(([key, label]) => (
+                    <Picker.Item key={key} label={label} value={key} />
+                  ))}
+                </Picker>
+              </View>
+            ) : (
+              <TextInput
+                style={styles.input}
+                value={specificationDetails[field] || ''}
+                onChangeText={(text) => setSpecificationDetails({ ...specificationDetails, [field]: text })}
+              />
+            )}
+          </View>
+        );
+      })}
 
       <Text style={styles.label}>Description</Text>
       <TextInput
@@ -104,55 +312,42 @@ const ConstructionOrderScreen: React.FC = () => {
         placeholder="Enter order description"
       />
 
-      <Text style={styles.label}>Dimensions</Text>
-      <View style={styles.row}>
-        <TextInput
-          style={[styles.input, styles.smallInput]}
-          value={dimensions.height}
-          onChangeText={(text) => setDimensions({ ...dimensions, height: text })}
-          placeholder="Height"
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, styles.smallInput]}
-          value={dimensions.width}
-          onChangeText={(text) => setDimensions({ ...dimensions, width: text })}
-          placeholder="Width"
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, styles.smallInput]}
-          value={dimensions.thickness}
-          onChangeText={(text) => setDimensions({ ...dimensions, thickness: text })}
-          placeholder="Thickness"
-          keyboardType="numeric"
-        />
-      </View>
-
       <Text style={styles.label}>Proposed Price</Text>
       <TextInput
         style={styles.input}
-        value={proposedPrice}
-        onChangeText={setProposedPrice}
+        value={proposedPrice !== null ? proposedPrice.toString() : ''}
+        onChangeText={(text) => setProposedPrice(text ? parseFloat(text) : null)}
         placeholder="Enter proposed price (optional)"
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Requested Start Time</Text>
-      <TextInput
-        style={styles.input}
-        value={requestedStartTime}
-        onChangeText={setRequestedStartTime}
-        placeholder="YYYY-MM-DD"
-      />
-
       <Text style={styles.label}>Address</Text>
-      <TextInput
-        style={styles.input}
-        value={address}
-        onChangeText={setAddress}
-        placeholder="Enter client address"
-      />
+      {Object.keys(address).map((field) => (
+        <View key={field} style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>{ADDRESS_LABELS[field] || field}</Text>
+          <TextInput
+            style={styles.input}
+            value={address[field as keyof typeof address]}
+            onChangeText={(text) => setAddress({ ...address, [field]: text })}
+          />
+        </View>
+      ))}
+
+      <Text style={styles.label}>Requested Start Time</Text>
+      <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.dateButtonText}>{selectedDate.toISOString().split('T')[0]}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={(event: any, date?: Date) => {
+            setShowDatePicker(false);
+            if (date) setSelectedDate(date);
+          }}
+        />
+      )}
 
       <Text style={styles.label}>Placement Photos</Text>
       <Button title="Add Photos" onPress={handleAddPhoto} />
@@ -189,6 +384,13 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
+  icon: {
+    width: 70,
+    height: 70,
+    alignSelf: 'center',
+    marginTop: 75,
+    marginBottom: 20,
+  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
@@ -201,6 +403,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
   },
+  pickerContainer: {
+    backgroundColor: '#fff8e1',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 15,
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -208,13 +417,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff8e1',
     marginBottom: 15,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  smallInput: {
-    flex: 0.3,
   },
   photosContainer: {
     flexDirection: 'row',
@@ -237,6 +439,27 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  inputContainer: {
+    marginBottom: 15,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#333',
+  },
+  dateButton: {
+    padding: 10,
+    backgroundColor: '#fff8e1',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  dateButtonText: {
+    fontSize: 16,
   },
 });
 
