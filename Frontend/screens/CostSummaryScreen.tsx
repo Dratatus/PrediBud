@@ -8,15 +8,15 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'CostSummary'>;
 
-const MATERIAL_ENUM1: Record<number, string> = { //PartitionWall
+const MATERIAL_ENUM1: Record<number, string> = { // PartitionWall
   0: 'Drywall',
   1: 'Brick',
-  2: 'AeratedConcrete',
+  2: 'Aerated Concrete',
   3: 'Wood',
   4: 'Glass',
 };
 
-const MATERIAL_ENUM3: Record<number, string> = { //Windows
+const MATERIAL_ENUM3: Record<number, string> = { // Windows
   0: 'Unknown',
   1: 'Wood',
   2: 'PVC',
@@ -25,7 +25,7 @@ const MATERIAL_ENUM3: Record<number, string> = { //Windows
   5: 'Composite',
 };
 
-const MATERIAL_ENUM4: Record<number, string> = { //Doors
+const MATERIAL_ENUM4: Record<number, string> = { // Doors
   0: 'Wood',
   1: 'Steel',
   2: 'PVC',
@@ -33,7 +33,7 @@ const MATERIAL_ENUM4: Record<number, string> = { //Doors
   4: 'Glass',
 };
 
-const MATERIAL_ENUM6: Record<number, string> = { //Flooring
+const MATERIAL_ENUM6: Record<number, string> = { // Flooring
   0: 'Laminate',
   1: 'Hardwood',
   2: 'Vinyl',
@@ -41,41 +41,41 @@ const MATERIAL_ENUM6: Record<number, string> = { //Flooring
   4: 'Carpet',
 };
 
-const MATERIAL_ENUM7: Record<number, string> = { //SuspendedCeiling
+const MATERIAL_ENUM7: Record<number, string> = { // SuspendedCeiling
   0: 'Drywall',
-  1: 'MineralFiber',
+  1: 'Mineral Fiber',
   2: 'Metal',
   3: 'PVC',
   4: 'Wood',
-  5: 'GlassFiber',
+  5: 'Glass Fiber',
   6: 'Composite',
 };
 
-const MATERIAL_ENUM8: Record<number, string> = { //InsulationOfAttic
-  0: 'MineralWool',
+const MATERIAL_ENUM8: Record<number, string> = { // InsulationOfAttic
+  0: 'Mineral Wool',
   1: 'Styrofoam',
-  2: 'PolyurethaneFoam',
+  2: 'Polyurethane Foam',
   3: 'Cellulose',
   4: 'Fiberglass',
-  5: 'RockWool',
+  5: 'Rock Wool',
 };
 
-const MATERIAL_ENUM9: Record<number, string> = { //Plastering
+const MATERIAL_ENUM9: Record<number, string> = { // Plastering
   0: 'Gypsum',
   1: 'Cement',
   2: 'Lime',
-  3: 'LimeCement',
+  3: 'Lime Cement',
   4: 'Clay',
   5: 'Acrylic',
   6: 'Silicone',
   7: 'Silicate',
 };
 
-const MATERIAL_ENUM10: Record<number, string> = { //Painting
+const MATERIAL_ENUM10: Record<number, string> = { // Painting
   0: 'Acrylic',
   1: 'Latex',
-  2: 'OilBased',
-  3: 'WaterBased',
+  2: 'Oil Based',
+  3: 'Water Based',
   4: 'Epoxy',
   5: 'Enamel',
   6: 'Chalk',
@@ -84,7 +84,7 @@ const MATERIAL_ENUM10: Record<number, string> = { //Painting
   9: 'Glossy',
 };
 
-const MATERIAL_ENUM11: Record<number, string> = { //Staircase
+const MATERIAL_ENUM11: Record<number, string> = { // Staircase
   0: 'Unknown',
   1: 'Wood',
   2: 'Metal',
@@ -96,45 +96,38 @@ const MATERIAL_ENUM11: Record<number, string> = { //Staircase
   8: 'Granite',
 };
 
-const MATERIAL_ENUM12: Record<number, string> = { //Balcony
+const MATERIAL_ENUM12: Record<number, string> = { // Balcony
   0: 'Steel',
   1: 'Wood',
   2: 'Glass',
   3: 'Aluminum',
-  4: 'WroughtIron',
+  4: 'Wrought Iron',
 };
 
-const MATERIAL_ENUM13: Record<number, string> = { //LoadBearingWall
+const MATERIAL_ENUM13: Record<number, string> = { // LoadBearingWall
   0: 'Concrete',
   1: 'Brick',
-  2: 'AeratedConcrete',
+  2: 'Aerated Concrete',
   3: 'Stone',
   4: 'Wood',
 };
 
-const MATERIAL_ENUM14: Record<number, string> = { //Roof
+const MATERIAL_ENUM14: Record<number, string> = { // Roof
   0: 'Tile',
-  1: 'MetalSheet',
-  2: 'AsphaltShingle',
+  1: 'Metal Sheet',
+  2: 'Asphalt Shingle',
   3: 'Thatch',
   4: 'Slate',
   5: 'PVC',
   6: 'Composite',
 };
 
-const MATERIAL_ENUM15: Record<number, string> = { //Ceiling
+const MATERIAL_ENUM15: Record<number, string> = { // Ceiling
   0: 'Concrete',
   1: 'Wood',
   2: 'Steel',
   3: 'Composite',
-  4: 'PrefabricatedConcrete',
-};
-
-const MATERIAL_MAP: Record<number, string> = {
-  1: 'Concrete',
-  2: 'Brick',
-  3: 'Steel',
-  4: 'Wood',
+  4: 'Prefabricated Concrete',
 };
 
 const INSULATION_TYPE_MAP: Record<number, string> = {
@@ -152,59 +145,42 @@ const FINISH_MATERIAL_MAP: Record<number, string> = {
   4: 'Metal Siding',
 };
 
-const WINDOWS_MATERIAL_MAP: Record<number, string> = {
-  0: 'PVC',
-  1: 'Aluminum',
-  2: 'Wood',
-};
-
-const DOORS_MATERIAL_MAP: Record<number, string> = {
-  0: 'Steel',
-  1: 'Wood',
-  2: 'Aluminum',
+// Słownik ładnych etykiet dla pól specificationDetails
+const SPECIFICATION_LABELS: Record<string, string> = {
+  height: "Height (m)",
+  width: "Width (m)",
+  thickness: "Thickness (m)",
+  material: "Material",
+  length: "Length (m)",
+  depth: "Depth (m)",
+  amount: "Amount",
+  surfacearea: "Surface area (m²)",
+  insulationtype: "Insulation type",
+  finishmaterial: "Finish material",
+  area: "Area (m²)",
+  pitch: "Pitch (°)",
+  wallsurfacearea: "Wall surface area (m²)",
+  plastertype: "Plaster type",
+  painttype: "Paint type",
+  numberofcoats: "Number of coats",
+  numberofsteps: "Number of steps",
+  railingmaterial: "Railing material",
+  count: "Count",
 };
 
 const CostSummaryScreen: React.FC = () => {
   const route = useRoute<RouteProp<StackParamList, 'CostSummary'>>();
   const { constructionType, specificationDetails, includeTax } = route.params;
-
   const [totalCost, setTotalCost] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProps>();
 
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const payload = {
-          type: constructionType,
-          ...specificationDetails,
-          includeTax,
-        };
-
-        console.log('Payload sent to backend:', payload);
-
-        const response = await axios.post('http://10.0.2.2:5142/api/Calculator/calculate', payload);
-        const cost = includeTax ? response.data.priceWithTax : response.data.priceWithoutTax;
-
-        console.log('Response received from backend:', response.data);
-
-        setTotalCost(cost);
-        setError(null);
-      } catch (error: any) {
-        console.error('Error fetching price:', error.message || error);
-        setTotalCost(null);
-        setError('Failed to calculate the total cost. Please try again.');
-      }
-    };
-
-    fetchPrice();
-  }, [constructionType, specificationDetails, includeTax]);
-
   const renderSpecificationDetails = () => {
     return Object.entries(specificationDetails).map(([key, value]) => {
       let displayValue: string | number = value;
-  
-      if (key === 'material') {
+      const lowerKey = key.toLowerCase();
+
+      if (lowerKey === 'material') {
         switch (constructionType) {
           case 'PartitionWall':
             displayValue = MATERIAL_ENUM1[value as keyof typeof MATERIAL_ENUM1] || value;
@@ -248,26 +224,54 @@ const CostSummaryScreen: React.FC = () => {
           default:
             displayValue = value;
         }
-      } else if (key === 'insulationType') {
+      } else if (lowerKey === 'insulationtype') {
         displayValue = INSULATION_TYPE_MAP[value as keyof typeof INSULATION_TYPE_MAP] || value;
-      } else if (key === 'finishMaterial') {
+      } else if (lowerKey === 'finishmaterial') {
         displayValue = FINISH_MATERIAL_MAP[value as keyof typeof FINISH_MATERIAL_MAP] || value;
-      }else if (key === 'plasterType') {
+      } else if (lowerKey === 'plastertype') {
         displayValue = MATERIAL_ENUM9[value as number] || value;
-      } else if (key === 'paintType') {
+      } else if (lowerKey === 'painttype') {
         displayValue = MATERIAL_ENUM10[value as number] || value;
-      } else if (key === 'railingMaterial') {
+      } else if (lowerKey === 'railingmaterial') {
         displayValue = MATERIAL_ENUM12[value as number] || value;
       }
-  
+      
+      const prettyLabel = SPECIFICATION_LABELS[lowerKey] || key;
       return (
         <Text key={key} style={styles.detailText}>
-          {key}: {displayValue}
+          {prettyLabel}: {displayValue}
         </Text>
       );
     });
   };
-  
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const payload = {
+          type: constructionType,
+          ...specificationDetails,
+          includeTax,
+        };
+
+        console.log('Payload sent to backend:', payload);
+
+        const response = await axios.post('http://10.0.2.2:5142/api/Calculator/calculate', payload);
+        const cost = includeTax ? response.data.priceWithTax : response.data.priceWithoutTax;
+
+        console.log('Response received from backend:', response.data);
+
+        setTotalCost(cost);
+        setError(null);
+      } catch (error: any) {
+        console.error('Error fetching price:', error.message || error);
+        setTotalCost(null);
+        setError('Failed to calculate the total cost. Please try again.');
+      }
+    };
+
+    fetchPrice();
+  }, [constructionType, specificationDetails, includeTax]);
 
   if (error) {
     return (

@@ -166,7 +166,8 @@ namespace Backend.IntergationTests.Data
                 ID = 10,
                 ClientId = 1,
                 Description = "Instalacja testowa #10",
-                ConstructionSpecificationId = windowsSpec.ID
+                ConstructionSpecificationId = windowsSpec.ID,
+                Address = new OrderAddress { ID = 243, City = "Kraków", PostCode = "34-423", StreetName = "Dębicka 8A" }
             };
             db.Set<ConstructionOrder>().Add(order10);
 
@@ -436,7 +437,8 @@ namespace Backend.IntergationTests.Data
                 Supplier = supplier1,
                 MaterialPriceId = materialPrice1.ID,
                 MaterialPrice = materialPrice1,
-                CreatedDate = DateTime.UtcNow.AddDays(-5)
+                CreatedDate = DateTime.UtcNow.AddDays(-5),
+                Address = new OrderAddress { ID = 555, City = "Kraków", PostCode = "34-423", StreetName = "Dębicka 8A" }
             };
             var materialOrder6 = new MaterialOrder
             {
