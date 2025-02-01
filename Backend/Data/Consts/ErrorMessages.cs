@@ -138,6 +138,7 @@
         public const string AddressStreetNameRequired = "Street name is required.";
         public const string MaterialNotFound = "The specified material does not exist.";
         public const string MaterialDoesNotBelongToSupplier = "The specified material does not belong to the given supplier.";
+        public const string NotificationNotFound = "Notification not found";
+        public const string NotificationsNotFound = "Notifications not found";
     }
 }
-
