@@ -100,7 +100,6 @@ namespace Backend.IntergationTests.Data
             var worker1 = new Worker
             {
                 ID = 20,
-                Position = "Worker 1",
                 ContactDetails = new ContactDetails { Name = "Worker 1", Phone = "444-555-666" },
                 AddressId = workerAddress.ID,
                 Address = workerAddress,

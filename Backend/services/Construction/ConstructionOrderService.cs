@@ -62,7 +62,6 @@ namespace Backend.services.Construction
                 Worker = order.Worker == null ? null : new WorkerDto
                 {
                     ID = order.Worker.ID,
-                    Position = order.Worker.Position,
                     ContactDetails = order.Worker.ContactDetails,
                     AddressId = order.Worker.AddressId,
                     Address = order.Worker.Address
@@ -107,7 +106,6 @@ namespace Backend.services.Construction
                 Worker = order.Worker == null ? null : new WorkerDto
                 {
                     ID = order.Worker.ID,
-                    Position = order.Worker.Position,
                     ContactDetails = order.Worker.ContactDetails,
                     AddressId = order.Worker.AddressId,
                     Address = order.Worker.Address

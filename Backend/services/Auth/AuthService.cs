@@ -84,7 +84,6 @@ namespace Backend.services.Auth
                         PostCode = request.Address.PostCode,
                         StreetName = request.Address.StreetName
                     },
-                    Position = request.Position
                 };
             }
 
