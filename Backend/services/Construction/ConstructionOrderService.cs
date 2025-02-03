@@ -194,7 +194,7 @@ namespace Backend.services.Construction
                     ContactDetails = order.Client.ContactDetails,
                     AddressId = order.Client.AddressId,
                     Address = order.Client.Address
-                },
+                },   
                 ConstructionSpecification = order.ConstructionSpecification,
                 ConstructionSpecificationId = order.ConstructionSpecificationId,
                 Address = new OrderAddressDto
