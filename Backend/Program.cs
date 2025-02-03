@@ -8,6 +8,7 @@ using Backend.services;
 using Backend.services.Auth;
 using Backend.services.Calculator;
 using Backend.services.Construction;
+using Backend.services.Email;
 using Backend.services.Material;
 using Backend.services.Negotiation;
 using Backend.services.Notification;
@@ -62,6 +63,7 @@ namespace Backend
             });
 
             builder.Services.AddScoped<ISupplierService, SupplierService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();

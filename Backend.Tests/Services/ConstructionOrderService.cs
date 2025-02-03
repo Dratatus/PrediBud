@@ -102,7 +102,6 @@ namespace Backend.Tests.Services
                     Worker = new Worker
                     {
                         ID = workerId,
-                        Position = "Painter",
                         ContactDetails = new ContactDetails { Phone = "+43 3432 23 332", Name = "Daniel" },
                         AddressId = 2,
                         Address = new Address { City = "WorkerCity" }
