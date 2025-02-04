@@ -1,5 +1,6 @@
 ﻿using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Orders.Construction;
+using Backend.DTO.ConstructionOrderDto;
 
 namespace Backend.Repositories
 {
@@ -14,5 +15,7 @@ namespace Backend.Repositories
         Task SaveChangesAsync();
         Task<List<ConstructionOrder>> GetWorkerNegotiationsAsync(int workerId);
         Task<List<ConstructionOrder>> GetClientNegotiationsAsync(int clientId);
+        Task<ConstructionOrder> GetClientNegotiationByIdAsync(int orderId, int clientId);
+        Task<ConstructionOrder> GetWorkerNegotiationByIdAsync(int orderId, int workerId);
     }
 }
