@@ -23,6 +23,7 @@ namespace Backend.DTO.ConstructionOrderDto
         public decimal TotalPrice { get; set; }
         public ClientDto Client { get; set; }
         public WorkerDto Worker { get; set; }
+        public LastActionBy LastActionBy { get; set; } = LastActionBy.None;
         public OrderAddressDto Address { get; set; }
         public ConstructionSpecification ConstructionSpecification { get; set; }
         public int ConstructionSpecificationId { get; set; }

@@ -11,6 +11,7 @@ using Backend.services.Construction;
 using Backend.services.Email;
 using Backend.services.Material;
 using Backend.services.Negotiation;
+using Backend.services.Negotiation.Mapper;
 using Backend.services.Notification;
 using Backend.services.Token;
 using Backend.Validatiors.Login;
@@ -56,6 +57,7 @@ namespace Backend
             builder.Services.AddScoped<IMaterialOrderService, MaterialOrderService>();
             builder.Services.AddScoped<ICalculatorService, CalculatorService>();
             builder.Services.AddScoped<ISupplierService, SupplierService>();
+            builder.Services.AddScoped<INegotiationMapper, NegotationMapper>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISupplierDataProvider>(sp =>
             {

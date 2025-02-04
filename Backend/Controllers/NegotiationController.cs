@@ -15,6 +15,21 @@ namespace Backend.Controllers
             _negotiationService = negotiationService;
         }
 
+        [HttpGet("client/{clientId}/negotiations")]
+        public async Task<IActionResult> GetClientNegotiations(int clientId)
+        {
+            var negotiations = await _negotiationService.GetClientNegotiationsAsync(clientId);
+            return Ok(negotiations);
+        }
+
+        [HttpGet("worker/{workerId}/negotiations")]
+        public async Task<IActionResult> GetWorkerNegotiations(int workerId)
+        {
+            var negotiations = await _negotiationService.GetWorkerNegotiationsAsync(workerId);
+            return Ok(negotiations);
+        }
+
+
         [HttpPost("{orderId}/initiate")]
         public async Task<IActionResult> InitiateNegotiation(int orderId, [FromBody] InitiateNegotiationRequest request)
         {

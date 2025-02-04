@@ -106,7 +106,6 @@ namespace Backend.Tests.Services
                 IsClient = true, 
                 Name = "Daniel Orban",
                 Phone = "+23 4212231 23",
-                Position = "Client",
                 Address = new Address { 
                     City = "Kraków", 
                     PostCode = "33-200",
@@ -139,7 +138,6 @@ namespace Backend.Tests.Services
                 IsClient = true,
                 Name = "Daniel Orban",
                 Phone = "+23 4212231 23",
-                Position = "Client",
                 Address = new Address
                 {
                     City = "Kraków",

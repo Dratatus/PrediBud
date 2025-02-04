@@ -12,5 +12,7 @@ namespace Backend.Repositories
         Task AddAsync(ConstructionOrder order);
         Task DeleteAsync(ConstructionOrder order);
         Task SaveChangesAsync();
+        Task<List<ConstructionOrder>> GetWorkerNegotiationsAsync(int workerId);
+        Task<List<ConstructionOrder>> GetClientNegotiationsAsync(int clientId);
     }
 }

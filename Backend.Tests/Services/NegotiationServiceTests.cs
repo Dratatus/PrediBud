@@ -6,6 +6,7 @@ using Backend.Data.Models.Users;
 using Backend.Middlewares;
 using Backend.Repositories;
 using Backend.services.Negotiation;
+using Backend.services.Negotiation.Mapper;
 using Backend.services.Notification;
 using Moq;
 
@@ -16,6 +17,7 @@ namespace Backend.Tests.Services
         private readonly Mock<IConstructionOrderRepository> _orderRepositoryMock;
         private readonly Mock<INotificationService> _notificationServiceMock;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<INegotiationMapper> _negotiationMapper;
         private readonly NegotiationService _service;
 
         public NegotiationServiceTests()
@@ -23,11 +25,13 @@ namespace Backend.Tests.Services
             _orderRepositoryMock = new Mock<IConstructionOrderRepository>();
             _notificationServiceMock = new Mock<INotificationService>();
             _userRepositoryMock = new Mock<IUserRepository>();
+            _negotiationMapper = new Mock<INegotiationMapper>();
 
             _service = new NegotiationService(
                 _orderRepositoryMock.Object,
                 _notificationServiceMock.Object,
-                _userRepositoryMock.Object);
+                _userRepositoryMock.Object,
+                _negotiationMapper.Object);
         }
 
         [Fact]
