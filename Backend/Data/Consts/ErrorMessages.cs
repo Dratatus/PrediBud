@@ -140,5 +140,20 @@
         public const string MaterialDoesNotBelongToSupplier = "The specified material does not belong to the given supplier.";
         public const string NotificationNotFound = "Notification not found";
         public const string NotificationsNotFound = "Notifications not found";
+
+        public const string InvalidPartitionWallDetails = "Partition wall details cannot be null.";
+        public const string InvalidPartitionWallHeight = "Partition wall height must be greater than zero.";
+        public const string InvalidPartitionWallWidth = "Partition wall width must be greater than zero.";
+        public const string InvalidPartitionWallThickness = "Partition wall thickness must be greater than zero.";
+
+        public const string InvalidLoadBearingWallDetails = "Load bearing wall details cannot be null.";
+        public const string InvalidLoadBearingWallHeight = "Load bearing wall height must be greater than zero.";
+        public const string InvalidLoadBearingWallWidth = "Load bearing wall width must be greater than zero.";
+        public const string InvalidLoadBearingWallThickness = "Load bearing wall thickness must be greater than zero.";
+
+        public const string InvalidVentilationSystemDetails = "Ventilation system details cannot be null.";
+        public const string InvalidRoofDetails = "Roof details cannot be null.";
+        public const string InvalidCeilingDetails = "Ceiling details cannot be null.";
+        public const string InvalidChimneyDetails = "Chimney details cannot be null.";
     }
 }

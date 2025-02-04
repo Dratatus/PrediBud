@@ -21,6 +21,8 @@ using Backend.Data.Models.Constructions.Specyfication.Foundation;
 using Backend.Validatiors.ConstructionOrder.Specyfication;
 using Backend.Data.Consts;
 using Backend.Middlewares;
+using Backend.DTO.Specyfication.Backend.DTO.Specifications;
+using Backend.Validatiors.Orders.Specyfication;
 
 namespace Backend.Factories
 {
@@ -83,6 +85,24 @@ namespace Backend.Factories
                 case ConstructionType.Foundation:
                     var foundationDetails = JsonSerializer.Deserialize<FoundationSpecificationDetails>(details.ToString(), options);
                     return CreateFoundationSpecification(foundationDetails);
+
+                case ConstructionType.PartitionWall:
+                    return CreatePartitionWallSpecification(JsonSerializer.Deserialize<PartitionWallSpecificationDetails>(details.ToString(), options));
+
+                case ConstructionType.LoadBearingWall:
+                    return CreateLoadBearingWallSpecification(JsonSerializer.Deserialize<LoadBearingWallSpecificationDetails>(details.ToString(), options));
+
+                case ConstructionType.VentilationSystem:
+                    return CreateVentilationSystemSpecification(JsonSerializer.Deserialize<VentilationSystemSpecificationDetails>(details.ToString(), options));
+
+                case ConstructionType.Roof:
+                    return CreateRoofSpecification(JsonSerializer.Deserialize<RoofSpecificationDetails>(details.ToString(), options));
+
+                case ConstructionType.Ceiling:
+                    return CreateCeilingSpecification(JsonSerializer.Deserialize<CeilingSpecificationDetails>(details.ToString(), options));
+
+                case ConstructionType.Chimney:
+                    return CreateChimneySpecification(JsonSerializer.Deserialize<ChimneySpecificationDetails>(details.ToString(), options));
 
                 default:
                     throw new ApiException($"Construction type {type} is not supported.", StatusCodes.Status400BadRequest);
@@ -269,5 +289,75 @@ namespace Backend.Factories
                 Material = details.Material.Value
             };
         }
+
+        private PartitionWallSpecification CreatePartitionWallSpecification(PartitionWallSpecificationDetails details)
+        {
+            PartitionWallSpecificationValidator.Validate(details);
+
+            return new PartitionWallSpecification
+            {
+                Height = details.Height,
+                Width = details.Width,
+                Thickness = details.Thickness,
+                Material = details.Material.Value
+            };
+        }
+
+        private LoadBearingWallSpecification CreateLoadBearingWallSpecification(LoadBearingWallSpecificationDetails details)
+        {
+            LoadBearingWallSpecificationValidator.Validate(details);
+
+            return new LoadBearingWallSpecification
+            {
+                Height = details.Height,
+                Width = details.Width,
+                Thickness = details.Thickness,
+                Material = details.Material.Value
+            };
+        }
+
+        private VentilationSystemSpecification CreateVentilationSystemSpecification(VentilationSystemSpecificationDetails details)
+        {
+            VentilationSystemSpecificationValidator.Validate(details);
+
+            return new VentilationSystemSpecification
+            {
+                Count = details.Count
+            };
+        }
+
+        private RoofSpecification CreateRoofSpecification(RoofSpecificationDetails details)
+        {
+            RoofSpecificationValidator.Validate(details);
+
+            return new RoofSpecification
+            {
+                Area = details.Area,
+                Pitch = details.Pitch,
+                Material = details.Material.Value
+            };
+        }
+
+        private CeilingSpecification CreateCeilingSpecification(CeilingSpecificationDetails details)
+        {
+            CeilingSpecificationValidator.Validate(details);
+
+            return new CeilingSpecification
+            {
+                Area = details.Area,
+                Material = details.Material.Value
+            };
+        }
+
+        private ChimneySpecification CreateChimneySpecification(ChimneySpecificationDetails details)
+        {
+            ChimneySpecificationValidator.Validate(details);
+
+            return new ChimneySpecification
+            {
+                Count = details.Count
+            };
+        }
+
     }
 }
