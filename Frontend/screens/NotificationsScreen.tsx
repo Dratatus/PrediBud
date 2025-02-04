@@ -1,24 +1,79 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, ActivityIndicator } from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import axios from 'axios';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamList } from '../navigation/AppNavigator';
 
-// Sample data for notifications
-const notifications = [
-    { id: '1', name: 'Supplier X', message: 'Accepted your order #3dfv20', time: '3m ago', icon: require('../assets/icons/worker.png'), showExclamation: true },
-    { id: '2', name: 'Worker Y', message: 'Accepted your construction order #3dfds', time: '5m ago', icon: require('../assets/icons/worker.png'), showExclamation: true },
-    { id: '3', name: 'Worker Z', message: 'Offered you a price for order #sdrda', time: '2h ago', icon: require('../assets/icons/worker.png'), showExclamation: true },
-    { id: '4', name: 'Supplier X', message: 'Accepted your order #3dfv20', time: '3m ago', icon: require('../assets/icons/worker.png'), showExclamation: false },
-    { id: '5', name: 'Worker Y', message: 'Accepted your construction order #3dfds', time: '5m ago', icon: require('../assets/icons/worker.png'), showExclamation: false },
-  ];
+// Zakładamy, że w trasie Notifications przekazujemy clientId
+type NotificationsRouteProps = RouteProp<StackParamList, 'Notifications'>;
+type NavigationProps = NativeStackNavigationProp<StackParamList, 'Notifications'>;
+
+interface Notification {
+  id: string;
+  name: string;
+  message: string;
+  time: string;
+  icon: any;
+  showExclamation: boolean;
+}
 
 const NotificationsScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
+  const route = useRoute<NotificationsRouteProps>();
+  const { clientId } = route.params || { clientId: 1 };
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Funkcja pobierająca powiadomienia z API
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get<Notification[]>(`http://10.0.2.2:5142/api/Notification/${clientId}/unread`);
+      setNotifications(response.data);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+      setError("Failed to load notifications.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Funkcja oznaczająca wszystkie jako przeczytane (POST)
+  const handleMarkAllAsRead = async () => {
+    const url = `http://10.0.2.2:5142/api/Notification/${clientId}/mark-all-as-read`;
+    console.log("Mark All as Read URL:", url);
+    try {
+      await axios.post(url);
+      // Odświeżenie powiadomień po udanej operacji
+      fetchNotifications();
+    } catch (err) {
+      console.error("Error marking notifications as read:", err);
+    }
+  };
+  
+
+  // Funkcja usuwająca wszystkie powiadomienia (DELETE)
+  const handleDeleteAll = async () => {
+    try {
+      await axios.delete(`http://10.0.2.2:5142/api/Notification/${clientId}/all`);
+      // Po udanej operacji czyścimy listę
+      setNotifications([]);
+    } catch (err) {
+      console.error("Error deleting notifications:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  const renderNotification = ({ item }: { item: typeof notifications[0] }) => (
+  const renderNotification = ({ item }: { item: Notification }) => (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
         <Image source={item.icon} style={styles.notificationIcon} />
@@ -36,12 +91,32 @@ const NotificationsScreen: React.FC = () => {
     </View>
   );
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{'<'} Back</Text>
-      </TouchableOpacity>
+      {/* Nagłówek z przyciskami */}
+      <View style={styles.headerRow}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.backButtonText}>{'<'} Back</Text>
+        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity style={styles.headerButton} onPress={handleMarkAllAsRead}>
+            <Text style={styles.headerButtonText}>Mark All as Read</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerButton} onPress={handleDeleteAll}>
+            <Text style={styles.headerButtonText}>Delete All</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <Text style={styles.headerText}>Notifications</Text>
+      {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={notifications}
         renderItem={renderNotification}
@@ -58,25 +133,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9b234',
     padding: 20,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 50,
+    marginBottom: 10,
+  },
   backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
     backgroundColor: '#f0f0d0',
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
-    zIndex: 1,
   },
   backButtonText: {
     color: 'black',
     fontWeight: 'bold',
   },
+  headerButtons: {
+    flexDirection: 'row',
+  },
+  headerButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  headerButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginTop: 90,
     marginBottom: 30,
+    textAlign: 'center',
   },
   notificationList: {
     paddingBottom: 100,
@@ -123,6 +216,12 @@ const styles = StyleSheet.create({
   exclamationIcon: {
     width: 20,
     height: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 

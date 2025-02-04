@@ -14,15 +14,19 @@ const icons = {
 };
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'UserProfile'>;
-type UserProfileRouteProps = RouteProp<StackParamList, 'UserProfile'>;
 
 const UserProfileScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
-  const route = useRoute<UserProfileRouteProps>();
-  const { userRole = '', userName = 'Unknown User' } = route.params || {};
-
+  const route = useRoute<RouteProp<StackParamList, 'UserProfile'>>();
+  
+  // Pobieramy dane z parametrów trasy
+  const { userRole = '', userName = 'Unknown User', clientId } = route.params || {};
+  // Konwersja clientId na liczbę
+  const clientIdNum = Number(clientId);
+  
   const handleLogout = () => {
-    navigation.navigate('Login');
+    // Używamy obiektowego wywołania nawigacji, aby spełnić typy
+    navigation.navigate({ name: 'Login', params: undefined });
   };
 
   const handleFindWorks = () => {
@@ -34,20 +38,20 @@ const UserProfileScreen: React.FC = () => {
   };
 
   const handleMyOrders = () => {
-    navigation.navigate('MyOrders');
+    navigation.navigate('MyOrders', { clientId: clientIdNum });
   };
 
-  const handleNotifications = () =>{
+  const handleNotifications = () => {
     navigation.navigate('Notifications');
-  }
+  };
 
-  const handleCalculator = () =>{
-    navigation.navigate('Calculator');
-  }
+  const handleCalculator = () => {
+    navigation.navigate('Calculator', { clientId: clientIdNum });
+  };
 
-  const handleMaterials = () =>{
-    navigation.navigate('Materials');
-  }
+  const handleMaterials = () => {
+    navigation.navigate('Materials', { clientId: clientIdNum });
+  };
 
   return (
     <View style={styles.container}>
@@ -65,46 +69,45 @@ const UserProfileScreen: React.FC = () => {
       <Text style={styles.userName}>{userName || 'Unknown User'}</Text>
 
       <View style={styles.optionsContainer}>
-      {userRole?.toLowerCase() === 'client' ? (
-  <>
-    <TouchableOpacity style={styles.optionButton} onPress={handleCalculator}>
-      <Image source={icons.calculator} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Calculator</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleMyOrders}>
-      <Image source={icons.orders} style={styles.optionIcon} />
-      <Text style={styles.optionText}>My orders</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
-      <Image source={icons.notifications} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Notifications</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
-      <Image source={icons.materials} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Materials</Text>
-    </TouchableOpacity>
-  </>
-) : (
-  <>
-    <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
-      <Image source={icons.findWorks} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Find works</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
-      <Image source={icons.myWorks} style={styles.optionIcon} />
-      <Text style={styles.optionText}>My works</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
-      <Image source={icons.notifications} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Notifications</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
-      <Image source={icons.materials} style={styles.optionIcon} />
-      <Text style={styles.optionText}>Materials</Text>
-    </TouchableOpacity>
-  </>
-)}
-
+        {userRole?.toLowerCase() === 'client' ? (
+          <>
+            <TouchableOpacity style={styles.optionButton} onPress={handleCalculator}>
+              <Image source={icons.calculator} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Calculator</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleMyOrders}>
+              <Image source={icons.orders} style={styles.optionIcon} />
+              <Text style={styles.optionText}>My orders</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+              <Image source={icons.notifications} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Notifications</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+              <Image source={icons.materials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Materials</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
+              <Image source={icons.findWorks} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Find works</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
+              <Image source={icons.myWorks} style={styles.optionIcon} />
+              <Text style={styles.optionText}>My works</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+              <Image source={icons.notifications} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Notifications</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+              <Image source={icons.materials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Materials</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );

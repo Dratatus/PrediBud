@@ -16,31 +16,37 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://10.0.2.2:5142/api/auth/login', { email, password });
-
+  
       console.log(response);
-
+  
       const token = response.data.token;
       console.log('Login successful:', token);
-
+  
       const decodedToken = decodeJWT(token);
       console.log('Decoded Token:', decodedToken);
-
+  
       const userName = decodedToken?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
       const userRole = decodedToken?.UserType;
-
+      // Załóżmy, że identyfikator użytkownika jest przechowywany w decodedToken.ID.
+      // Możesz również użyć innej właściwości, np. "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+      const clientId = Number(decodedToken?.sub);
+  
       console.log('User Name:', userName);
       console.log('User Role:', userRole);
-
+      console.log('Client ID:', clientId);
+  
       navigation.navigate('UserProfile', {
-          userRole: userRole,
-          userName: userName,
+        userRole: userRole,
+        userName: userName,
+        clientId: clientId,
       });
-
+  
     } catch (error: any) {
       console.error('Error during login:', error.response?.data || error.message);
       console.error('Error during login:', error);
     }
   };
+  
 
   const decodeJWT = (token: string) => {
   try {

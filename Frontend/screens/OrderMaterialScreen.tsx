@@ -1,58 +1,144 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Image, 
+  ActivityIndicator,
+  ScrollView 
+} from 'react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
+import * as ImagePicker from 'expo-image-picker';
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'OrderMaterial'>;
 
+interface Material {
+  id: number;
+  materialType: string;
+  materialCategory: string;
+  priceWithoutTax: number;
+  supplierId: number;
+  supplierName: string;
+}
+
 const OrderMaterialScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
+  const route = useRoute<RouteProp<StackParamList, 'OrderMaterial'>>();
+  // Pobieramy material oraz clientId z przekazanych parametrów
+  const params = route.params as { material: Material; clientId: number } | undefined;
+  if (!params || !params.material) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Material details not provided.</Text>
+      </View>
+    );
+  }
+  const { material, clientId } = params;
+  
+  console.log('OrderMaterialScreen - Retrieved clientId:', clientId);
+  console.log('OrderMaterialScreen - Material:', material);
 
-  const [materialType, setMaterialType] = useState('Brick');
-  const [quantity, setQuantity] = useState('');
-  const [address, setAddress] = useState('');
-  const pricePerUnit = 2.7;
+  // Formularz – pola Quantity oraz Address
+  const [quantity, setQuantity] = useState<string>('');
+  const [postCode, setPostCode] = useState<string>('');
+  const [city, setCity] = useState<string>('');
+  const [streetName, setStreetName] = useState<string>('');
+
+  const pricePerUnit = material.priceWithoutTax;
   const totalCost = quantity ? (parseInt(quantity) * pricePerUnit).toFixed(2) : '0.00';
 
-  const handleOrder = () => {
-    navigation.navigate('MyOrders'); // Przeniesienie do ekranu MyOrders
+  const getMaterialIcon = (materialType: string): any => {
+    const lowerType = materialType.toLowerCase();
+    switch (lowerType) {
+      case 'steel':
+        return require('../assets/icons/steel.png');
+      case 'wood':
+        return require('../assets/icons/wood.png');
+      case 'brick':
+        return require('../assets/icons/brick.png');
+      // ... (pozostałe przypadki)
+      default:
+        return require('../assets/icons/materials.png');
+    }
   };
 
-  const handleBack = () => {
-    navigation.goBack(); // Powrót do poprzedniego ekranu
+  const handleOrder = async () => {
+    const orderData = {
+      id: 0,
+      unitPriceNet: material.priceWithoutTax,
+      unitPriceGross: material.priceWithoutTax * 1.23, // przykładowy VAT 23%
+      quantity: parseInt(quantity) || 0,
+      totalPriceNet: (parseInt(quantity) * material.priceWithoutTax) || 0,
+      totalPriceGross: (parseInt(quantity) * material.priceWithoutTax * 1.23) || 0,
+      createdDate: new Date().toISOString(),
+      userId: clientId, // dynamicznie pobieramy identyfikator użytkownika
+      supplierId: material.supplierId,
+      materialPriceId: material.id,
+      address: {
+        city,
+        postCode,
+        streetName,
+      },
+    };
+
+    // Logujemy raz wysyłany obiekt danych
+    console.log('Order data to be sent to backend:', orderData);
+
+    try {
+      const response = await fetch('http://10.0.2.2:5142/api/MaterialOrder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error('Failed to create order:', errText);
+      } else {
+        const responseData = await response.json();
+        console.log('Order created successfully:', responseData);
+        // Przekazujemy clientId przy nawigacji do MyOrders
+        navigation.navigate('MyOrders', { clientId });
+      }
+    } catch (error) {
+      console.error('Error while creating order:', error);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>{'<'} Back</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Image source={require('../assets/icons/materials.png')} style={styles.headerIcon} />
+        <Image 
+          source={getMaterialIcon(material.materialType)}
+          style={styles.headerIcon}
+        />
         <Text style={styles.headerText}>ORDER MATERIAL</Text>
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>MATERIAL</Text>
-        <View style={styles.inputRow}>
-          <Image source={require('../assets/icons/materials.png')} style={styles.inputIcon} />
-          <Picker
-            selectedValue={materialType}
-            style={styles.picker}
-            onValueChange={(itemValue) => setMaterialType(itemValue)}
-          >
-            <Picker.Item label="Brick" value="Brick" />
-            <Picker.Item label="Steel" value="Steel" />
-            <Picker.Item label="Wood" value="Wood" />
-          </Picker>
+        <Text style={styles.inputLabel}>Material</Text>
+        <View style={styles.fixedInfo}>
+          <Text style={styles.fixedText}>{material.materialType}</Text>
         </View>
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>PICS</Text>
+        <Text style={styles.inputLabel}>Details</Text>
+        <View style={styles.fixedInfo}>
+          <Text style={styles.fixedText}>Category: {material.materialCategory}</Text>
+          <Text style={styles.fixedText}>Supplier: {material.supplierName}</Text>
+        </View>
+      </View>
+
+      <View style={styles.inputBlock}>
+        <Text style={styles.inputLabel}>Quantity (pcs)</Text>
         <View style={styles.inputRow}>
           <Image source={require('../assets/icons/trolley.png')} style={styles.inputIcon} />
           <TextInput
@@ -66,32 +152,43 @@ const OrderMaterialScreen: React.FC = () => {
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>ADDRESS</Text>
-        <View style={styles.inputRow}>
-          <Image source={require('../assets/icons/location.png')} style={styles.inputIcon} />
-          <TextInput
-            style={styles.inputField}
-            value={address}
-            onChangeText={setAddress}
-            placeholder="Enter address"
-          />
-        </View>
+        <Text style={styles.inputLabel}>Post code</Text>
+        <TextInput
+          style={styles.inputField}
+          value={postCode}
+          onChangeText={setPostCode}
+          placeholder="Post code"
+        />
+        <Text style={styles.inputLabel}>City</Text>
+        <TextInput
+          style={styles.inputField}
+          value={city}
+          onChangeText={setCity}
+          placeholder="City"
+        />
+        <Text style={styles.inputLabel}>Street</Text>
+        <TextInput
+          style={styles.inputField}
+          value={streetName}
+          onChangeText={setStreetName}
+          placeholder="Street name"
+        />
       </View>
 
       <View style={styles.totalCostBlock}>
-        <Text style={styles.totalCostText}>{`${quantity || 0} x ${pricePerUnit} = ${totalCost} $`}</Text>
+        <Text style={styles.totalCostText}>{`${quantity || 0} x ${pricePerUnit} = ${totalCost} PLN`}</Text>
       </View>
 
       <TouchableOpacity style={styles.orderButton} onPress={handleOrder}>
         <Text style={styles.orderButtonText}>ORDER</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#f9b234',
     padding: 20,
   },
@@ -149,10 +246,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 5,
+    marginBottom: 10,
   },
-  picker: {
-    flex: 1,
-    height: 40,
+  fixedInfo: {
+    paddingVertical: 10,
+  },
+  fixedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   totalCostBlock: {
     backgroundColor: '#fff8e1',
@@ -176,6 +277,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

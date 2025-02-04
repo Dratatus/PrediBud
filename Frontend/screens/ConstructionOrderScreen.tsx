@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Button, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -55,30 +55,9 @@ const ADDRESS_LABELS: Record<string, string> = {
   streetName: 'Street name',
 };
 
-// Nowy słownik etykiet dla pól Specification Details
-const FIELD_LABELS: Record<string, string> = {
-  height: "Height (m)",
-  width: "Width (m)",
-  thickness: "Thickness (m)",
-  material: "Material",
-  length: "Length (m)",
-  depth: "Depth (m)",
-  amount: "Amount",
-  surfacearea: "Surface area (m²)",
-  insulationtype: "Insulation type",
-  finishmaterial: "Finish material",
-  area: "Area (m²)",
-  pitch: "Pitch (°)",
-  wallsurfacearea: "Wall surface area (m²)",
-  plastertype: "Plaster type",
-  painttype: "Paint type",
-  numberofcoats: "Number of coats",
-  numberofsteps: "Number of steps",
-  railingmaterial: "Railing material",
-  count: "Count"
-};
-
-// Funkcja formatująca nazwy typu konstrukcji, aby były ładniejsze w dropdownie
+/**
+ * Funkcja formatująca tekst dla Construction Type – zamienia klucze na ładniejsze napisy.
+ */
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
     partitionwall: 'Partition Wall',
@@ -178,7 +157,7 @@ const ConstructionOrderScreen: React.FC = () => {
   const [constructionType, setConstructionType] = useState<string>('partitionwall');
   const [specificationDetails, setSpecificationDetails] = useState<Record<string, string>>({});
   const [proposedPrice, setProposedPrice] = useState<number | null>(null);
-  // Wybrana data – domyślnie dzisiejsza
+  // Używamy stanu na wybraną datę – domyślnie dzisiejsza data
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [placementPhotos, setPlacementPhotos] = useState<string[]>([]);
@@ -187,7 +166,6 @@ const ConstructionOrderScreen: React.FC = () => {
     city: '',
     streetName: '',
   });
-  const [clientId, setClientId] = useState<number>(0);
 
   useEffect(() => {
     if (route.params) {
@@ -215,10 +193,13 @@ const ConstructionOrderScreen: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    // Konwersja constructionType na liczbę
     const constructionTypeNumber = CONSTRUCTION_TYPE_ENUM[constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM];
+    // Konwersja specificationDetails – wszystkie wartości na liczby
     const convertedSpecDetails = Object.fromEntries(
       Object.entries(specificationDetails).map(([key, value]) => [key, Number(value)])
     );
+    // Konwersja wybranej daty na format "YYYY-MM-DD"
     const requestedStartTimeString = selectedDate.toISOString().split('T')[0];
 
     const orderData = {
@@ -228,20 +209,20 @@ const ConstructionOrderScreen: React.FC = () => {
       placementPhotos,
       requestedStartTime: requestedStartTimeString,
       clientProposedPrice: proposedPrice,
-      clientId,
+      clientId: route.params!.clientId,
       address,
     };
 
     console.log('Data sent to backend:', orderData);
 
     try {
-      const response = await fetch('http://10.0.2.2:5142/api/Orders', {
+      const response = await fetch('http://10.0.2.2:5142/api/ConstructionOrderClient', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
       });
       if (response.ok) {
-        navigation.navigate('MyOrders');
+        navigation.navigate('MyOrders', { clientId: route.params!.clientId });
       } else {
         console.error('Failed to create order:', await response.text());
       }
@@ -281,7 +262,7 @@ const ConstructionOrderScreen: React.FC = () => {
         const enumOptions = getEnumOptions(constructionType, field);
         return (
           <View key={field} style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>{FIELD_LABELS[field] || field}</Text>
+            <Text style={styles.inputLabel}>{field}</Text>
             {enumOptions ? (
               <View style={styles.pickerContainer}>
                 <Picker
@@ -339,14 +320,17 @@ const ConstructionOrderScreen: React.FC = () => {
       </TouchableOpacity>
       {showDatePicker && (
         <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={(event: any, date?: Date) => {
-            setShowDatePicker(false);
-            if (date) setSelectedDate(date);
-          }}
-        />
+        value={selectedDate}
+        mode="date"
+        display="default"
+        onChange={(event: DateTimePickerEvent, date?: Date) => {
+          setShowDatePicker(false);
+          if (date) {
+            setSelectedDate(date);
+          }
+        }}
+      />
+      
       )}
 
       <Text style={styles.label}>Placement Photos</Text>

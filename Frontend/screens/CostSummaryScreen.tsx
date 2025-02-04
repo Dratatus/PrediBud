@@ -7,171 +7,12 @@ import { SpecificationDetails } from '../screens/CalculatorScreen';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, 'CostSummary'>;
-
-const MATERIAL_ENUM1: Record<number, string> = { // PartitionWall
-  0: 'Drywall',
-  1: 'Brick',
-  2: 'Aerated Concrete',
-  3: 'Wood',
-  4: 'Glass',
-};
-
-const MATERIAL_ENUM3: Record<number, string> = { // Windows
-  0: 'Unknown',
-  1: 'Wood',
-  2: 'PVC',
-  3: 'Aluminum',
-  4: 'Steel',
-  5: 'Composite',
-};
-
-const MATERIAL_ENUM4: Record<number, string> = { // Doors
-  0: 'Wood',
-  1: 'Steel',
-  2: 'PVC',
-  3: 'Aluminum',
-  4: 'Glass',
-};
-
-const MATERIAL_ENUM6: Record<number, string> = { // Flooring
-  0: 'Laminate',
-  1: 'Hardwood',
-  2: 'Vinyl',
-  3: 'Tile',
-  4: 'Carpet',
-};
-
-const MATERIAL_ENUM7: Record<number, string> = { // SuspendedCeiling
-  0: 'Drywall',
-  1: 'Mineral Fiber',
-  2: 'Metal',
-  3: 'PVC',
-  4: 'Wood',
-  5: 'Glass Fiber',
-  6: 'Composite',
-};
-
-const MATERIAL_ENUM8: Record<number, string> = { // InsulationOfAttic
-  0: 'Mineral Wool',
-  1: 'Styrofoam',
-  2: 'Polyurethane Foam',
-  3: 'Cellulose',
-  4: 'Fiberglass',
-  5: 'Rock Wool',
-};
-
-const MATERIAL_ENUM9: Record<number, string> = { // Plastering
-  0: 'Gypsum',
-  1: 'Cement',
-  2: 'Lime',
-  3: 'Lime Cement',
-  4: 'Clay',
-  5: 'Acrylic',
-  6: 'Silicone',
-  7: 'Silicate',
-};
-
-const MATERIAL_ENUM10: Record<number, string> = { // Painting
-  0: 'Acrylic',
-  1: 'Latex',
-  2: 'Oil Based',
-  3: 'Water Based',
-  4: 'Epoxy',
-  5: 'Enamel',
-  6: 'Chalk',
-  7: 'Matte',
-  8: 'Satin',
-  9: 'Glossy',
-};
-
-const MATERIAL_ENUM11: Record<number, string> = { // Staircase
-  0: 'Unknown',
-  1: 'Wood',
-  2: 'Metal',
-  3: 'Concrete',
-  4: 'Stone',
-  5: 'Glass',
-  6: 'Composite',
-  7: 'Marble',
-  8: 'Granite',
-};
-
-const MATERIAL_ENUM12: Record<number, string> = { // Balcony
-  0: 'Steel',
-  1: 'Wood',
-  2: 'Glass',
-  3: 'Aluminum',
-  4: 'Wrought Iron',
-};
-
-const MATERIAL_ENUM13: Record<number, string> = { // LoadBearingWall
-  0: 'Concrete',
-  1: 'Brick',
-  2: 'Aerated Concrete',
-  3: 'Stone',
-  4: 'Wood',
-};
-
-const MATERIAL_ENUM14: Record<number, string> = { // Roof
-  0: 'Tile',
-  1: 'Metal Sheet',
-  2: 'Asphalt Shingle',
-  3: 'Thatch',
-  4: 'Slate',
-  5: 'PVC',
-  6: 'Composite',
-};
-
-const MATERIAL_ENUM15: Record<number, string> = { // Ceiling
-  0: 'Concrete',
-  1: 'Wood',
-  2: 'Steel',
-  3: 'Composite',
-  4: 'Prefabricated Concrete',
-};
-
-const INSULATION_TYPE_MAP: Record<number, string> = {
-  0: 'Styrofoam',
-  1: 'Mineral Wool',
-  2: 'Polyurethane Foam',
-  3: 'Fiberglass',
-};
-
-const FINISH_MATERIAL_MAP: Record<number, string> = {
-  0: 'Plaster',
-  1: 'Brick',
-  2: 'Stone',
-  3: 'Wood',
-  4: 'Metal Siding',
-};
-
-// Słownik ładnych etykiet dla pól specificationDetails
-const SPECIFICATION_LABELS: Record<string, string> = {
-  height: "Height (m)",
-  width: "Width (m)",
-  thickness: "Thickness (m)",
-  material: "Material",
-  length: "Length (m)",
-  depth: "Depth (m)",
-  amount: "Amount",
-  surfacearea: "Surface area (m²)",
-  insulationtype: "Insulation type",
-  finishmaterial: "Finish material",
-  area: "Area (m²)",
-  pitch: "Pitch (°)",
-  wallsurfacearea: "Wall surface area (m²)",
-  plastertype: "Plaster type",
-  painttype: "Paint type",
-  numberofcoats: "Number of coats",
-  numberofsteps: "Number of steps",
-  railingmaterial: "Railing material",
-  count: "Count",
-};
+type CostSummaryRouteProps = RouteProp<StackParamList, 'CostSummary'>;
 
 const CostSummaryScreen: React.FC = () => {
-  const route = useRoute<RouteProp<StackParamList, 'CostSummary'>>();
-  const { constructionType, specificationDetails, includeTax } = route.params;
-  const [totalCost, setTotalCost] = useState<number | null>(null);
+  const route = useRoute<CostSummaryRouteProps>();
+  const { constructionType, specificationDetails, includeTax, totalCost, clientId } = route.params;
+  const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProps>();
 
@@ -180,6 +21,7 @@ const CostSummaryScreen: React.FC = () => {
       let displayValue: string | number = value;
       const lowerKey = key.toLowerCase();
 
+      // W zależności od typu konstrukcji wyświetlamy odpowiednią wartość
       if (lowerKey === 'material') {
         switch (constructionType) {
           case 'PartitionWall':
@@ -261,11 +103,11 @@ const CostSummaryScreen: React.FC = () => {
 
         console.log('Response received from backend:', response.data);
 
-        setTotalCost(cost);
+        setCalculatedCost(cost);
         setError(null);
       } catch (error: any) {
         console.error('Error fetching price:', error.message || error);
-        setTotalCost(null);
+        setCalculatedCost(null);
         setError('Failed to calculate the total cost. Please try again.');
       }
     };
@@ -281,14 +123,14 @@ const CostSummaryScreen: React.FC = () => {
         </TouchableOpacity>
         <Text style={styles.title}>Cost Summary</Text>
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={() => setTotalCost(null)}>
+        <TouchableOpacity style={styles.retryButton} onPress={() => setCalculatedCost(null)}>
           <Text style={styles.retryButtonText}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  if (totalCost === null) {
+  if (calculatedCost === null) {
     return (
       <View style={styles.container}>
         <Text style={styles.loadingText}>Calculating cost...</Text>
@@ -309,7 +151,7 @@ const CostSummaryScreen: React.FC = () => {
       <View style={styles.box}>
         <Text style={styles.detailText}>Construction Type: {constructionType}</Text>
         <Text style={styles.detailText}>Include Tax: {includeTax ? 'Yes' : 'No'}</Text>
-        <Text style={styles.detailText}>Total Cost: {totalCost} PLN</Text>
+        <Text style={styles.detailText}>Total Cost: {calculatedCost} PLN</Text>
       </View>
 
       <View style={styles.box}>
@@ -326,8 +168,8 @@ const CostSummaryScreen: React.FC = () => {
             specificationDetails,
             placementPhotos: null,
             requestedStartTime: null,
-            clientProposedPrice: totalCost!,
-            clientId: null,
+            clientProposedPrice: calculatedCost,
+            clientId, // przekazujemy dynamicznie clientId
           })
         }
       >
@@ -335,6 +177,45 @@ const CostSummaryScreen: React.FC = () => {
       </TouchableOpacity>
     </View>
   );
+};
+
+const MATERIAL_ENUM1: Record<number, string> = { 0: 'Drywall', 1: 'Brick', 2: 'Aerated Concrete', 3: 'Wood', 4: 'Glass' };
+const MATERIAL_ENUM3: Record<number, string> = { 0: 'Unknown', 1: 'Wood', 2: 'PVC', 3: 'Aluminum', 4: 'Steel', 5: 'Composite' };
+const MATERIAL_ENUM4: Record<number, string> = { 0: 'Wood', 1: 'Steel', 2: 'PVC', 3: 'Aluminum', 4: 'Glass' };
+const MATERIAL_ENUM6: Record<number, string> = { 0: 'Laminate', 1: 'Hardwood', 2: 'Vinyl', 3: 'Tile', 4: 'Carpet' };
+const MATERIAL_ENUM7: Record<number, string> = { 0: 'Drywall', 1: 'Mineral Fiber', 2: 'Metal', 3: 'PVC', 4: 'Wood', 5: 'Glass Fiber', 6: 'Composite' };
+const MATERIAL_ENUM8: Record<number, string> = { 0: 'Mineral Wool', 1: 'Styrofoam', 2: 'Polyurethane Foam', 3: 'Cellulose', 4: 'Fiberglass', 5: 'Rock Wool' };
+const MATERIAL_ENUM9: Record<number, string> = { 0: 'Gypsum', 1: 'Cement', 2: 'Lime', 3: 'Lime Cement', 4: 'Clay', 5: 'Acrylic', 6: 'Silicone', 7: 'Silicate' };
+const MATERIAL_ENUM10: Record<number, string> = { 0: 'Acrylic', 1: 'Latex', 2: 'Oil Based', 3: 'Water Based', 4: 'Epoxy', 5: 'Enamel', 6: 'Chalk', 7: 'Matte', 8: 'Satin', 9: 'Glossy' };
+const MATERIAL_ENUM11: Record<number, string> = { 0: 'Unknown', 1: 'Wood', 2: 'Metal', 3: 'Concrete', 4: 'Stone', 5: 'Glass', 6: 'Composite', 7: 'Marble', 8: 'Granite' };
+const MATERIAL_ENUM12: Record<number, string> = { 0: 'Steel', 1: 'Wood', 2: 'Glass', 3: 'Aluminum', 4: 'Wrought Iron' };
+const MATERIAL_ENUM13: Record<number, string> = { 0: 'Concrete', 1: 'Brick', 2: 'Aerated Concrete', 3: 'Stone', 4: 'Wood' };
+const MATERIAL_ENUM14: Record<number, string> = { 0: 'Tile', 1: 'Metal Sheet', 2: 'Asphalt Shingle', 3: 'Thatch', 4: 'Slate', 5: 'PVC', 6: 'Composite' };
+const MATERIAL_ENUM15: Record<number, string> = { 0: 'Concrete', 1: 'Wood', 2: 'Steel', 3: 'Composite', 4: 'Prefabricated Concrete' };
+
+const INSULATION_TYPE_MAP: Record<number, string> = { 0: 'Styrofoam', 1: 'Mineral Wool', 2: 'Polyurethane Foam', 3: 'Fiberglass' };
+const FINISH_MATERIAL_MAP: Record<number, string> = { 0: 'Plaster', 1: 'Brick', 2: 'Stone', 3: 'Wood', 4: 'Metal Siding' };
+
+const SPECIFICATION_LABELS: Record<string, string> = {
+  height: "Height (m)",
+  width: "Width (m)",
+  thickness: "Thickness (m)",
+  material: "Material",
+  length: "Length (m)",
+  depth: "Depth (m)",
+  amount: "Amount",
+  surfacearea: "Surface area (m²)",
+  insulationtype: "Insulation type",
+  finishmaterial: "Finish material",
+  area: "Area (m²)",
+  pitch: "Pitch (°)",
+  wallsurfacearea: "Wall surface area (m²)",
+  plastertype: "Plaster type",
+  painttype: "Paint type",
+  numberofcoats: "Number of coats",
+  numberofsteps: "Number of steps",
+  railingmaterial: "Railing material",
+  count: "Count",
 };
 
 const styles = StyleSheet.create({

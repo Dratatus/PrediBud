@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Switch, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StackParamList } from '../navigation/AppNavigator';
 
@@ -142,6 +142,7 @@ const MATERIAL_ENUM15 = { // Ceiling
   PrefabricatedConcrete: 4,
 };
 
+
 const CONSTRUCTION_TYPE_ENUM = {
   PartitionWall: 0,
   Foundation: 1,
@@ -162,8 +163,6 @@ const CONSTRUCTION_TYPE_ENUM = {
   Roof: 16,
   Ceiling: 17
 };
-
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'Calculator'>;
 
 export type SpecificationDetails = 
   | { height: number; width: number; thickness: number; material: number }
@@ -187,6 +186,9 @@ type CalculatorScreenState = {
   includeTax: boolean;
 };
 
+type CalculatorRouteProps = RouteProp<StackParamList, 'Calculator'>;
+type NavProps = NativeStackNavigationProp<StackParamList, 'Calculator'>;
+
 const CalculatorScreen: React.FC = () => {
   const [state, setState] = useState<CalculatorScreenState>({
     constructionType: 'PartitionWall',
@@ -194,81 +196,78 @@ const CalculatorScreen: React.FC = () => {
     includeTax: true,
   });
 
-  const navigation = useNavigation<NavigationProps>();
+  const navigation = useNavigation<NavProps>();
+  const route = useRoute<CalculatorRouteProps>();
+  // Pobieramy clientId przekazany przy nawigacji (np. z UserProfileScreen)
+  const { clientId } = route.params!;
+  if (clientId == null) {
+    console.error('CalculatorScreen: clientId is not provided.');
+  }
 
   const handleCalculate = () => {
     let materialEnumValue = null;
 
     if (state.constructionType === 'PartitionWall') {
       materialEnumValue = MATERIAL_ENUM1[state.fields.Material as keyof typeof MATERIAL_ENUM1];
-      if (materialEnumValue === null || materialEnumValue === undefined) { // Poprawiono warunek
+      if (materialEnumValue === null || materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
     } else if (state.constructionType === 'Windows') {
       materialEnumValue = MATERIAL_ENUM3[state.fields.Material as keyof typeof MATERIAL_ENUM3];
-      if (materialEnumValue === null || materialEnumValue === undefined) { // Poprawiono warunek
+      if (materialEnumValue === null || materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Doors') {
+    } else if (state.constructionType === 'Doors') {
       materialEnumValue = MATERIAL_ENUM4[state.fields.Material as keyof typeof MATERIAL_ENUM4];
-      if (!materialEnumValue === null || materialEnumValue === undefined) {
+      if (materialEnumValue === null || materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Flooring') {
+    } else if (state.constructionType === 'Flooring') {
       materialEnumValue = MATERIAL_ENUM6[state.fields.Material as keyof typeof MATERIAL_ENUM6];
-      if (!materialEnumValue === null || materialEnumValue === undefined) {
+      if (materialEnumValue === null || materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'SuspendedCeiling') {
+    } else if (state.constructionType === 'SuspendedCeiling') {
       materialEnumValue = MATERIAL_ENUM7[state.fields.Material as keyof typeof MATERIAL_ENUM7];
       if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'InsulationOfAttic') {
+    } else if (state.constructionType === 'InsulationOfAttic') {
       materialEnumValue = MATERIAL_ENUM8[state.fields.Material as keyof typeof MATERIAL_ENUM8];
       if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Plastering') {
+    } else if (state.constructionType === 'Plastering') {
       materialEnumValue = MATERIAL_ENUM9[state.fields.PlasterType as keyof typeof MATERIAL_ENUM9];
-      if (materialEnumValue === undefined) { // Poprawiono warunek
+      if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Painting') {
+    } else if (state.constructionType === 'Painting') {
       materialEnumValue = MATERIAL_ENUM10[state.fields.PaintType as keyof typeof MATERIAL_ENUM10];
-      if (materialEnumValue === undefined) { // Poprawiono warunek
+      if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Staircase') {
+    } else if (state.constructionType === 'Staircase') {
       materialEnumValue = MATERIAL_ENUM11[state.fields.Material as keyof typeof MATERIAL_ENUM11];
       if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'Balcony') {
+    } else if (state.constructionType === 'Balcony') {
       materialEnumValue = MATERIAL_ENUM12[state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12];
       if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
         return;
       }
-    }
-    else if (state.constructionType === 'LoadBearingWall') {
+    } else if (state.constructionType === 'LoadBearingWall') {
       materialEnumValue = MATERIAL_ENUM13[state.fields.Material as keyof typeof MATERIAL_ENUM13];
       if (materialEnumValue === undefined) {
         console.error('Invalid material selected');
@@ -293,7 +292,7 @@ const CalculatorScreen: React.FC = () => {
           width: state.fields.Width || 0,
           depth: state.fields.Depth || 0,
         };
-      break;
+        break;
       case 'Windows':
         specificationDetails = {
           amount: state.fields.Amount || 0,
@@ -301,7 +300,7 @@ const CalculatorScreen: React.FC = () => {
           width: state.fields.Width || 0,
           material: materialEnumValue!,
         };
-      break;
+        break;
       case 'Doors':
         specificationDetails = {
           amount: state.fields.Amount || 0,
@@ -309,93 +308,93 @@ const CalculatorScreen: React.FC = () => {
           width: state.fields.Width || 0,
           material: materialEnumValue!,
         };
-      break;
+        break;
       case 'Facade':
-      specificationDetails = {
-        surfaceArea: state.fields.SurfaceArea || 0,
-        insulationType: INSULATION_TYPE_ENUM[state.fields.InsulationType as keyof typeof INSULATION_TYPE_ENUM],
-        finishMaterial: FINISH_MATERIAL_ENUM[state.fields.FinishMaterial as keyof typeof FINISH_MATERIAL_ENUM],
-      };
-      break;
+        specificationDetails = {
+          surfaceArea: state.fields.SurfaceArea || 0,
+          insulationType: INSULATION_TYPE_ENUM[state.fields.InsulationType as keyof typeof INSULATION_TYPE_ENUM],
+          finishMaterial: FINISH_MATERIAL_ENUM[state.fields.FinishMaterial as keyof typeof FINISH_MATERIAL_ENUM],
+        };
+        break;
       case 'Flooring':
-      specificationDetails = {
-        area: state.fields.Area || 0,
-        material: MATERIAL_ENUM6[state.fields.Material as keyof typeof MATERIAL_ENUM6],
-      };
-      break;
+        specificationDetails = {
+          area: state.fields.Area || 0,
+          material: MATERIAL_ENUM6[state.fields.Material as keyof typeof MATERIAL_ENUM6],
+        };
+        break;
       case 'SuspendedCeiling':
         specificationDetails = {
           area: state.fields.Area || 0,
           height: state.fields.Height || 0,
           material: MATERIAL_ENUM7[state.fields.Material as keyof typeof MATERIAL_ENUM7],
-      };
-      break;
+        };
+        break;
       case 'InsulationOfAttic':
         specificationDetails = {
           area: state.fields.Area || 0,
           thickness: state.fields.Thickness || 0,
           material: materialEnumValue!,
-      };
-      break;
+        };
+        break;
       case 'Plastering':
         specificationDetails = {
           wallSurfaceArea: state.fields.WallSurfaceArea || 0,
           plasterType: materialEnumValue!,
-      };
-      break;
+        };
+        break;
       case 'Painting':
-      specificationDetails = {
-        wallSurfaceArea: state.fields.WallSurfaceArea || 0,
-        paintType: materialEnumValue!,
-        numberOfCoats: state.fields.NumberOfCoats || 0,
-      };
-      break;
+        specificationDetails = {
+          wallSurfaceArea: state.fields.WallSurfaceArea || 0,
+          paintType: materialEnumValue!,
+          numberOfCoats: state.fields.NumberOfCoats || 0,
+        };
+        break;
       case 'Staircase':
-      specificationDetails = {
-        numberOfSteps: state.fields.NumberOfSteps || 0,
-        height: state.fields.Height || 0,
-        width: state.fields.Width || 0,
-        material: materialEnumValue!,
-      };
-      break;
+        specificationDetails = {
+          numberOfSteps: state.fields.NumberOfSteps || 0,
+          height: state.fields.Height || 0,
+          width: state.fields.Width || 0,
+          material: materialEnumValue!,
+        };
+        break;
       case 'Balcony':
-      specificationDetails = {
-        length: state.fields.Length || 0,
-        width: state.fields.Width || 0,
-        railingMaterial: materialEnumValue!,
-      };
-      break;
+        specificationDetails = {
+          length: state.fields.Length || 0,
+          width: state.fields.Width || 0,
+          railingMaterial: materialEnumValue!,
+        };
+        break;
       case 'Chimney':
-      specificationDetails = {
-        count: state.fields.Count || 0,
-      };
-      break;
+        specificationDetails = {
+          count: state.fields.Count || 0,
+        };
+        break;
       case 'LoadBearingWall':
-      specificationDetails = {
-        height: state.fields.Height || 0,
-        width: state.fields.Width || 0,
-        thickness: state.fields.Thickness || 0,
-        material: materialEnumValue!,
-      };
-      break;
+        specificationDetails = {
+          height: state.fields.Height || 0,
+          width: state.fields.Width || 0,
+          thickness: state.fields.Thickness || 0,
+          material: materialEnumValue!,
+        };
+        break;
       case 'VentilationSystem':
-      specificationDetails = {
-        count: state.fields.Count || 0,
-      };
-      break;
+        specificationDetails = {
+          count: state.fields.Count || 0,
+        };
+        break;
       case 'Roof':
-      specificationDetails = {
-        area: state.fields.Area || 0,
-        material: MATERIAL_ENUM14[state.fields.Material as keyof typeof MATERIAL_ENUM14],
-        pitch: state.fields.Pitch || 0,
-      };
-      break;
+        specificationDetails = {
+          area: state.fields.Area || 0,
+          material: MATERIAL_ENUM14[state.fields.Material as keyof typeof MATERIAL_ENUM14],
+          pitch: state.fields.Pitch || 0,
+        };
+        break;
       case 'Ceiling':
-      specificationDetails = {
-        area: state.fields.Area || 0,
-        material: MATERIAL_ENUM15[state.fields.Material as keyof typeof MATERIAL_ENUM15],
-      };
-      break;
+        specificationDetails = {
+          area: state.fields.Area || 0,
+          material: MATERIAL_ENUM15[state.fields.Material as keyof typeof MATERIAL_ENUM15],
+        };
+        break;
       default:
         console.error('Unsupported construction type');
         return;
@@ -408,6 +407,7 @@ const CalculatorScreen: React.FC = () => {
       specificationDetails,
       includeTax: state.includeTax,
       totalCost: calculatedPrice,
+      clientId, // przekazujemy clientId pobrany z route.params
     });
   };
 
@@ -1095,6 +1095,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
+  pickerContainer: {
+    backgroundColor: '#fff8e1',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 20,
+  },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -1108,13 +1115,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     backgroundColor: '#fff8e1',
-  },
-  pickerContainer: {
-    backgroundColor: '#fff8e1',
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
   },
   switchContainer: {
     flexDirection: 'row',
