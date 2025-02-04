@@ -34,9 +34,6 @@ namespace Backend.Validatiors.Login
 
             if (string.IsNullOrWhiteSpace(request.Address.StreetName))
                 throw new ApiException(ErrorMessages.StreetNameRequired, StatusCodes.Status400BadRequest);
-
-            if (!request.IsClient && string.IsNullOrWhiteSpace(request.Position))
-                throw new ApiException(ErrorMessages.PositionRequired, StatusCodes.Status400BadRequest);
         }
 
         private static bool IsValidEmail(string email)

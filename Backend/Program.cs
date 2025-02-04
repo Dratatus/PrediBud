@@ -8,7 +8,6 @@ using Backend.services;
 using Backend.services.Auth;
 using Backend.services.Calculator;
 using Backend.services.Construction;
-using Backend.services.Email;
 using Backend.services.Material;
 using Backend.services.Negotiation;
 using Backend.services.Notification;
@@ -63,7 +62,6 @@ namespace Backend
             });
 
             builder.Services.AddScoped<ISupplierService, SupplierService>();
-            builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddScoped<IPasswordValidation, PasswordValidation>();
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
@@ -82,21 +80,10 @@ namespace Backend
                 UseRecommendedIsolationLevel = true,
                 DisableGlobalLocks = true
             }));
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll", policy =>
-                {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-                });
-            });
             builder.Services.AddHangfireServer();
 
 
-            builder.WebHost.UseUrls("http://192.168.1.24:5142/", "http://0.0.0.0:5142");
-
-
+            builder.WebHost.UseUrls("http://localhost:5142", "https://localhost:7290");
 
             var app = builder.Build();
 
@@ -109,8 +96,6 @@ namespace Backend
                 app.UseSwaggerUI();
             }
             app.UseHttpsRedirection();
-
-            app.UseCors("AllowAll");
 
             app.UseAuthorization();
 

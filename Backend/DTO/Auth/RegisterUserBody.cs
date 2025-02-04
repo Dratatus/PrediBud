@@ -22,6 +22,5 @@ namespace Backend.DTO.Auth
         public string Phone { get; set; }
 
         public bool IsClient { get; set; }
-        public string? Position { get; set; }
     }
 }
