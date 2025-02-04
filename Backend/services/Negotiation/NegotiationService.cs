@@ -6,6 +6,8 @@ using Backend.Data.Consts;
 using Backend.Middlewares;
 using Backend.Validatiors.Negotiation;
 using Backend.services.Notification;
+using Backend.DTO.ConstructionOrderDto;
+using Backend.services.Negotiation.Mapper;
 
 namespace Backend.services.Negotiation
 {
@@ -14,13 +16,29 @@ namespace Backend.services.Negotiation
         private readonly IConstructionOrderRepository _orderRepository;
         private readonly INotificationService _notificationService;
         private readonly IUserRepository _userRepository;
+        private readonly INegotiationMapper _negotiationMapper;
 
-        public NegotiationService(IConstructionOrderRepository orderRepository, INotificationService notificationService, IUserRepository userRepository)
+
+        public NegotiationService(IConstructionOrderRepository orderRepository, INotificationService notificationService, IUserRepository userRepository, INegotiationMapper negotiationMapper)
         {
             _orderRepository = orderRepository;
             _notificationService = notificationService;
             _userRepository = userRepository;
+            _negotiationMapper = negotiationMapper;
         }
+
+        public async Task<List<ConstructionOrderDto>> GetClientNegotiationsAsync(int clientId)
+        {
+            var orders = await _orderRepository.GetClientNegotiationsAsync(clientId);
+            return _negotiationMapper.MapToDtoList(orders);
+        }
+
+        public async Task<List<ConstructionOrderDto>> GetWorkerNegotiationsAsync(int workerId)
+        {
+            var orders = await _orderRepository.GetWorkerNegotiationsAsync(workerId);
+            return _negotiationMapper.MapToDtoList(orders);
+        }
+
 
         public async Task<bool> InitiateNegotiation(int orderId, int workerId, decimal proposedPrice)
         {

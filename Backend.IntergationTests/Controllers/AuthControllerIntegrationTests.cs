@@ -26,7 +26,6 @@ namespace Backend.IntergationTests.Controllers
                 IsClient = true,
                 Name = "Daniel Orban",
                 Phone = "+23 4212231 23",
-                Position = "Client",
                 Address = new Address
                 {
                     City = "Kraków",

@@ -63,6 +63,29 @@ namespace Backend.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<ConstructionOrder>> GetClientNegotiationsAsync(int clientId)
+        {
+            return await _context.ConstructionOrders
+                .Include(o => o.Address)
+                .Include(o => o.Client)
+                .Include(o => o.Worker)
+                .Include(o => o.ConstructionSpecification)
+                .Where(o => o.ClientId == clientId && o.Status == OrderStatus.NegotiationInProgress)
+                .ToListAsync();
+        }
+
+        public async Task<List<ConstructionOrder>> GetWorkerNegotiationsAsync(int workerId)
+        {
+            return await _context.ConstructionOrders
+                .Include(o => o.Address)
+                .Include(o => o.Client)
+                .Include(o => o.Worker)
+                .Include(o => o.ConstructionSpecification)
+                .Where(o => o.WorkerId == workerId && o.Status == OrderStatus.NegotiationInProgress)
+                .ToListAsync();
+        }
+
+
         public async Task AddAsync(ConstructionOrder order)
         {
             await _context.ConstructionOrders.AddAsync(order);
