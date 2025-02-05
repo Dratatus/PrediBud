@@ -1,8 +1,6 @@
 ﻿using Backend.Data.Context;
-using Backend.Data.Models.Constructions.Specyfication;
 using Backend.Data.Models.Orders;
 using Backend.Data.Models.Orders.Construction;
-using Backend.Data.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories
@@ -15,6 +13,28 @@ namespace Backend.Repositories
         {
             _context = context;
         }
+
+        public async Task<ConstructionOrder> GetClientNegotiationByIdAsync(int orderId, int clientId)
+        {
+            return await _context.ConstructionOrders
+                .Include(o => o.Client)
+                .Include(o => o.Worker)
+                .Include(o => o.ConstructionSpecification)
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.ID == orderId && o.ClientId == clientId);
+        }
+
+        public async Task<ConstructionOrder> GetWorkerNegotiationByIdAsync(int orderId, int workerId)
+        {
+            return await _context.ConstructionOrders
+                .Include(o => o.Client)
+                .Include(o => o.Worker)
+                .Include(o => o.ConstructionSpecification)
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.ID == orderId && o.WorkerId == workerId);
+        }
+
+
 
         public async Task<List<ConstructionOrder>> GetOrdersByClientIdAsync(int clientId)
         {

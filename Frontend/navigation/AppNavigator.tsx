@@ -17,6 +17,70 @@ import OrderMaterialScreen from '../screens/OrderMaterialScreen';
 import CostSummaryScreen from '../screens/CostSummaryScreen';
 import ConstructionOrderScreen from '../screens/ConstructionOrderScreen';
 import { SpecificationDetails } from '../screens/CalculatorScreen';
+import MyMaterialsScreen from '../screens/MyMaterialsScreen';
+import ConstructionNegotiationScreen from '../screens/ConstructionNegotiationScreen';
+import ClientNegotiationsScreen from '../screens/ClientNegotiationsScreen';
+import WorkerNegotiationsScreen from '../screens/WorkerNegotiationsScreen';
+import NegotiationDetailsScreen from '../screens/NegotiationDetailsScreen';
+import NegotiationCounterScreen from '../screens/NegotiationCounterScreen';
+
+// Definicja typu Negotiation na podstawie przykładowego JSONa
+export interface Negotiation {
+  id: number;
+  description: string;
+  status: string;
+  constructionType: string;
+  placementPhotos: string[];
+  requestedStartTime: string;
+  startDate: string | null;
+  endDate: string | null;
+  clientProposedPrice: number;
+  workerProposedPrice: number | null;
+  agreedPrice: number | null;
+  totalPrice: number;
+  client: {
+    id: number;
+    contactDetails: {
+      name: string;
+      phone: string;
+    };
+    addressId: number;
+    address: {
+      id: number;
+      postCode: string;
+      city: string;
+      streetName: string;
+    } | null;
+  };
+  worker: {
+    id: number;
+    contactDetails: {
+      name: string;
+      phone: string;
+    };
+    addressId: number;
+    address: {
+      id: number;
+      postCode: string;
+      city: string;
+      streetName: string;
+    } | null;
+  } | null;
+  lastActionBy: string;
+  address: {
+    city: string;
+    postCode: string;
+    streetName: string;
+  };
+  constructionSpecification: {
+    [key: string]: any;
+    id: number;
+    type: string;
+    clientProvidedPrice: number | null;
+    isPriceGross: boolean | null;
+  };
+  constructionSpecificationId: number;
+}
 
 export interface Material {
   id: number;
@@ -36,15 +100,16 @@ export type StackParamList = {
     userName: string;
     clientId: number;
   };
-  FindWorks: undefined;
-  MyWorks: undefined;
+  FindWorks: { clientId: number };
+  MyWorks: { clientId: number };
   MyOrders: { clientId: number };
   WorkDetails: { workId: string };
-  // Dla zamówień materiałowych – szczegóły wyświetlone przez MaterialOrderDetailsScreen
   OrderDetails: { workId: string };
-  // Nowa trasa dla zamówień konstrukcyjnych
-  ConstructionOrderDetails: { workId: string };
-  Notifications: undefined;
+  ConstructionOrderDetails: { workId: string; workerId: number };
+  ConstructionNegotiation: { orderId: string; clientProposedPrice: number; workerId: number };
+  ClientNegotiations: { clientId: number };
+  WorkerNegotiations: { workerId: number };
+  Notifications: { clientId: number };
   Calculator: { clientId: number };
   Materials: { clientId: number };
   CostSummary: {
@@ -54,7 +119,6 @@ export type StackParamList = {
     totalCost: number;
     clientId: number;
   };
-  // Uaktualniono – teraz przekazujemy cały obiekt materiału
   OrderMaterial: { material: Material; clientId: number };
   ConstructionOrder: {
     description: string | null;
@@ -65,6 +129,9 @@ export type StackParamList = {
     clientProposedPrice: number;
     clientId: number;
   };
+  MyMaterials: { clientId: number };
+  NegotiationDetails: { negotiation: Negotiation; clientId: number };
+  NegotiationCounter: { negotiationId: string; clientProposedPrice: number; workerProposedPrice: number; clientId: number };
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -88,6 +155,12 @@ const AppNavigator = () => {
       <Stack.Screen name="OrderMaterial" component={OrderMaterialScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CostSummary" component={CostSummaryScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ConstructionOrder" component={ConstructionOrderScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="MyMaterials" component={MyMaterialsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="ConstructionNegotiation" component={ConstructionNegotiationScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="ClientNegotiations" component={ClientNegotiationsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="WorkerNegotiations" component={WorkerNegotiationsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="NegotiationDetails" component={NegotiationDetailsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="NegotiationCounter" component={NegotiationCounterScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 };

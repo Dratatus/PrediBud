@@ -39,6 +39,34 @@ namespace Backend.services.Negotiation
             return _negotiationMapper.MapToDtoList(orders);
         }
 
+        public async Task<ConstructionOrderDto> GetClientNegotiationByIdAsync(int orderId, int clientId)
+        {
+            ClientNegotiationValidator.Validate(orderId, clientId);
+
+            var order = await _orderRepository.GetClientNegotiationByIdAsync(orderId, clientId);
+
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.NegotiationNotFound, StatusCodes.Status404NotFound);
+            }
+
+            return _negotiationMapper.MapToDto(order);
+        }
+
+        public async Task<ConstructionOrderDto> GetWorkerNegotiationByIdAsync(int orderId, int workerId)
+        {
+            WorkerNegotiationValidator.Validate(orderId, workerId);
+
+            var order = await _orderRepository.GetWorkerNegotiationByIdAsync(orderId, workerId);
+
+            if (order == null)
+            {
+                throw new ApiException(ErrorMessages.NegotiationNotFound, StatusCodes.Status404NotFound);
+            }
+
+            return _negotiationMapper.MapToDto(order);
+        }
+
 
         public async Task<bool> InitiateNegotiation(int orderId, int workerId, decimal proposedPrice)
         {

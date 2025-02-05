@@ -155,5 +155,8 @@
         public const string InvalidRoofDetails = "Roof details cannot be null.";
         public const string InvalidCeilingDetails = "Ceiling details cannot be null.";
         public const string InvalidChimneyDetails = "Chimney details cannot be null.";
+
+        public const string NegotiationNotFound = "Negotiation not found.";
+        public const string InvalidOrderId = "Invalid order ID.";
     }
 }

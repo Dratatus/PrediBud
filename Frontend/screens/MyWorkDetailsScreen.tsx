@@ -1,11 +1,18 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/AppNavigator';
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'WorkDetails'>;
-type MyWorkDetailsRouteProps = RouteProp<StackParamList, 'WorkDetails'>;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "WorkDetails">;
+type MyWorkDetailsRouteProps = RouteProp<StackParamList, "WorkDetails">;
 
 const MyWorkDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
@@ -19,12 +26,12 @@ const MyWorkDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{'<'} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Back</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
         <Image
-          source={require('../assets/logo.png')}
+          source={require("../assets/logo.png")}
           style={styles.headerIcon}
         />
         <Text style={styles.headerText}>WORK DETAILS</Text>
@@ -37,18 +44,20 @@ const MyWorkDetailsScreen: React.FC = () => {
 
       <View style={styles.detailBlock}>
         <Text style={styles.detailLabel}>DESCRIPTION</Text>
-        <Text style={styles.detailValue}>Round the corner in front of the window</Text>
+        <Text style={styles.detailValue}>
+          Round the corner in front of the window
+        </Text>
       </View>
 
       <View style={styles.detailBlock}>
         <Text style={styles.detailLabel}>PHOTO OF PLACEMENT</Text>
         <View style={styles.photoContainer}>
           <Image
-            source={require('../assets/images/photo1.png')}
+            source={require("../assets/images/photo1.png")}
             style={styles.photo}
           />
           <Image
-            source={require('../assets/images/photo1.png')}
+            source={require("../assets/images/photo1.png")}
             style={styles.photo}
           />
         </View>
@@ -63,7 +72,7 @@ const MyWorkDetailsScreen: React.FC = () => {
         <Text style={styles.detailLabel}>CUSTOMER CONTACT</Text>
         <View style={styles.row}>
           <Image
-            source={require('../assets/icons/phone.png')}
+            source={require("../assets/icons/phone.png")}
             style={styles.icon}
           />
           <Text style={styles.detailValue}>+48 643 263 612</Text>
@@ -74,7 +83,7 @@ const MyWorkDetailsScreen: React.FC = () => {
         <Text style={styles.detailLabel}>AGREED PRICE</Text>
         <View style={styles.row}>
           <Image
-            source={require('../assets/icons/dollar.png')}
+            source={require("../assets/icons/dollar.png")}
             style={styles.icon}
           />
           <Text style={styles.detailValue}>550</Text>
@@ -85,7 +94,7 @@ const MyWorkDetailsScreen: React.FC = () => {
         <Text style={styles.detailLabel}>DESIRED START DATE</Text>
         <View style={styles.row}>
           <Image
-            source={require('../assets/icons/calendar.png')}
+            source={require("../assets/icons/calendar.png")}
             style={styles.icon}
           />
           <Text style={styles.detailValue}>12.10.2025</Text>
@@ -96,7 +105,7 @@ const MyWorkDetailsScreen: React.FC = () => {
         <Text style={styles.detailLabel}>ADDRESS</Text>
         <View style={styles.row}>
           <Image
-            source={require('../assets/icons/location.png')}
+            source={require("../assets/icons/location.png")}
             style={styles.icon}
           />
           <Text style={styles.detailValue}>33-200, Tarnów</Text>
@@ -109,26 +118,26 @@ const MyWorkDetailsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9b234',
+    backgroundColor: "#f9b234",
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: '#f0f0d0',
+    backgroundColor: "#f0f0d0",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
     zIndex: 1,
   },
   backButtonText: {
-    color: 'black',
-    fontWeight: 'bold',
+    color: "black",
+    fontWeight: "bold",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   headerIcon: {
@@ -140,42 +149,42 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   detailBlock: {
-    width: '100%',
-      backgroundColor: '#fff8e1',
-      borderRadius: 10,
-      padding: 10,
-      marginBottom: 15,
-      alignItems: 'center', // Wyśrodkowanie w poziomie
+    width: "100%",
+    backgroundColor: "#fff8e1",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 15,
+    alignItems: "center",
   },
   detailLabel: {
     fontSize: 14,
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: 5,
-      textAlign: 'center', // Wyśrodkowanie tekstu
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+    textAlign: "center",
   },
   detailValue: {
     fontSize: 16,
-      color: '#666',
-      textAlign: 'center', // Wyśrodkowanie tekstu
+    color: "#666",
+    textAlign: "center",
   },
   photoContainer: {
-    flexDirection: 'row',
-      justifyContent: 'center', // Wyśrodkowanie zdjęć w poziomie
-      marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
   },
   photo: {
-    width: 70, // Zmniejszenie szerokości zdjęć
-      height: 70, // Zmniejszenie wysokości zdjęć
-      borderRadius: 10,
-      marginHorizontal: 5, // Dodanie odstępów między zdjęciami
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    marginHorizontal: 5,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   icon: {
     width: 20,

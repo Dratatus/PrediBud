@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Switch, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/AppNavigator';
-import axios from 'axios';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Switch,
+  ScrollView,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/AppNavigator";
+import axios from "axios";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'Register'>;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "Register">;
 
 const RegisterScreen = () => {
   const navigation = useNavigation<NavigationProps>();
 
-  // Pola formularza
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isClient, setIsClient] = useState(true);
 
-  // Dane adresowe
-  const [streetName, setStreetName] = useState('');
-  const [city, setCity] = useState('');
-  const [postCode, setPostCode] = useState('');
+  const [streetName, setStreetName] = useState("");
+  const [city, setCity] = useState("");
+  const [postCode, setPostCode] = useState("");
 
   const handleRegister = async () => {
     try {
@@ -37,26 +44,30 @@ const RegisterScreen = () => {
         },
       };
 
-      const response = await axios.post('http://10.0.2.2:5142/api/auth/register', requestBody);
+      const response = await axios.post(
+        "http://10.0.2.2:5142/api/auth/register",
+        requestBody
+      );
 
-      console.log('Registration successful:', response.data);
+      console.log("Registration successful:", response.data);
 
-      // Przekierowanie do ekranu logowania
-      navigation.navigate('Login');
+      navigation.navigate("Login");
     } catch (error: any) {
-      console.error('Error during registration:', error.response?.data || error.message);
+      console.error(
+        "Error during registration:",
+        error.response?.data || error.message
+      );
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Image source={require("../assets/logo.png")} style={styles.logo} />
         <Text style={styles.title}>PREDICT YOUR FUTURE!</Text>
         <Text style={styles.subtitle}>Create new Account</Text>
 
         <View style={styles.form}>
-          {/* Pola podstawowe */}
           <Text style={styles.label}>NAME</Text>
           <TextInput
             style={styles.input}
@@ -92,7 +103,6 @@ const RegisterScreen = () => {
             onChangeText={setPassword}
           />
 
-          {/* Adres */}
           <Text style={styles.label}>STREET NAME</Text>
           <TextInput
             style={styles.input}
@@ -118,23 +128,28 @@ const RegisterScreen = () => {
             onChangeText={setPostCode}
           />
 
-          {/* Typ użytkownika */}
           <View style={styles.switchContainer}>
             <Text style={styles.label}>REGISTER AS CLIENT</Text>
             <Switch
               value={isClient}
               onValueChange={setIsClient}
-              trackColor={{ false: '#767577', true: '#f0ad4e' }}
-              thumbColor={isClient ? '#f0ad4e' : '#f4f3f4'}
+              trackColor={{ false: "#767577", true: "#f0ad4e" }}
+              thumbColor={isClient ? "#f0ad4e" : "#f4f3f4"}
             />
           </View>
 
-          <TouchableOpacity style={[styles.button, { marginBottom: 1 }]} onPress={handleRegister}>
+          <TouchableOpacity
+            style={[styles.button, { marginBottom: 1 }]}
+            onPress={handleRegister}
+          >
             <Text style={styles.buttonText}>SIGN UP</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.linkContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Login")}
+          style={styles.linkContainer}
+        >
           <Text style={styles.linkText}>Already Registered? Log in here.</Text>
         </TouchableOpacity>
       </View>
@@ -145,16 +160,16 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
-    width: '100%',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "flex-start",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 60,
-    backgroundColor: '#f0f0d0',
+    backgroundColor: "#f0f0d0",
   },
   logo: {
     width: 100,
@@ -165,64 +180,64 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   form: {
-    width: '85%',
-    alignItems: 'center',
+    width: "85%",
+    alignItems: "center",
     marginBottom: 25,
   },
   label: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
-    color: '#000',
+    color: "#000",
     marginLeft: 5,
   },
   input: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 12,
     paddingHorizontal: 15,
-    backgroundColor: '#f9e085',
+    backgroundColor: "#f9e085",
     borderRadius: 5,
     marginBottom: 15,
   },
   button: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 15,
-    backgroundColor: '#f0ad4e',
+    backgroundColor: "#f0ad4e",
     borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 1,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   linkContainer: {
     marginTop: 1,
   },
   linkText: {
-    color: '#000',
+    color: "#000",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     marginBottom: 10,
   },
 });

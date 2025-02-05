@@ -1,56 +1,70 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/AppNavigator';
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/AppNavigator";
 
 const icons = {
-  calculator: require('../assets/icons/calculator.png'),
-  orders: require('../assets/icons/orders.png'),
-  notifications: require('../assets/icons/notifications.png'),
-  materials: require('../assets/icons/materials.png'),
-  findWorks: require('../assets/icons/find-works.png'),
-  myWorks: require('../assets/icons/my-works.png'),
+  calculator: require("../assets/icons/calculator.png"),
+  orders: require("../assets/icons/orders.png"),
+  notifications: require("../assets/icons/notifications.png"),
+  materials: require("../assets/icons/materials.png"),
+  findWorks: require("../assets/icons/find-works.png"),
+  myWorks: require("../assets/icons/my-works.png"),
+  negotiations: require("../assets/icons/negotiations.png"),
 };
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'UserProfile'>;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "UserProfile">;
 
 const UserProfileScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
-  const route = useRoute<RouteProp<StackParamList, 'UserProfile'>>();
-  
-  // Pobieramy dane z parametrów trasy
-  const { userRole = '', userName = 'Unknown User', clientId } = route.params || {};
-  // Konwersja clientId na liczbę
+  const route = useRoute<RouteProp<StackParamList, "UserProfile">>();
+
+  const {
+    userRole = "",
+    userName = "Unknown User",
+    clientId,
+  } = route.params || {};
   const clientIdNum = Number(clientId);
-  
+
   const handleLogout = () => {
-    // Używamy obiektowego wywołania nawigacji, aby spełnić typy
-    navigation.navigate({ name: 'Login', params: undefined });
+    navigation.navigate({ name: "Login", params: undefined });
   };
 
   const handleFindWorks = () => {
-    navigation.navigate('FindWorks');
+    navigation.navigate("FindWorks", { clientId: clientIdNum });
   };
 
   const handleMyWorks = () => {
-    navigation.navigate('MyWorks');
+    navigation.navigate("MyWorks", { clientId: clientIdNum });
+  };
+
+  const handleClientNegotiations = () => {
+    navigation.navigate("ClientNegotiations", { clientId: clientIdNum });
+  };
+
+  const handleWorkerNegotiations = () => {
+    navigation.navigate("WorkerNegotiations", { workerId: clientIdNum });
   };
 
   const handleMyOrders = () => {
-    navigation.navigate('MyOrders', { clientId: clientIdNum });
+    navigation.navigate("MyOrders", { clientId: clientIdNum });
+  };
+
+  const handleMyMaterials = () => {
+    navigation.navigate("MyMaterials", { clientId: clientIdNum });
   };
 
   const handleNotifications = () => {
-    navigation.navigate('Notifications');
+    navigation.navigate("Notifications", { clientId: clientIdNum });
   };
 
   const handleCalculator = () => {
-    navigation.navigate('Calculator', { clientId: clientIdNum });
+    navigation.navigate("Calculator", { clientId: clientIdNum });
   };
 
   const handleMaterials = () => {
-    navigation.navigate('Materials', { clientId: clientIdNum });
+    navigation.navigate("Materials", { clientId: clientIdNum });
   };
 
   return (
@@ -60,49 +74,101 @@ const UserProfileScreen: React.FC = () => {
       </TouchableOpacity>
       <Image
         source={
-          userRole?.toLowerCase() === 'client'
-            ? require('../assets/client-avatar.png')
-            : require('../assets/worker-avatar.png')
+          userRole?.toLowerCase() === "client"
+            ? require("../assets/client-avatar.png")
+            : require("../assets/worker-avatar.png")
         }
         style={styles.avatar}
       />
-      <Text style={styles.userName}>{userName || 'Unknown User'}</Text>
+      <Text style={styles.userName}>{userName || "Unknown User"}</Text>
 
       <View style={styles.optionsContainer}>
-        {userRole?.toLowerCase() === 'client' ? (
+        {userRole?.toLowerCase() === "client" ? (
           <>
-            <TouchableOpacity style={styles.optionButton} onPress={handleCalculator}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleCalculator}
+            >
               <Image source={icons.calculator} style={styles.optionIcon} />
               <Text style={styles.optionText}>Calculator</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleMyOrders}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyOrders}
+            >
               <Image source={icons.orders} style={styles.optionIcon} />
               <Text style={styles.optionText}>My orders</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyMaterials}
+            >
+              <Image source={icons.materials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>My materials</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleClientNegotiations}
+            >
+              <Image source={icons.negotiations} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Negotiations</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleNotifications}
+            >
               <Image source={icons.notifications} style={styles.optionIcon} />
               <Text style={styles.optionText}>Notifications</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMaterials}
+            >
               <Image source={icons.materials} style={styles.optionIcon} />
               <Text style={styles.optionText}>Materials</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
-            <TouchableOpacity style={styles.optionButton} onPress={handleFindWorks}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleFindWorks}
+            >
               <Image source={icons.findWorks} style={styles.optionIcon} />
               <Text style={styles.optionText}>Find works</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleMyWorks}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyWorks}
+            >
               <Image source={icons.myWorks} style={styles.optionIcon} />
               <Text style={styles.optionText}>My works</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleNotifications}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyMaterials}
+            >
+              <Image source={icons.materials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>My materials</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleWorkerNegotiations}
+            >
+              <Image source={icons.negotiations} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Negotiations</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleNotifications}
+            >
               <Image source={icons.notifications} style={styles.optionIcon} />
               <Text style={styles.optionText}>Notifications</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={handleMaterials}>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMaterials}
+            >
               <Image source={icons.materials} style={styles.optionIcon} />
               <Text style={styles.optionText}>Materials</Text>
             </TouchableOpacity>
@@ -116,24 +182,24 @@ const UserProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#f0f0d0',
+    backgroundColor: "#f0f0d0",
   },
   logoutButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: '#f0ad4e',
+    backgroundColor: "#f0ad4e",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
     zIndex: 1,
   },
   logoutButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   avatar: {
     width: 100,
@@ -143,18 +209,18 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 100,
   },
   optionsContainer: {
-    width: '90%',
-    backgroundColor: '#f9b234',
+    width: "90%",
+    backgroundColor: "#f9b234",
     borderRadius: 15,
     padding: 15,
   },
   optionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 10,
@@ -166,8 +232,8 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 22,
-    fontWeight: '500',
-    color: '#593100',
+    fontWeight: "500",
+    color: "#593100",
   },
 });
 
