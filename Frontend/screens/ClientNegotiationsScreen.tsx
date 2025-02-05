@@ -81,7 +81,15 @@ interface Negotiation {
 const ClientNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<ClientNegotiationsRouteProps>();
-  const { clientId } = route.params;
+  const {
+    clientId,
+    userRole = "Client",
+    userName = "Unknown User",
+  } = route.params as {
+    clientId: number;
+    userRole?: string;
+    userName?: string;
+  };
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,6 +128,8 @@ const ClientNegotiationsScreen: React.FC = () => {
             navigation.navigate("NegotiationDetails", {
               negotiation: item,
               clientId,
+              userRole,
+              userName,
             })
           }
         >

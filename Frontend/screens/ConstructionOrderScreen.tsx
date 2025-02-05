@@ -18,6 +18,27 @@ import * as ImagePicker from "expo-image-picker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
+const FIELD_PRETTY: Record<string, string> = {
+  height: "Height (m)",
+  width: "Width (m)",
+  thickness: "Thickness (m)",
+  length: "Length (m)",
+  depth: "Depth (m)",
+  amount: "Amount",
+  surfacearea: "Surface Area (m²)",
+  insulationtype: "Insulation Type",
+  finishmaterial: "Finish Material",
+  area: "Area (m²)",
+  pitch: "Pitch (°)",
+  wallsurfacearea: "Wall Surface Area (m²)",
+  plastertype: "Plaster Type",
+  painttype: "Paint Type",
+  numberofcoats: "Number of Coats",
+  numberofsteps: "Number of Steps",
+  railingmaterial: "Railing Material",
+  count: "Count",
+};
+
 const CONSTRUCTION_TYPE_ENUM = {
   partitionwall: 0,
   foundation: 1,
@@ -290,6 +311,8 @@ const ConstructionOrderScreen: React.FC = () => {
     city: "",
     streetName: "",
   });
+  const [userNameState, setUserNameState] = useState<string>("Unknown User");
+  const [userRoleState, setUserRoleState] = useState<string>("Client");
 
   useEffect(() => {
     if (route.params) {
@@ -357,7 +380,11 @@ const ConstructionOrderScreen: React.FC = () => {
         }
       );
       if (response.ok) {
-        navigation.navigate("MyOrders", { clientId: route.params!.clientId });
+        navigation.navigate("MyOrders", {
+          clientId: route.params!.clientId,
+          userRole: route.params?.userRole ?? "Client",
+          userName: route.params?.userName ?? "Unknown User",
+        });
       } else {
         console.error("Failed to create order:", await response.text());
       }
@@ -407,7 +434,9 @@ const ConstructionOrderScreen: React.FC = () => {
             const enumOptions = getEnumOptions(constructionType, field);
             return (
               <View key={field} style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>{field}</Text>
+                <Text style={styles.inputLabel}>
+                  {FIELD_PRETTY[field.toLowerCase()] || field}
+                </Text>
                 {enumOptions ? (
                   <View style={styles.pickerContainer}>
                     <Picker

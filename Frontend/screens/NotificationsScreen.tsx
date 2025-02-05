@@ -6,6 +6,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import axios from "axios";
@@ -13,10 +14,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
 type NotificationsRouteProps = RouteProp<StackParamList, "Notifications">;
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "Notifications"
->;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "Notifications">;
 
 interface Notification {
   id: number;
@@ -59,26 +57,23 @@ const NotificationsScreen: React.FC = () => {
     }
   };
 
-  const handleMarkAllAsRead = async () => {
-    const url = `http://10.0.2.2:5142/api/Notification/${clientId}/mark-all-as-read`;
-    console.log("Mark All as Read URL:", url);
+  // Funkcja do usuwania pojedynczego powiadomienia
+  const handleDeleteNotification = async (notificationId: number) => {
     try {
-      await axios.post(
-        url,
-        {},
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const url = `http://10.0.2.2:5142/api/Notification/${notificationId}`;
+      console.log("Deleting notification with URL:", url);
+      await axios.delete(url);
+      // Po usunięciu, odśwież listę powiadomień
       fetchNotifications();
     } catch (err) {
-      console.error("Error marking notifications as read:", err);
+      console.error("Error deleting notification:", err);
+      Alert.alert("Error", "Failed to delete notification.");
     }
   };
 
   const handleDeleteAll = async () => {
     try {
-      await axios.delete(
-        `http://10.0.2.2:5142/api/Notification/${clientId}/all`
-      );
+      await axios.delete(`http://10.0.2.2:5142/api/Notification/${clientId}/all`);
       setNotifications([]);
     } catch (err) {
       console.error("Error deleting notifications:", err);
@@ -93,31 +88,42 @@ const NotificationsScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  const renderNotification = ({ item }: { item: Notification }) => (
-    <View style={styles.notificationItem}>
-      <View style={styles.notificationContent}>
-        <View style={styles.notificationTextContainer}>
+  const renderNotification = ({ item }: { item: Notification }) => {
+    const notificationDate = new Date(item.date);
+    const dateStr = notificationDate.toLocaleDateString();
+    const timeStr = notificationDate.toLocaleTimeString();
+
+    return (
+      <View style={styles.notificationItem}>
+        {/* Lewa sekcja – constructionOrderID */}
+        <View style={styles.leftSection}>
+          <Text style={styles.orderIDText}>ID: {item.constructionOrderID}</Text>
+        </View>
+        {/* Środkowa sekcja – tytuł i opis */}
+        <View style={styles.notificationContent}>
           <Text style={styles.notificationTitle}>{item.title}</Text>
           <Text style={styles.notificationDescription}>{item.description}</Text>
         </View>
+        {/* Prawa sekcja – data, godzina oraz przycisk X */}
+        <View style={styles.rightSection}>
+          <View style={styles.dateTimeContainer}>
+            <Text style={styles.notificationTime}>{timeStr}</Text>
+            <Text style={styles.notificationDate}>{dateStr}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => handleDeleteNotification(item.id)}
+          >
+            <Text style={styles.deleteButtonText}> X </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.notificationRightSection}>
-        <Text style={styles.notificationTime}>
-          {new Date(item.date).toLocaleString()}
-        </Text>
-        <Text style={styles.notificationStatus}>{item.status}</Text>
-      </View>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -130,16 +136,7 @@ const NotificationsScreen: React.FC = () => {
           <Text style={styles.backButtonText}>{"<"} Back</Text>
         </TouchableOpacity>
         <View style={styles.headerButtons}>
-          <TouchableOpacity
-            style={styles.headerButton}
-            onPress={handleMarkAllAsRead}
-          >
-            <Text style={styles.headerButtonText}>Mark All as Read</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.headerButton}
-            onPress={handleDeleteAll}
-          >
+          <TouchableOpacity style={styles.headerButton} onPress={handleDeleteAll}>
             <Text style={styles.headerButtonText}>Delete All</Text>
           </TouchableOpacity>
         </View>
@@ -183,7 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#d9534f",
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderRadius: 5,
@@ -209,15 +206,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+  },
+  leftSection: {
+    marginRight: 10,
+    minWidth: 50,
+    alignItems: "flex-start",
+  },
+  orderIDText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
   },
   notificationContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  notificationTextContainer: {
     flex: 1,
   },
   notificationTitle: {
@@ -228,19 +229,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  notificationRightSection: {
+  rightSection: {
+    flexDirection: "row",
     alignItems: "center",
-    flexDirection: "column-reverse",
+  },
+  dateTimeContainer: {
+    alignItems: "flex-end",
+    marginRight: 5,
   },
   notificationTime: {
     fontSize: 12,
     color: "#666",
-    marginBottom: 5,
   },
-  notificationStatus: {
+  notificationDate: {
     fontSize: 12,
-    color: "#333",
+    color: "#666",
+  },
+  deleteButton: {
+    backgroundColor: "#dc3545",
+    borderRadius: 15,
+    padding: 5,
+  },
+  deleteButtonText: {
+    color: "#fff",
     fontWeight: "bold",
+    fontSize: 12,
   },
   errorText: {
     fontSize: 16,

@@ -14,10 +14,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import * as ImagePicker from "expo-image-picker";
 
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "OrderMaterial"
->;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "OrderMaterial">;
+type OrderMaterialRouteProps = RouteProp<StackParamList, "OrderMaterial">;
 
 interface Material {
   id: number;
@@ -30,19 +28,11 @@ interface Material {
 
 const OrderMaterialScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
-  const route = useRoute<RouteProp<StackParamList, "OrderMaterial">>();
-  const params = route.params as
-    | { material: Material; clientId: number }
-    | undefined;
-  if (!params || !params.material) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Material details not provided.</Text>
-      </View>
-    );
-  }
-  const { material, clientId } = params;
-
+  const route = useRoute<OrderMaterialRouteProps>();
+  
+  // Oczekujemy, że trasa przekazuje material, clientId, userRole oraz userName
+  const { material, clientId, userRole, userName } = route.params;
+  
   console.log("OrderMaterialScreen - Retrieved clientId:", clientId);
   console.log("OrderMaterialScreen - Material:", material);
 
@@ -65,6 +55,104 @@ const OrderMaterialScreen: React.FC = () => {
         return require("../assets/icons/wood.png");
       case "brick":
         return require("../assets/icons/brick.png");
+      case "glass":
+        return require("../assets/icons/glass.png");
+      case "aluminum":
+        return require("../assets/icons/aluminum.png");
+      case "drywall":
+        return require("../assets/icons/drywall.png");
+      case "mineralfiber":
+        return require("../assets/icons/mineralfiber.png");
+      case "metal":
+        return require("../assets/icons/metal.png");
+      case "pvc":
+        return require("../assets/icons/pvc.png");
+      case "glassfiber":
+        return require("../assets/icons/glassfiber.png");
+      case "composite":
+        return require("../assets/icons/composite.png");
+      case "wroughtiron":
+        return require("../assets/icons/wroughtiron.png");
+      case "styrofoam":
+        return require("../assets/icons/styrofoam.png");
+      case "mineralwool":
+        return require("../assets/icons/mineralwool.png");
+      case "polyurethanefoam":
+        return require("../assets/icons/polyurethanefoam.png");
+      case "fiberglass":
+        return require("../assets/icons/fiberglass.png");
+      case "plaster":
+        return require("../assets/icons/plaster.png");
+      case "stone":
+        return require("../assets/icons/stone.png");
+      case "metalsiding":
+        return require("../assets/icons/metalsiding.png");
+      case "laminate":
+        return require("../assets/icons/laminate.png");
+      case "hardwood":
+        return require("../assets/icons/hardwood.png");
+      case "vinyl":
+        return require("../assets/icons/vinyl.png");
+      case "carpet":
+        return require("../assets/icons/carpet.png");
+      case "tile":
+        return require("../assets/icons/tile.png");
+      case "cellulose":
+        return require("../assets/icons/cellulose.png");
+      case "rockwool":
+        return require("../assets/icons/mineralfiber.png");
+      case "acrylic":
+        return require("../assets/icons/acrylic.png");
+      case "latex":
+        return require("../assets/icons/latex.png");
+      case "oilbased":
+        return require("../assets/icons/oilbased.png");
+      case "waterbased":
+        return require("../assets/icons/waterbased.png");
+      case "enamel":
+        return require("../assets/icons/enamel.png");
+      case "chalk":
+        return require("../assets/icons/chalk.png");
+      case "glossy":
+        return require("../assets/icons/glossy.png");
+      case "epoxy":
+        return require("../assets/icons/epoxy.png");
+      case "matte":
+        return require("../assets/icons/matte.png");
+      case "satin":
+        return require("../assets/icons/satin.png");
+      case "gypsum":
+        return require("../assets/icons/gypsum.png");
+      case "cement":
+        return require("../assets/icons/cement.png");
+      case "lime":
+        return require("../assets/icons/lime.png");
+      case "limecement":
+        return require("../assets/icons/limecement.png");
+      case "clay":
+        return require("../assets/icons/clay.png");
+      case "silicone":
+        return require("../assets/icons/silicone.png");
+      case "silicate":
+        return require("../assets/icons/silicate.png");
+      case "concrete":
+        return require("../assets/icons/concrete.png");
+      case "prefabricatedconcrete":
+        return require("../assets/icons/prefabricatedconcrete.png");
+      case "aeratedconcrete":
+        return require("../assets/icons/aeratedconcrete.png");
+      case "metalsheet":
+        return require("../assets/icons/metalsheet.png");
+      case "asphaltshingle":
+        return require("../assets/icons/asphaltshingle.png");
+      case "slate":
+        return require("../assets/icons/slate.png");
+      case "thatch":
+        return require("../assets/icons/thatch.png");
+      case "marble":
+        return require("../assets/icons/marble.png");
+      case "granite":
+        return require("../assets/icons/granite.png");
       default:
         return require("../assets/icons/materials.png");
     }
@@ -76,9 +164,9 @@ const OrderMaterialScreen: React.FC = () => {
       unitPriceNet: material.priceWithoutTax,
       unitPriceGross: material.priceWithoutTax * 1.23,
       quantity: parseInt(quantity) || 0,
-      totalPriceNet: parseInt(quantity) * material.priceWithoutTax || 0,
+      totalPriceNet: (parseInt(quantity) * material.priceWithoutTax) || 0,
       totalPriceGross:
-        parseInt(quantity) * material.priceWithoutTax * 1.23 || 0,
+        (parseInt(quantity) * material.priceWithoutTax * 1.23) || 0,
       createdDate: new Date().toISOString(),
       userId: clientId,
       supplierId: material.supplierId,
@@ -104,19 +192,20 @@ const OrderMaterialScreen: React.FC = () => {
       } else {
         const responseData = await response.json();
         console.log("Order created successfully:", responseData);
-        navigation.navigate("MyMaterials", { clientId });
+        navigation.navigate("MyMaterials", { clientId, userRole, userName });
       }
     } catch (error) {
       console.error("Error while creating order:", error);
     }
   };
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Text style={styles.backButtonText}>{"<"} Back</Text>
       </TouchableOpacity>
 

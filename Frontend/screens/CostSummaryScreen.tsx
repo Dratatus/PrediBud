@@ -22,6 +22,27 @@ const CostSummaryScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProps>();
 
+  const CONSTRUCTION_TYPE_PRETTY: Record<string, string> = {
+    partitionwall: "Partition Wall",
+    foundation: "Foundation",
+    windows: "Windows",
+    doors: "Doors",
+    facade: "Facade",
+    flooring: "Flooring",
+    suspendedceiling: "Suspended Ceiling",
+    insulationofattic: "Insulation Of Attic",
+    plastering: "Plastering",
+    painting: "Painting",
+    staircase: "Staircase",
+    balcony: "Balcony",
+    shellopen: "Shell Open",
+    chimney: "Chimney",
+    loadbearingwall: "Load Bearing Wall",
+    ventilationsystem: "Ventilation System",
+    roof: "Roof",
+    ceiling: "Ceiling",
+  };
+
   const renderSpecificationDetails = () => {
     return Object.entries(specificationDetails).map(([key, value]) => {
       let displayValue: string | number = value;
@@ -188,8 +209,11 @@ const CostSummaryScreen: React.FC = () => {
 
       <View style={styles.box}>
         <Text style={styles.detailText}>
-          Construction Type: {constructionType}
+          Construction Type:{" "}
+          {CONSTRUCTION_TYPE_PRETTY[constructionType.toLowerCase()] ||
+            constructionType}
         </Text>
+
         <Text style={styles.detailText}>
           Include Tax: {includeTax ? "Yes" : "No"}
         </Text>
@@ -212,6 +236,8 @@ const CostSummaryScreen: React.FC = () => {
             requestedStartTime: null,
             clientProposedPrice: calculatedCost,
             clientId,
+            userRole: route.params?.userRole ?? "Client",
+            userName: route.params?.userName ?? "Unknown User",
           })
         }
       >

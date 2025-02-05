@@ -9,79 +9,19 @@ import {
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../navigation/AppNavigator";
+import { StackParamList, Negotiation } from "../navigation/AppNavigator"; // Upewnij się, że typ Negotiation jest eksportowany
 import axios from "axios";
 
-interface Negotiation {
-  id: number;
-  description: string;
-  status: string;
-  constructionType: string;
-  placementPhotos: string[];
-  requestedStartTime: string;
-  startDate: string | null;
-  endDate: string | null;
-  clientProposedPrice: number;
-  workerProposedPrice: number | null;
-  agreedPrice: number | null;
-  totalPrice: number;
-  client: {
-    id: number;
-    contactDetails: {
-      name: string;
-      phone: string;
-    };
-    addressId: number;
-    address: {
-      id: number;
-      postCode: string;
-      city: string;
-      streetName: string;
-    } | null;
-  };
-  worker: {
-    id: number;
-    contactDetails: {
-      name: string;
-      phone: string;
-    };
-    addressId: number;
-    address: {
-      id: number;
-      postCode: string;
-      city: string;
-      streetName: string;
-    } | null;
-  } | null;
-  lastActionBy: string;
-  address: {
-    city: string;
-    postCode: string;
-    streetName: string;
-  };
-  constructionSpecification: {
-    [key: string]: any;
-    id: number;
-    type: string;
-    clientProvidedPrice: number | null;
-    isPriceGross: boolean | null;
-  };
-  constructionSpecificationId: number;
-}
-
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "WorkerNegotiations"
->;
-type WorkerNegotiationsRouteProps = RouteProp<
-  StackParamList,
-  "WorkerNegotiations"
->;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "WorkerNegotiations">;
+type WorkerNegotiationsRouteProps = RouteProp<StackParamList, "WorkerNegotiations">;
 
 const WorkerNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<WorkerNegotiationsRouteProps>();
-  const { workerId } = route.params;
+
+  // Pobieramy workerId oraz userName (dla pracownika) z parametrów
+  const { workerId, userName } = route.params as { workerId: number; userName: string };
+
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +50,9 @@ const WorkerNegotiationsScreen: React.FC = () => {
   const handleDetails = (negotiation: Negotiation) => {
     navigation.navigate("NegotiationDetails", {
       negotiation,
-      clientId: workerId,
+      clientId: workerId, // mimo nazwy parametru, tutaj używamy workerId jako clientId
+      userRole: "Worker",
+      userName: userName || "Unknown Worker",
     });
   };
 

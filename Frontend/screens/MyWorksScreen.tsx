@@ -64,8 +64,16 @@ type NavigationProps = NativeStackNavigationProp<StackParamList, "MyWorks">;
 const MyWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MyWorksRouteProps>();
-  const { clientId: workerId } = route.params;
-  console.log("MyWorksScreen - Worker ID:", workerId);
+  const {
+    clientId,
+    userRole = "Worker",
+    userName = "Unknown Worker",
+  } = route.params as {
+    clientId: number;
+    userRole: string;
+    userName: string;
+  };
+  console.log("MyWorksScreen - Worker ID:", clientId);
 
   const [orders, setOrders] = useState<CommonOrder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -73,7 +81,7 @@ const MyWorksScreen: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get<ConstructionOrder[]>(
-        `http://10.0.2.2:5142/api/ConstructionOrderWorker/my-orders/${workerId}`
+        `http://10.0.2.2:5142/api/ConstructionOrderWorker/my-orders/${clientId}`
       );
       console.log("Construction orders response:", response.data);
       const acceptedOrders = response.data.filter(
@@ -104,20 +112,29 @@ const MyWorksScreen: React.FC = () => {
   const handleDetails = (order: CommonOrder) => {
     navigation.navigate("ConstructionOrderDetails", {
       workId: order.id.toString(),
-      workerId,
+      workerId: clientId, // uważamy, że w MyWorksScreen "clientId" to ID pracownika
+      userType: "Worker",
+      userRole: userRole,
+      userName: userName,
     });
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
-      <View style={styles.orderInfoContainer}>
+      <View style={styles.orderInfoWrapper}>
         <Image
           source={require("../assets/icons/package.png")}
           style={styles.orderIcon}
         />
-        <View>
+        <View style={styles.textContainer}>
           <Text style={styles.orderId}>{item.main}</Text>
-          <Text style={styles.orderTitle}>{item.sub}</Text>
+          <Text
+            style={styles.orderTitle}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {item.sub}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
@@ -221,6 +238,15 @@ const styles = StyleSheet.create({
   detailsButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  orderInfoWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
 });
 

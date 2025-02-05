@@ -11,6 +11,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList, Material } from "../navigation/AppNavigator";
+import axios from "axios";
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, "Materials">;
 type MaterialsRouteProps = RouteProp<StackParamList, "Materials">;
@@ -19,15 +20,8 @@ const MaterialsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialsRouteProps>();
 
-  if (!route.params || typeof route.params.clientId !== "number") {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Client ID not provided.</Text>
-      </View>
-    );
-  }
-
-  const { clientId } = route.params;
+  // Teraz oczekujemy, że trasa przekazuje clientId, userRole oraz userName
+  const { clientId, userRole, userName } = route.params;
   console.log("MaterialsScreen - Received clientId:", clientId);
 
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -170,7 +164,7 @@ const MaterialsScreen: React.FC = () => {
 
   const handleOrder = (material: Material) => {
     console.log("MaterialsScreen - Passing clientId:", clientId);
-    navigation.navigate("OrderMaterial", { material, clientId });
+    navigation.navigate("OrderMaterial", { material, clientId, userRole, userName });
   };
 
   const renderMaterialItem = ({ item }: { item: Material }) => (

@@ -26,6 +26,7 @@ interface ConstructionWork {
 const FindWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<FindWorksRouteProps>();
+  // Zakładamy, że w route.params mamy przekazany clientId jako workerId (dla pracownika)
   const { clientId: workerId } = route.params;
   console.log("FindWorksScreen - Worker ID:", workerId);
 
@@ -47,24 +48,6 @@ const FindWorksScreen: React.FC = () => {
     }
   };
 
-  const handleMarkAllAsRead = async () => {
-    const url = `http://10.0.2.2:5142/api/Notification/${workerId}/mark-all-as-read`;
-    try {
-      await axios.post(url);
-    } catch (err) {
-      console.error("Error marking notifications as read:", err);
-    }
-  };
-
-  const handleDeleteAll = async () => {
-    const url = `http://10.0.2.2:5142/api/Notification/${workerId}/all`;
-    try {
-      await axios.delete(url);
-    } catch (err) {
-      console.error("Error deleting notifications:", err);
-    }
-  };
-
   useEffect(() => {
     fetchAvailableWorks();
   }, []);
@@ -73,8 +56,28 @@ const FindWorksScreen: React.FC = () => {
     navigation.goBack();
   };
 
+  // Zaktualizowana funkcja handleDetails – przekazujemy również userRole oraz userName
   const handleDetails = (workId: string) => {
-    navigation.navigate("ConstructionOrderDetails", { workId, workerId });
+    // Jeśli masz dane o pracowniku (np. nazwę) z innego źródła, możesz je tu przekazać.
+    // Teraz ustawiamy domyślne wartości:
+    const userRole = "Worker";
+    const userName = "Unknown Worker"; // lub inna wartość, jeśli posiadasz
+
+    console.log("Navigating to ConstructionOrderDetails with parameters:", {
+      workId,
+      workerId,
+      userType: "worker",
+      userRole,
+      userName,
+    });
+
+    navigation.navigate("ConstructionOrderDetails", {
+      workId,
+      workerId,
+      userType: "worker",
+      userRole,
+      userName,
+    });
   };
 
   const getWorkIcon = (constructionType: string | undefined): any => {
@@ -165,21 +168,6 @@ const styles = StyleSheet.create({
   returnButtonText: {
     color: "black",
     fontWeight: "bold",
-  },
-  headerButtons: {
-    flexDirection: "row",
-  },
-  headerButton: {
-    backgroundColor: "#f0f0d0",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  headerButtonText: {
-    color: "black",
-    fontWeight: "bold",
-    fontSize: 12,
   },
   headerText: {
     fontSize: 32,

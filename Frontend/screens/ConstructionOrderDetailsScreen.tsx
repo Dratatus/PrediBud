@@ -7,6 +7,7 @@ import {
   Image,
   ActivityIndicator,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -43,7 +44,7 @@ type ConstructionOrderDetailsRouteProps = RouteProp<
   "ConstructionOrderDetails"
 >;
 
-interface ConstructionOrder {
+export interface ConstructionOrder {
   id: number;
   description: string;
   status: string;
@@ -70,7 +71,13 @@ interface ConstructionOrder {
       streetName: string;
     };
   };
-  worker: any;
+  // Zakładamy, że obiekt worker ma przynajmniej contactDetails
+  worker: {
+    contactDetails: {
+      name: string;
+      phone: string;
+    };
+  } | null;
   address: {
     city: string;
     postCode: string;
@@ -92,11 +99,27 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<ConstructionOrderDetailsRouteProps>();
 
-  const { workId, workerId, userRole } = route.params as {
+  // Pobieramy parametry – dla pracownika domyślne wartości dla userRole i userName
+  const {
+    workId,
+    workerId,
+    userType = "Worker",
+    userRole = userType.toLowerCase() === "worker" ? "Worker" : "Client",
+    userName = userType.toLowerCase() === "worker" ? "Unknown Worker" : "Unknown User",
+  } = route.params as {
     workId: string;
     workerId: number;
+    userType?: string;
     userRole?: string;
+    userName?: string;
   };
+
+  console.log("ConstructionOrderDetailsScreen params:");
+  console.log("  workId:", workId);
+  console.log("  workerId:", workerId);
+  console.log("  userType:", userType);
+  console.log("  userRole:", userRole);
+  console.log("  userName:", userName);
 
   const [order, setOrder] = useState<ConstructionOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -112,6 +135,7 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: ConstructionOrder = await response.json();
+        console.log("Fetched construction order details:", data);
         setOrder(data);
       } catch (err) {
         console.error("Error fetching construction order details:", err);
@@ -124,6 +148,7 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   }, [workId]);
 
   const handleBack = () => {
+    // Przycisk Back – tylko powrót do poprzedniego ekranu
     navigation.goBack();
   };
 
@@ -136,10 +161,71 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
     });
   };
 
+  const handleComplete = async () => {
+    if (!order) return;
+    try {
+      const url = `http://10.0.2.2:5142/api/Negotiation/${order.id}/complete`;
+      const currentUserId =
+        userType.toLowerCase() === "client" && order.client ? order.client.id : workerId;
+      console.log("handleComplete - currentUserId:", currentUserId);
+      if (userType.toLowerCase() === "client" && order.client) {
+        console.log("handleComplete - client name from order:", order.client.contactDetails.name);
+      } else {
+        console.log("handleComplete - worker userName (from params):", userName);
+      }
+      const payload = { userId: currentUserId };
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status} - ${errText}`);
+      }
+      Alert.alert("Success", "Order completed successfully.");
+      navigation.navigate("UserProfile", {
+        clientId: currentUserId,
+        userRole,
+        userName,
+      });
+    } catch (err) {
+      console.error("Error completing negotiation:", err);
+      Alert.alert("Error", "Failed to complete negotiation.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!order) return;
+    try {
+      const currentClientId =
+        userType.toLowerCase() === "client" && order.client ? order.client.id : workerId;
+      const url = `http://10.0.2.2:5142/api/ConstructionOrderClient/${order.id}/${currentClientId}`;
+      console.log("handleDelete - currentClientId:", currentClientId);
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status} - ${errText}`);
+      }
+      Alert.alert("Success", "Order deleted successfully.");
+      navigation.navigate("MyOrders", {
+        clientId: currentClientId,
+        userRole,
+        userName,
+      });
+    } catch (err) {
+      console.error("Error deleting order:", err);
+      Alert.alert("Error", "Failed to delete order.");
+    }
+  };
+
   const renderOrderField = (label: string, value: any) => (
     <View style={styles.detailBlock}>
       <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
+      <Text style={styles.detailValue}>{String(value)}</Text>
     </View>
   );
 
@@ -148,16 +234,14 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
     return Object.entries(order.constructionSpecification)
       .filter(
         ([key]) =>
-          !["id", "type", "clientprovidedprice", "ispricegross"].includes(
-            key.toLowerCase()
-          )
+          !["id", "type", "clientprovidedprice", "ispricegross"].includes(key.toLowerCase())
       )
       .map(([key, value]) => {
         const lowerKey = key.toLowerCase();
         const label = SPECIFICATION_LABELS[lowerKey] || key;
         return (
           <Text key={key} style={styles.detailValue}>
-            {label}: {value}
+            {label}: {String(value)}
           </Text>
         );
       });
@@ -174,7 +258,6 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   if (error || !order) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>{error || "Order not found"}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Text style={styles.backButtonText}>{"<"} Back</Text>
         </TouchableOpacity>
@@ -184,34 +267,23 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Przycisk Back – tylko powrót do poprzedniego ekranu */}
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Text style={styles.backButtonText}>{"<"} Back</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Image
-          source={require("../assets/logo.png")}
-          style={styles.headerIcon}
-        />
+        <Image source={require("../assets/logo.png")} style={styles.headerIcon} />
         <Text style={styles.headerText}>CONSTRUCTION ORDER DETAILS</Text>
       </View>
 
-      {renderOrderField("ID", order.id)}
       {renderOrderField("Status", order.status)}
       {renderOrderField("Description", order.description)}
       {renderOrderField("Construction Type", order.constructionType)}
       {renderOrderField("Requested Start Time", order.requestedStartTime)}
-      {renderOrderField(
-        "Client Proposed Price",
-        `${order.clientProposedPrice} PLN`
-      )}
-      {renderOrderField(
-        "Agreed Price",
-        order.agreedPrice !== null ? `${order.agreedPrice} PLN` : "N/A"
-      )}
-      {renderOrderField("Total Price", `${order.totalPrice} PLN`)}
-      {order.client &&
-        renderOrderField("Client Phone", order.client.contactDetails.phone)}
+      {renderOrderField("Client Proposed Price", `${order.clientProposedPrice} PLN`)}
+      {renderOrderField("Agreed Price", order.agreedPrice !== null ? `${order.agreedPrice} PLN` : "N/A")}
+      {order.client && renderOrderField("Client Phone", order.client.contactDetails.phone)}
       {renderOrderField(
         "Order Address",
         `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
@@ -222,16 +294,42 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
         {renderSpecificationDetails()}
       </View>
 
-      {order.status !== "Accepted" &&
-        ((userRole && userRole.toLowerCase() === "worker") ||
-          (!userRole && workerId)) && (
-          <TouchableOpacity
-            style={styles.initiateButton}
-            onPress={handleInitiate}
-          >
-            <Text style={styles.initiateButtonText}>Initiate</Text>
-          </TouchableOpacity>
+      {/* Wyświetlamy kontakt do Workera, jeśli status to Completed, Accepted lub NegotiationInProgress */}
+      {(order.status === "Completed" ||
+        order.status === "Accepted" ||
+        order.status === "NegotiationInProgress") &&
+        order.worker && (
+          <View style={styles.detailBlock}>
+            <Text style={styles.detailLabel}>Worker Contact</Text>
+            <Text style={styles.detailValue}>
+              Name: {order.worker.contactDetails.name}
+            </Text>
+            <Text style={styles.detailValue}>
+              Phone: {order.worker.contactDetails.phone}
+            </Text>
+          </View>
         )}
+
+      {/* Jeśli status zamówienia to "Accepted", wyświetlamy przycisk Complete */}
+      {order.status === "Accepted" && (
+        <TouchableOpacity style={styles.completeButton} onPress={handleComplete}>
+          <Text style={styles.completeButtonText}>Complete</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Jeśli status nie jest "Accepted" oraz userType to "worker", wyświetlamy przycisk Initiate */}
+      {order.status !== "Accepted" && userType.toLowerCase() === "worker" && (
+        <TouchableOpacity style={styles.initiateButton} onPress={handleInitiate}>
+          <Text style={styles.initiateButtonText}>Initiate</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Wyświetlamy przycisk Delete tylko wtedy, gdy status to "Completed" lub (status to "New" i nie jesteśmy workerem) */}
+      {(order.status === "Completed" || (order.status === "New" && userType.toLowerCase() !== "worker")) && (
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
@@ -242,6 +340,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9b234",
     padding: 20,
     alignItems: "center",
+  },
+  orderIDContainer: {
+    alignSelf: "flex-start",
+    marginBottom: 10,
+  },
+  orderIDText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
   },
   backButton: {
     position: "absolute",
@@ -260,12 +367,12 @@ const styles = StyleSheet.create({
   headerContainer: {
     alignItems: "center",
     marginBottom: 20,
+    marginTop: 60,
   },
   headerIcon: {
     width: 80,
     height: 80,
     marginBottom: 10,
-    marginTop: 50,
     borderRadius: 100,
   },
   headerText: {
@@ -293,11 +400,17 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
   },
-  errorText: {
+  completeButton: {
+    backgroundColor: "#007bff",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  completeButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
-    color: "red",
-    textAlign: "center",
-    marginBottom: 20,
   },
   initiateButton: {
     backgroundColor: "#4CAF50",
@@ -307,6 +420,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   initiateButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  deleteButton: {
+    backgroundColor: "#dc3545",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  deleteButtonText: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,

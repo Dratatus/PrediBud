@@ -36,11 +36,19 @@ const UserProfileScreen: React.FC = () => {
   };
 
   const handleMyWorks = () => {
-    navigation.navigate("MyWorks", { clientId: clientIdNum });
+    navigation.navigate("MyWorks", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   const handleClientNegotiations = () => {
-    navigation.navigate("ClientNegotiations", { clientId: clientIdNum });
+    navigation.navigate("ClientNegotiations", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   const handleWorkerNegotiations = () => {
@@ -48,11 +56,19 @@ const UserProfileScreen: React.FC = () => {
   };
 
   const handleMyOrders = () => {
-    navigation.navigate("MyOrders", { clientId: clientIdNum });
+    navigation.navigate("MyOrders", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   const handleMyMaterials = () => {
-    navigation.navigate("MyMaterials", { clientId: clientIdNum });
+    navigation.navigate("MyMaterials", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   const handleNotifications = () => {
@@ -60,11 +76,19 @@ const UserProfileScreen: React.FC = () => {
   };
 
   const handleCalculator = () => {
-    navigation.navigate("Calculator", { clientId: clientIdNum });
+    navigation.navigate("Calculator", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   const handleMaterials = () => {
-    navigation.navigate("Materials", { clientId: clientIdNum });
+    navigation.navigate("Materials", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
   };
 
   return (

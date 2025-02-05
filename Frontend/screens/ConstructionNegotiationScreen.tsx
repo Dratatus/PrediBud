@@ -27,8 +27,7 @@ const ConstructionNegotiationScreen: React.FC = () => {
   const route = useRoute<NegotiationRouteProps>();
 
   const { orderId, clientProposedPrice, workerId } = route.params;
-  const [proposedPrice, setProposedPrice] =
-    useState<number>(clientProposedPrice);
+  const [proposedPrice, setProposedPrice] = useState<number>(clientProposedPrice);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,14 +55,30 @@ const ConstructionNegotiationScreen: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.backButtonText}>{"<"} Back</Text>
+      </TouchableOpacity>
+
       <Text style={styles.headerText}>Construction Negotiation</Text>
-      <Text style={styles.label}>Proposed Price:</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={proposedPrice.toString()}
-        onChangeText={(text) => setProposedPrice(parseFloat(text))}
-      />
+      <View style={styles.detailBox}>
+        <Text style={styles.detailLabel}>Client Proposed Price</Text>
+        <Text style={styles.detailValue}>{clientProposedPrice} PLN</Text>
+      </View>
+      <View style={styles.detailBox}>
+        <Text style={styles.detailLabel}>Your Counter Offer</Text>
+        <TextInput
+          style={[styles.input, { textAlign: "center" }]}
+          keyboardType="numeric"
+          value={proposedPrice.toString()}
+          onChangeText={(text) =>
+            setProposedPrice(text ? parseFloat(text) : 0)
+          }
+        />
+      </View>
+
       {error && <Text style={styles.errorText}>{error}</Text>}
       {loading ? (
         <ActivityIndicator size="large" color="#000" />
@@ -83,14 +98,41 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9b234",
     alignItems: "center",
   },
+  detailBox: {
+    backgroundColor: "#fff8e1",
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 15,
+    width: "90%",
+    alignItems: "center",
+  },
+  detailLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  detailValue: {
+    fontSize: 16,
+    color: "#666",
+  },
+  backButton: {
+    alignSelf: "flex-start",
+    backgroundColor: "#f0f0d0",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginBottom: 20,
+    marginTop: 30,
+  },
+  backButtonText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
     marginVertical: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 10,
   },
   input: {
     width: "80%",
@@ -99,7 +141,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     backgroundColor: "#fff8e1",
-    marginBottom: 20,
+    marginBottom: 5,
     textAlign: "center",
   },
   button: {

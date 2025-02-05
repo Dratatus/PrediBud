@@ -15,7 +15,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
 const MATERIAL_ENUM1 = {
-  //PartitionWall
   Drywall: 0,
   Brick: 1,
   AeratedConcrete: 2,
@@ -24,7 +23,6 @@ const MATERIAL_ENUM1 = {
 };
 
 const MATERIAL_ENUM3 = {
-  //Windows
   Unknown: 0,
   Wood: 1,
   PVC: 2,
@@ -34,7 +32,6 @@ const MATERIAL_ENUM3 = {
 };
 
 const MATERIAL_ENUM4 = {
-  //Doors
   Wood: 0,
   Steel: 1,
   PVC: 2,
@@ -43,7 +40,6 @@ const MATERIAL_ENUM4 = {
 };
 
 const INSULATION_TYPE_ENUM = {
-  //Facade
   Styrofoam: 0,
   MineralWool: 1,
   PolyurethaneFoam: 2,
@@ -51,7 +47,6 @@ const INSULATION_TYPE_ENUM = {
 };
 
 const FINISH_MATERIAL_ENUM = {
-  //Facade
   Plaster: 0,
   Brick: 1,
   Stone: 2,
@@ -60,7 +55,6 @@ const FINISH_MATERIAL_ENUM = {
 };
 
 const MATERIAL_ENUM6 = {
-  //Flooring
   Laminate: 0,
   Hardwood: 1,
   Vinyl: 2,
@@ -69,7 +63,6 @@ const MATERIAL_ENUM6 = {
 };
 
 const MATERIAL_ENUM7 = {
-  //SuspendedCeiling
   Drywall: 0,
   MineralFiber: 1,
   Metal: 2,
@@ -80,7 +73,6 @@ const MATERIAL_ENUM7 = {
 };
 
 const MATERIAL_ENUM8 = {
-  // InsulationOfAttic
   MineralWool: 0,
   Styrofoam: 1,
   PolyurethaneFoam: 2,
@@ -90,7 +82,6 @@ const MATERIAL_ENUM8 = {
 };
 
 const MATERIAL_ENUM9 = {
-  // Plastering
   Gypsum: 0,
   Cement: 1,
   Lime: 2,
@@ -102,7 +93,6 @@ const MATERIAL_ENUM9 = {
 };
 
 const MATERIAL_ENUM10 = {
-  // Painting
   Acrylic: 0,
   Latex: 1,
   OilBased: 2,
@@ -116,7 +106,6 @@ const MATERIAL_ENUM10 = {
 };
 
 const MATERIAL_ENUM11 = {
-  // Staircase
   Unknown: 0,
   Wood: 1,
   Metal: 2,
@@ -129,7 +118,6 @@ const MATERIAL_ENUM11 = {
 };
 
 const MATERIAL_ENUM12 = {
-  // Balcony
   Steel: 0,
   Wood: 1,
   Glass: 2,
@@ -138,7 +126,6 @@ const MATERIAL_ENUM12 = {
 };
 
 const MATERIAL_ENUM13 = {
-  // LoadBearingWall
   Concrete: 0,
   Brick: 1,
   AeratedConcrete: 2,
@@ -147,7 +134,6 @@ const MATERIAL_ENUM13 = {
 };
 
 const MATERIAL_ENUM14 = {
-  // Roof
   Tile: 0,
   MetalSheet: 1,
   AsphaltShingle: 2,
@@ -158,7 +144,6 @@ const MATERIAL_ENUM14 = {
 };
 
 const MATERIAL_ENUM15 = {
-  // Ceiling
   Concrete: 0,
   Wood: 1,
   Steel: 2,
@@ -221,7 +206,8 @@ const CalculatorScreen: React.FC = () => {
 
   const navigation = useNavigation<NavProps>();
   const route = useRoute<CalculatorRouteProps>();
-  const { clientId } = route.params!;
+  // Teraz pobieramy wszystkie wymagane dane
+  const { clientId, userRole, userName } = route.params!;
   if (clientId == null) {
     console.error("CalculatorScreen: clientId is not provided.");
   }
@@ -294,9 +280,7 @@ const CalculatorScreen: React.FC = () => {
       }
     } else if (state.constructionType === "Balcony") {
       materialEnumValue =
-        MATERIAL_ENUM12[
-          state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12
-        ];
+        MATERIAL_ENUM12[state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12];
       if (materialEnumValue === undefined) {
         console.error("Invalid material selected");
         return;
@@ -454,16 +438,16 @@ const CalculatorScreen: React.FC = () => {
     }
 
     const calculatedPrice = 1000;
-
     navigation.navigate("CostSummary", {
       constructionType: state.constructionType,
       specificationDetails,
       includeTax: state.includeTax,
       totalCost: calculatedPrice,
-      clientId,
+      clientId: clientId,
+      userRole: route.params?.userRole ?? "Client",
+      userName: route.params?.userName ?? "Unknown User",
     });
   };
-
   const renderFields = () => {
     switch (state.constructionType) {
       case "PartitionWall":
@@ -1262,11 +1246,11 @@ const CalculatorScreen: React.FC = () => {
           <Picker
             selectedValue={state.constructionType}
             onValueChange={(value) =>
-              setState({
-                ...state,
+              setState((prev) => ({
+                ...prev,
                 constructionType: value as keyof typeof CONSTRUCTION_TYPE_ENUM,
                 fields: {},
-              })
+              }))
             }
           >
             <Picker.Item label="Partition Wall" value="PartitionWall" />
@@ -1276,10 +1260,7 @@ const CalculatorScreen: React.FC = () => {
             <Picker.Item label="Facade" value="Facade" />
             <Picker.Item label="Flooring" value="Flooring" />
             <Picker.Item label="Suspended Ceiling" value="SuspendedCeiling" />
-            <Picker.Item
-              label="Insulation of Attic"
-              value="InsulationOfAttic"
-            />
+            <Picker.Item label="Insulation of Attic" value="InsulationOfAttic" />
             <Picker.Item label="Plastering" value="Plastering" />
             <Picker.Item label="Painting" value="Painting" />
             <Picker.Item label="Staircase" value="Staircase" />
@@ -1300,7 +1281,9 @@ const CalculatorScreen: React.FC = () => {
           </Text>
           <Switch
             value={state.includeTax}
-            onValueChange={(value) => setState({ ...state, includeTax: value })}
+            onValueChange={(value) =>
+              setState((prev) => ({ ...prev, includeTax: value }))
+            }
           />
         </View>
       </View>
@@ -1370,7 +1353,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 15,
     backgroundColor: "#fff8e1",
   },
   switchContainer: {

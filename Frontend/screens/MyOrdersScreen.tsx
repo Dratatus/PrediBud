@@ -58,7 +58,12 @@ interface CommonOrder {
 const MyOrdersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MyOrdersRouteProps>();
-  const { clientId } = route.params;
+  // Przekazujemy parametry: clientId, userRole oraz userName
+  const { clientId, userRole, userName } = route.params as { 
+    clientId: number; 
+    userRole: string; 
+    userName: string; 
+  };
   console.log("MyOrdersScreen - Client ID:", clientId);
 
   const [orders, setOrders] = useState<CommonOrder[]>([]);
@@ -93,28 +98,38 @@ const MyOrdersScreen: React.FC = () => {
   }, []);
 
   const handleBack = () => {
-    navigation.goBack();
+    navigation.navigate("UserProfile", {
+      clientId,
+      userRole,
+      userName,
+    });
   };
 
   const handleDetails = (order: CommonOrder) => {
     if (order.orderType === "construction") {
+      // Teraz przekazujemy dodatkowo userRole i userName
       navigation.navigate("ConstructionOrderDetails", {
         workId: order.id.toString(),
-        workerId: clientId,
+        workerId: clientId, // dla klienta przekazujemy jego id
+        userType: "Client",
+        userRole,     // dodane
+        userName,     // dodane
       });
     }
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
-      <View style={styles.orderInfoContainer}>
+      <View style={styles.orderInfoWrapper}>
         <Image
           source={require("../assets/icons/package.png")}
           style={styles.orderIcon}
         />
-        <View>
+        <View style={styles.textContainer}>
           <Text style={styles.orderId}>{item.main}</Text>
-          <Text style={styles.orderTitle}>{item.sub}</Text>
+          <Text style={styles.orderTitle} numberOfLines={2} ellipsizeMode="tail">
+            {item.sub}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
@@ -128,12 +143,7 @@ const MyOrdersScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -193,9 +203,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  orderInfoContainer: {
+  orderInfoWrapper: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   orderIcon: {
     width: 40,

@@ -7,15 +7,13 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "OrderDetails"
->;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "OrderDetails">;
 type MaterialOrderDetailsRouteProps = RouteProp<StackParamList, "OrderDetails">;
 
 interface MaterialOrder {
@@ -59,7 +57,13 @@ interface MaterialOrder {
 const MaterialOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialOrderDetailsRouteProps>();
-  const { workId } = route.params;
+  // Oczekujemy, że trasa przekazuje: workId, clientId, userRole oraz userName
+  const { workId, clientId, userRole, userName } = route.params as {
+    workId: string;
+    clientId: number;
+    userRole: string;
+    userName: string;
+  };
 
   const [order, setOrder] = useState<MaterialOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -90,6 +94,33 @@ const MaterialOrderDetailsScreen: React.FC = () => {
     navigation.goBack();
   };
 
+  // Nowa funkcja: usuwanie zamówienia
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `http://10.0.2.2:5142/api/MaterialOrder/${order!.id}/${clientId}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error("Failed to delete order:", errText);
+        Alert.alert("Error", "Failed to delete order.");
+      } else {
+        navigation.navigate("UserProfile", { clientId, userRole, userName });
+      }
+    } catch (error) {
+      console.error("Error during deletion:", error);
+      Alert.alert("Error", "An error occurred during deletion.");
+    }
+  };
+
+  const renderOrderField = (label: string, value: any) => (
+    <View style={styles.detailBlock}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
+    </View>
+  );
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -107,13 +138,6 @@ const MaterialOrderDetailsScreen: React.FC = () => {
       </View>
     );
   }
-
-  const renderOrderField = (label: string, value: any) => (
-    <View style={styles.detailBlock}>
-      <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
-    </View>
-  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -147,6 +171,11 @@ const MaterialOrderDetailsScreen: React.FC = () => {
           )}
         </>
       )}
+
+      {/* Przycisk Delete */}
+      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+        <Text style={styles.deleteButtonText}>Delete</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -212,6 +241,18 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     marginBottom: 20,
+  },
+  deleteButton: {
+    backgroundColor: "#d9534f", // czerwony
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
