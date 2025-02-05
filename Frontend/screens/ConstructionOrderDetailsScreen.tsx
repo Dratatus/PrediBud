@@ -1,12 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/AppNavigator';
-import { StyleSheet } from 'react-native';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'ConstructionOrderDetails'>;
-type ConstructionOrderDetailsRouteProps = RouteProp<StackParamList, 'ConstructionOrderDetails'>;
+const SPECIFICATION_LABELS: Record<string, string> = {
+  height: "Height (m)",
+  width: "Width (m)",
+  thickness: "Thickness (m)",
+  material: "Material",
+  length: "Length (m)",
+  depth: "Depth (m)",
+  amount: "Amount",
+  surfacearea: "Surface Area (m²)",
+  insulationtype: "Insulation Type",
+  finishmaterial: "Finish Material",
+  area: "Area (m²)",
+  pitch: "Pitch (°)",
+  wallsurfacearea: "Wall Surface Area (m²)",
+  plastertype: "Plaster Type",
+  painttype: "Paint Type",
+  numberofcoats: "Number of Coats",
+  numberofsteps: "Number of Steps",
+  railingmaterial: "Railing Material",
+  count: "Count",
+};
+
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "ConstructionOrderDetails"
+>;
+type ConstructionOrderDetailsRouteProps = RouteProp<
+  StackParamList,
+  "ConstructionOrderDetails"
+>;
 
 interface ConstructionOrder {
   id: number;
@@ -42,16 +77,9 @@ interface ConstructionOrder {
     streetName: string;
   };
   constructionSpecification: {
-    // Przykładowe pola – mogą być inne, w zależności od typu zamówienia
-    length?: number;
-    width?: number;
-    depth?: number;
-    wallSurfaceArea?: number;
-    paintType?: string;
-    numberOfCoats?: number;
-    height?: number;
-    thickness?: number;
-    // ... inne pola, które chcemy wyświetlić
+    wallSurfaceArea: number;
+    paintType: string;
+    numberOfCoats: number;
     id: number;
     type: string;
     clientProvidedPrice: number | null;
@@ -60,34 +88,15 @@ interface ConstructionOrder {
   constructionSpecificationId: number;
 }
 
-// Etykiety dla specyfikacji – klucze zapisywane w lowercase
-const SPECIFICATION_LABELS: Record<string, string> = {
-    height: "Height (m)",
-    width: "Width (m)",
-    thickness: "Thickness (m)",
-    material: "Material",
-    length: "Length (m)",
-    depth: "Depth (m)",
-    amount: "Amount",
-    surfacearea: "Surface Area (m²)",
-    insulationtype: "Insulation Type",
-    finishmaterial: "Finish Material",
-    area: "Area (m²)",
-    numberofcoats: "Number of Coats",
-    numberofsteps: "Number of Steps",
-    railingmaterial: "Railing Material",
-    count: "Count",
-    pitch: "Pitch (°)",
-    plastertype: "Plaster Type",
-    painttype: "Paint Type"
-};
-
 const ConstructionOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<ConstructionOrderDetailsRouteProps>();
-  
-  // Upewniamy się, że workId jest dostępne (przyjmujemy, że przekazujemy go jako string)
-  const { workId } = route.params as { workId: string };
+
+  const { workId, workerId, userRole } = route.params as {
+    workId: string;
+    workerId: number;
+    userRole?: string;
+  };
 
   const [order, setOrder] = useState<ConstructionOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -96,7 +105,9 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://10.0.2.2:5142/api/ConstructionOrderClient/${workId}`);
+        const response = await fetch(
+          `http://10.0.2.2:5142/api/ConstructionOrderClient/${workId}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -116,7 +127,15 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  // Funkcja renderująca pole z etykietą i wartością
+  const handleInitiate = () => {
+    if (!order) return;
+    navigation.navigate("ConstructionNegotiation", {
+      orderId: order.id.toString(),
+      clientProposedPrice: order.clientProposedPrice,
+      workerId: workerId,
+    });
+  };
+
   const renderOrderField = (label: string, value: any) => (
     <View style={styles.detailBlock}>
       <Text style={styles.detailLabel}>{label}</Text>
@@ -124,11 +143,15 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
     </View>
   );
 
-  // Renderowanie specyfikacji konstrukcji w czytelnej formie
   const renderSpecificationDetails = () => {
     if (!order?.constructionSpecification) return null;
     return Object.entries(order.constructionSpecification)
-      .filter(([key]) => !["id", "type", "clientprovidedprice", "ispricegross"].includes(key.toLowerCase()))
+      .filter(
+        ([key]) =>
+          !["id", "type", "clientprovidedprice", "ispricegross"].includes(
+            key.toLowerCase()
+          )
+      )
       .map(([key, value]) => {
         const lowerKey = key.toLowerCase();
         const label = SPECIFICATION_LABELS[lowerKey] || key;
@@ -147,13 +170,13 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
       </View>
     );
   }
-  
+
   if (error || !order) {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>{error || "Order not found"}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{'<'} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Back</Text>
         </TouchableOpacity>
       </View>
     );
@@ -162,22 +185,35 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{'<'} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Back</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Image source={require('../assets/logo.png')} style={styles.headerIcon} />
+        <Image
+          source={require("../assets/logo.png")}
+          style={styles.headerIcon}
+        />
         <Text style={styles.headerText}>CONSTRUCTION ORDER DETAILS</Text>
       </View>
 
-      {renderOrderField('ID', order.id)}
-      {renderOrderField('Description', order.description)}
-      {renderOrderField('Construction Type', order.constructionType)}
-      {renderOrderField('Requested Start Time', order.requestedStartTime)}
-      {renderOrderField('Client Proposed Price', `${order.clientProposedPrice} PLN`)}
-      {order.client && renderOrderField('Client Phone', order.client.contactDetails.phone)}
+      {renderOrderField("ID", order.id)}
+      {renderOrderField("Status", order.status)}
+      {renderOrderField("Description", order.description)}
+      {renderOrderField("Construction Type", order.constructionType)}
+      {renderOrderField("Requested Start Time", order.requestedStartTime)}
       {renderOrderField(
-        'Order Address',
+        "Client Proposed Price",
+        `${order.clientProposedPrice} PLN`
+      )}
+      {renderOrderField(
+        "Agreed Price",
+        order.agreedPrice !== null ? `${order.agreedPrice} PLN` : "N/A"
+      )}
+      {renderOrderField("Total Price", `${order.totalPrice} PLN`)}
+      {order.client &&
+        renderOrderField("Client Phone", order.client.contactDetails.phone)}
+      {renderOrderField(
+        "Order Address",
         `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
       )}
 
@@ -185,34 +221,44 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
         <Text style={styles.detailLabel}>Construction Specification</Text>
         {renderSpecificationDetails()}
       </View>
+
+      {order.status !== "Accepted" &&
+        ((userRole && userRole.toLowerCase() === "worker") ||
+          (!userRole && workerId)) && (
+          <TouchableOpacity
+            style={styles.initiateButton}
+            onPress={handleInitiate}
+          >
+            <Text style={styles.initiateButtonText}>Initiate</Text>
+          </TouchableOpacity>
+        )}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  // Przyjmij, że style pozostają bez zmian
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9b234',
+    backgroundColor: "#f9b234",
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: '#f0f0d0',
+    backgroundColor: "#f0f0d0",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
     zIndex: 1,
   },
   backButtonText: {
-    color: 'black',
-    fontWeight: 'bold',
+    color: "black",
+    fontWeight: "bold",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   headerIcon: {
@@ -224,33 +270,46 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#593100",
   },
   detailBlock: {
-    width: '100%',
-    backgroundColor: '#fff8e1',
+    width: "100%",
+    backgroundColor: "#fff8e1",
     borderRadius: 10,
     padding: 10,
     marginBottom: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   detailLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 5,
-    textAlign: 'center',
+    textAlign: "center",
   },
   detailValue: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
   errorText: {
     fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 20,
+  },
+  initiateButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  initiateButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

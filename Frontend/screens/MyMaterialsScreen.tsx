@@ -9,80 +9,88 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
-import axios from "axios";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "MyOrders">;
-type MyOrdersRouteProps = RouteProp<StackParamList, "MyOrders">;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "MyMaterials">;
+type MyMaterialsRouteProps = RouteProp<StackParamList, "MyMaterials">;
 
-interface ConstructionOrder {
+interface Address {
+  streetName: string;
+  city: string;
+  postCode: string;
+}
+
+interface Supplier {
   id: number;
-  description: string;
-  status: string;
-  constructionType: string;
-  placementPhotos: string[];
-  requestedStartTime: string;
-  startDate: string | null;
-  endDate: string | null;
-  clientProposedPrice: number;
-  workerProposedPrice: number | null;
-  agreedPrice: number | null;
-  totalPrice: number;
-  client: any;
-  worker: any;
-  address: {
-    streetName: string;
-    city: string;
-    postCode: string;
-  };
-  constructionSpecification: {
-    wallSurfaceArea: number;
-    paintType: string;
-    numberOfCoats: number;
-    id: number;
-    type: string;
-    clientProvidedPrice: number | null;
-    isPriceGross: boolean | null;
-  };
-  constructionSpecificationId: number;
+  name: string;
+  address: Address;
+  contactEmail: string;
+}
+
+interface MaterialPrice {
+  id: number;
+  materialType: string;
+  materialCategory: string;
+  priceWithoutTax: number;
+  supplierId: number;
+  supplierName: string | null;
+}
+
+interface MaterialOrder {
+  id: number;
+  unitPriceNet: number;
+  unitPriceGross: number;
+  quantity: number;
+  totalPriceNet: number;
+  totalPriceGross: number;
+  createdDate: string;
+  userId: number;
+  supplierId: number;
+  supplier: Supplier;
+  materialPriceId: number;
+  materialPrice: MaterialPrice;
+  address: Address;
 }
 
 interface CommonOrder {
   id: number;
-  orderType: "construction";
   main: string;
   sub: string;
 }
 
-const MyOrdersScreen: React.FC = () => {
+const MyMaterialsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
-  const route = useRoute<MyOrdersRouteProps>();
+  const route = useRoute<MyMaterialsRouteProps>();
   const { clientId } = route.params;
-  console.log("MyOrdersScreen - Client ID:", clientId);
+  console.log("MyMaterialsScreen - Worker ID:", clientId);
 
   const [orders, setOrders] = useState<CommonOrder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchOrders = async () => {
     try {
-      const constructionResponse = await axios.get<ConstructionOrder[]>(
-        `http://10.0.2.2:5142/api/ConstructionOrderClient/all/${clientId}`
+      const response = await axios.get<MaterialOrder[]>(
+        "http://10.0.2.2:5142/api/MaterialOrder"
       );
-      console.log("Construction orders response:", constructionResponse.data);
-      const constructionOrders: CommonOrder[] = constructionResponse.data.map(
-        (item) => ({
-          id: item.id,
-          orderType: "construction",
-          main: item.constructionType,
-          sub: item.description,
+      console.log("Material orders response:", response.data);
+      const filteredOrders: CommonOrder[] = response.data
+        .filter((order) => {
+          console.log(
+            `Material order id ${order.id} - userId: ${order.userId}`
+          );
+          return order.userId === clientId;
         })
-      );
-      console.log("Construction orders mapped:", constructionOrders);
-
-      setOrders(constructionOrders);
+        .map((order) => ({
+          id: order.id,
+          main: order.materialPrice.materialType,
+          sub: order.materialPrice.materialCategory,
+        }));
+      console.log("Filtered material orders:", filteredOrders);
+      setOrders(filteredOrders);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching material orders:", error);
     } finally {
       setLoading(false);
     }
@@ -96,22 +104,30 @@ const MyOrdersScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  const handleDetails = (order: CommonOrder) => {
-    if (order.orderType === "construction") {
-      navigation.navigate("ConstructionOrderDetails", {
-        workId: order.id.toString(),
-        workerId: clientId,
-      });
+  const handleDetails = (orderId: number) => {
+    navigation.navigate("OrderDetails", { workId: orderId.toString() });
+  };
+
+  const getIcon = (materialType: string): any => {
+    const type = materialType.toLowerCase();
+    switch (type) {
+      case "steel":
+        return require("../assets/icons/steel.png");
+      case "wood":
+        return require("../assets/icons/wood.png");
+      case "brick":
+        return require("../assets/icons/brick.png");
+      case "glass":
+        return require("../assets/icons/glass.png");
+      default:
+        return require("../assets/icons/package.png");
     }
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
       <View style={styles.orderInfoContainer}>
-        <Image
-          source={require("../assets/icons/package.png")}
-          style={styles.orderIcon}
-        />
+        <Image source={getIcon(item.main)} style={styles.orderIcon} />
         <View>
           <Text style={styles.orderId}>{item.main}</Text>
           <Text style={styles.orderTitle}>{item.sub}</Text>
@@ -119,9 +135,9 @@ const MyOrdersScreen: React.FC = () => {
       </View>
       <TouchableOpacity
         style={styles.detailsButton}
-        onPress={() => handleDetails(item)}
+        onPress={() => handleDetails(item.id)}
       >
-        <Text style={styles.detailsButtonText}>see details</Text>
+        <Text style={styles.detailsButtonText}>Zobacz szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
@@ -142,13 +158,13 @@ const MyOrdersScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>My orders</Text>
+      <Text style={styles.headerText}>Moje zamówione materiały</Text>
       <FlatList
         data={orders}
         renderItem={renderOrderItem}
-        keyExtractor={(item) => `${item.orderType}-${item.id}`}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.orderList}
       />
     </View>
@@ -180,6 +196,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 90,
     marginBottom: 30,
+    textAlign: "center",
   },
   orderList: {
     paddingBottom: 100,
@@ -221,4 +238,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyOrdersScreen;
+export default MyMaterialsScreen;

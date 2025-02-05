@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { StackParamList } from '../navigation/AppNavigator';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, 'OrderDetails'>;
-type MaterialOrderDetailsRouteProps = RouteProp<StackParamList, 'OrderDetails'>;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "OrderDetails"
+>;
+type MaterialOrderDetailsRouteProps = RouteProp<StackParamList, "OrderDetails">;
 
-// Definicja interfejsu odpowiadającego strukturze JSON zwracanej przez /api/MaterialOrder/{id}
 interface MaterialOrder {
   id: number;
   unitPriceNet: number;
@@ -49,7 +59,7 @@ interface MaterialOrder {
 const MaterialOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialOrderDetailsRouteProps>();
-  const { workId } = route.params; // Zakładamy, że workId (jako string) został przekazany przy nawigacji
+  const { workId } = route.params;
 
   const [order, setOrder] = useState<MaterialOrder | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -58,7 +68,9 @@ const MaterialOrderDetailsScreen: React.FC = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://10.0.2.2:5142/api/MaterialOrder/${workId}`);
+        const response = await fetch(
+          `http://10.0.2.2:5142/api/MaterialOrder/${workId}`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -90,7 +102,7 @@ const MaterialOrderDetailsScreen: React.FC = () => {
       <View style={styles.container}>
         <Text style={styles.errorText}>{error || "Order not found"}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{'<'} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Back</Text>
         </TouchableOpacity>
       </View>
     );
@@ -103,61 +115,65 @@ const MaterialOrderDetailsScreen: React.FC = () => {
     </View>
   );
 
-  // Wewnątrz komponentu MaterialOrderDetailsScreen, zastępujemy sekcję renderowania danymi:
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.backButtonText}>{"<"} Back</Text>
+      </TouchableOpacity>
 
-return (
-  <ScrollView contentContainerStyle={styles.container}>
-    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-      <Text style={styles.backButtonText}>{'<'} Back</Text>
-    </TouchableOpacity>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/logo.png")}
+          style={styles.headerIcon}
+        />
+        <Text style={styles.headerText}>MATERIAL ORDER DETAILS</Text>
+      </View>
 
-    <View style={styles.headerContainer}>
-      <Image source={require('../assets/logo.png')} style={styles.headerIcon} />
-      <Text style={styles.headerText}>MATERIAL ORDER DETAILS</Text>
-    </View>
-
-    {renderOrderField('ID', order.id)}
-    {renderOrderField('Quantity', order.quantity)}
-    {renderOrderField('Total Price Net', order.totalPriceNet)}
-    {order.supplier && renderOrderField('Supplier Contact', order.supplier.contactEmail)}
-    {renderOrderField(
-      'Order Address',
-      `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
-    )}
-    {order.materialPrice && (
-      <>
-        {renderOrderField('Material Type', order.materialPrice.materialType)}
-        {renderOrderField('Material Category', order.materialPrice.materialCategory)}
-      </>
-    )}
-  </ScrollView>
-);
-
+      {renderOrderField("ID", order.id)}
+      {renderOrderField("Quantity", order.quantity)}
+      {renderOrderField("Total Price Net", order.totalPriceNet)}
+      {order.supplier &&
+        renderOrderField("Supplier Contact", order.supplier.contactEmail)}
+      {renderOrderField(
+        "Order Address",
+        `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
+      )}
+      {order.materialPrice && (
+        <>
+          {renderOrderField("Material Type", order.materialPrice.materialType)}
+          {renderOrderField(
+            "Material Category",
+            order.materialPrice.materialCategory
+          )}
+        </>
+      )}
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9b234',
+    backgroundColor: "#f9b234",
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
-    backgroundColor: '#f0f0d0',
+    backgroundColor: "#f0f0d0",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
     zIndex: 1,
   },
   backButtonText: {
-    color: 'black',
-    fontWeight: 'bold',
+    color: "black",
+    fontWeight: "bold",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   headerIcon: {
@@ -169,32 +185,32 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   detailBlock: {
-    width: '100%',
-    backgroundColor: '#fff8e1',
+    width: "100%",
+    backgroundColor: "#fff8e1",
     borderRadius: 10,
     padding: 10,
     marginBottom: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   detailLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 5,
-    textAlign: 'center',
+    textAlign: "center",
   },
   detailValue: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
   },
   errorText: {
     fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 20,
   },
 });
