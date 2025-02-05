@@ -135,6 +135,9 @@ namespace Backend.services.Negotiation
                 throw new ApiException(ErrorMessages.UnauthorizedAccess, StatusCodes.Status403Forbidden);
             }
 
+            if (isClient) order.LastActionBy = LastActionBy.Client;
+            else if (isWorker) order.LastActionBy = LastActionBy.Worker;
+
             order.Status = OrderStatus.Accepted;
             order.AgreedPrice = isClient ? order.WorkerProposedPrice : order.ClientProposedPrice;
             order.StartDate = order.RequestedStartTime;
@@ -150,7 +153,7 @@ namespace Backend.services.Negotiation
                 Title = "Negotiation Accepted",
                 Description = isClient ? "Client has accepted the proposed terms." : "Worker has accepted the proposed terms.",
                 Status = NotificationStatus.OrderAccepted,
-                WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : 0,
+                WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
                 ClientId = isClient ? null : order.ClientId,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now
