@@ -29,6 +29,14 @@ namespace Backend
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+
+            Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {

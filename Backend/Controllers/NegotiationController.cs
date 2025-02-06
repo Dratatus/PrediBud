@@ -81,7 +81,7 @@ namespace Backend.Controllers
         {
             await _negotiationService.CompleteOrder(orderId, request.UserId);
 
-            return Ok("Negotiation has been continued.");
+            return Ok("Negotiation has been completed.");
         }
     }
 }

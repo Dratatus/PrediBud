@@ -94,8 +94,8 @@ namespace Backend.services.Negotiation
             await _notificationService.SendNotificationAsync(new ConstructionOrderNotification
             {
                 ClientId = order.ClientId,
-                Title = "Negotiation Started",
-                Description = $"Worker has proposed a price of {proposedPrice}.",
+                Title = "Negocjacja rozpoczęta",
+                Description = $"Pracownik zaproponował cenę w wysokości: {proposedPrice}.",
                 Status = NotificationStatus.NegotiationStarted,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now
@@ -150,8 +150,8 @@ namespace Backend.services.Negotiation
             await _orderRepository.SaveChangesAsync();
             var notification = new ConstructionOrderNotification
             {
-                Title = "Negotiation Accepted",
-                Description = isClient ? "Client has accepted the proposed terms." : "Worker has accepted the proposed terms.",
+                Title = "Negocjacja zaakceptowana",
+                Description = isClient ? "Klient zaakceptował zaproponowane warunki." : "Pracownik zaakceptował zaproponowane warunki.",
                 Status = NotificationStatus.OrderAccepted,
                 WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
                 ClientId = isClient ? null : order.ClientId,
@@ -218,8 +218,8 @@ namespace Backend.services.Negotiation
             {
                 ClientId = isClient ? null : bannedClient,
                 WorkerId = isClient ? bannedWorker : null,
-                Title = "Negotiation Rejected",
-                Description = isClient ? "Client has rejected the terms." : "Worker has rejected the terms.",
+                Title = "Negocjacje odrzucone",
+                Description = isClient ? "Klient odrzucił warunki." : "Pracownik odrzucił warunki.",
                 Status = NotificationStatus.NegotiationRejected,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now
@@ -278,8 +278,8 @@ namespace Backend.services.Negotiation
             {
                 ClientId = isWorker ? order.ClientId : null,
                 WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
-                Title = "Continued Negotiation",
-                Description = isClient ? "Client has continued negotiations." : "Worker has continued negotiations.",
+                Title = "Kontynuacja negocjacji",
+                Description = isClient ? "Klient kontynuuje negocjacje." : "Pracownik kontynuuje negocjacje",
                 Status = NotificationStatus.ContinuedNegotiation,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now
@@ -325,10 +325,10 @@ namespace Backend.services.Negotiation
             {
                 ClientId = isWorker ? order.ClientId : null,
                 WorkerId = isClient ? order.WorkerId.GetValueOrDefault() : null,
-                Title = "Order Completed",
+                Title = "Zamówienie zrealizowane",
                 Description = isClient
-                    ? "The client has marked the order as completed."
-                    : "The worker has marked the order as completed.",
+                    ? "Klient oznaczył zamówienie jako zrealizowane."
+                    : "Pracownik oznaczył zamówienie jako zakończone.",
                 Status = NotificationStatus.OrderCompleted,
                 ConstructionOrderID = order.ID,
                 Date = DateTime.Now

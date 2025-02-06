@@ -9,6 +9,7 @@ using Backend.DTO.Users.Supplier;
 using Backend.Middlewares;
 using Backend.Repositories;
 using Backend.services.Material;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace Backend.Tests.Services
@@ -101,15 +102,16 @@ namespace Backend.Tests.Services
         }
 
         [Fact]
-        public async Task GetMaterialOrderByIdAsync_ReturnsNull_IfNotFound()
+        public async Task GetMaterialOrderByIdAsync_ThrowsApiException_IfNotFound()
         {
             int orderId = 999;
             _repositoryMock.Setup(r => r.GetMaterialOrderByIdAsync(orderId))
-                     .ReturnsAsync((MaterialOrder)null);
+                           .ReturnsAsync((MaterialOrder)null);
 
-            var result = await _service.GetMaterialOrderByIdAsync(orderId);
+            var exception = await Assert.ThrowsAsync<ApiException>(() => _service.GetMaterialOrderByIdAsync(orderId));
 
-            Assert.Null(result);
+            Assert.Equal(ErrorMessages.OrderNotFound, exception.Message);
+            Assert.Equal(StatusCodes.Status404NotFound, exception.StatusCode);
         }
 
         [Fact]
