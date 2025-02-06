@@ -1,4 +1,6 @@
-﻿using Backend.DTO.Orders.Material;
+﻿using Backend.Data.Consts;
+using Backend.DTO.Orders.Material;
+using Backend.Middlewares;
 using Backend.services.Material;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,11 +28,6 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetOrderById(int orderId)
         {
             var dto = await _service.GetMaterialOrderByIdAsync(orderId);
-
-            if (dto == null)
-            {
-                return NotFound();
-            }
 
             return Ok(dto);
         }

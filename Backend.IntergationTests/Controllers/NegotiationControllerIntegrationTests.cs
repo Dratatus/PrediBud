@@ -124,7 +124,7 @@ namespace Backend.IntergationTests.Controllers
 
             response.EnsureSuccessStatusCode();
             var respString = await response.Content.ReadAsStringAsync();
-            Assert.Contains("Negotiation has been continued", respString);
+            Assert.Contains("Negotiation has been completed", respString);
         }
 
         [Fact]

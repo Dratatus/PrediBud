@@ -51,7 +51,8 @@ namespace Backend.services.Material
         public async Task<MaterialOrderDetailsDto> GetMaterialOrderByIdAsync(int orderId)
         {
             var entity = await _repository.GetMaterialOrderByIdAsync(orderId);
-            if (entity == null) return null;
+
+            if (entity == null) throw new ApiException(ErrorMessages.OrderNotFound, StatusCodes.Status404NotFound);
 
             return MapToDto(entity);
         }

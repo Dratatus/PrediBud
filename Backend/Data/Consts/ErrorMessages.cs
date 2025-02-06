@@ -119,7 +119,7 @@
         public const string NullUpdateMaterialOrderDto = "Update material order data cannot be null.";
         public const string InvalidMaterialOrderId = "Material order ID must be greater than zero.";
         public const string MaterialOrderNotFound = "Material order not found.";
-        public const string UnauthorizedAccess = "You are not authorized to update this material order.";
+        public const string UnauthorizedAccess = "You are not authorized to perfrom this action.";
         public const string InvalidWorkerId = "Invalid worker ID.";
         public const string InvalidProposedPrice = "Invalid proposed price.";
         public const string OrderNotNew = "Order is not new.";

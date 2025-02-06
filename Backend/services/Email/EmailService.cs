@@ -25,7 +25,8 @@ namespace Backend.services.Email
                         _configuration["Email:Username"],
                         _configuration["Email:Password"]
                     ),
-                    EnableSsl = true
+                    EnableSsl = true,
+                    UseDefaultCredentials = false
                 };
 
                 var mailMessage = new MailMessage
@@ -35,6 +36,13 @@ namespace Backend.services.Email
                     Body = $"An error occurred:\n\nMessage: {ex.Message}\n\nDate: {DateTime.Now}\n\nStackTrace:\n{ex.StackTrace}",
                     IsBodyHtml = false
                 };
+
+                _logger.LogInformation($"SMTP Host: {_configuration["Email:SmtpHost"]}");
+                _logger.LogInformation($"SMTP Port: {_configuration["Email:SmtpPort"]}");
+                _logger.LogInformation($"SMTP Username: {_configuration["Email:Username"]}");
+                _logger.LogInformation($"SMTP Password: {_configuration["Email:Password"]}");
+                _logger.LogInformation($"SMTP From: {_configuration["Email:From"]}");
+                _logger.LogInformation($"SMTP Support Address: {_configuration["Email:SupportAddress"]}");
 
                 mailMessage.To.Add(_configuration["Email:SupportAddress"]);
 
