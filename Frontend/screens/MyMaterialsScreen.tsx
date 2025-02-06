@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,13 @@ import {
   FlatList,
   Image,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
+import * as ImagePicker from "expo-image-picker";
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, "MyMaterials">;
 type MyMaterialsRouteProps = RouteProp<StackParamList, "MyMaterials">;
@@ -60,6 +62,50 @@ interface CommonOrder {
   sub: string;
 }
 
+// Funkcja tłumacząca typ materiału na język polski
+const materialMapping: Record<string, string> = {
+  wood: "Drewno",
+  steel: "Stal",
+  brick: "Cegła",
+  glass: "Szkło",
+  pvc: "PVC",
+  aluminium: "Aluminium",
+  composite: "Kompozyt",
+  drywall: "Płyta gipsowo-kartonowa",
+  vinyl: "Winyl",
+};
+
+// Mapowanie tłumaczenia kategorii materiału
+const categoryMapping: Record<string, string> = {
+  balcony: "Balkon",
+  // Możesz dodać więcej tłumaczeń kategorii, jeśli są potrzebne
+};
+
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
 const MyMaterialsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MyMaterialsRouteProps>();
@@ -75,10 +121,10 @@ const MyMaterialsScreen: React.FC = () => {
       const response = await axios.get<MaterialOrder[]>(
         "http://10.0.2.2:5142/api/MaterialOrder"
       );
-      console.log("Material orders response:", response.data);
+      console.log("Odpowiedź dla zamówień materiałowych:", response.data);
       const filteredOrders: CommonOrder[] = response.data
         .filter((order) => {
-          console.log(`Material order id ${order.id} - userId: ${order.userId}`);
+          console.log(`Zamówienie materiałowe o id ${order.id} - userId: ${order.userId}`);
           return order.userId === clientId;
         })
         .map((order) => ({
@@ -86,10 +132,10 @@ const MyMaterialsScreen: React.FC = () => {
           main: order.materialPrice.materialType,
           sub: order.materialPrice.materialCategory,
         }));
-      console.log("Filtered material orders:", filteredOrders);
+      console.log("Przefiltrowane zamówienia materiałowe:", filteredOrders);
       setOrders(filteredOrders);
     } catch (error) {
-      console.error("Error fetching material orders:", error);
+      console.error("Błąd pobierania zamówień materiałowych:", error);
     } finally {
       setLoading(false);
     }
@@ -103,7 +149,7 @@ const MyMaterialsScreen: React.FC = () => {
     navigation.navigate("UserProfile", { clientId, userRole, userName });
   };
 
-  // Uaktualniona funkcja handleDetails przekazuje wszystkie wymagane parametry:
+  // Uaktualniona funkcja handleDetails przekazuje wszystkie wymagane parametry
   const handleDetails = (orderId: number) => {
     navigation.navigate("OrderDetails", {
       workId: orderId.toString(),
@@ -221,24 +267,29 @@ const MyMaterialsScreen: React.FC = () => {
       case "granite":
         return require("../assets/icons/granite.png");
       default:
-        return require("../assets/icons/package.png");
+        return require("../assets/icons/materials.png");
     }
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
-      <View style={styles.orderInfoContainer}>
+      <View style={styles.orderInfoWrapper}>
         <Image source={getIcon(item.main)} style={styles.orderIcon} />
-        <View>
-          <Text style={styles.orderId}>{item.main}</Text>
-          <Text style={styles.orderTitle}>{item.sub}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.orderId}>
+            {materialMapping[item.main.toLowerCase()] ||
+              formatConstructionType(item.main)}
+          </Text>
+          <Text style={styles.orderTitle}>
+            {categoryMapping[item.sub.toLowerCase()] || item.sub}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => handleDetails(item.id)}
       >
-        <Text style={styles.detailsButtonText}>Zobacz szczegóły</Text>
+        <Text style={styles.detailsButtonText}>szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
@@ -253,7 +304,7 @@ const MyMaterialsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
       <Text style={styles.headerText}>Moje zamówione materiały</Text>
@@ -306,7 +357,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  orderInfoContainer: {
+  orderInfoWrapper: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -314,6 +366,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   orderId: {
     fontSize: 16,

@@ -1,17 +1,81 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   FlatList,
-  Image,
   ActivityIndicator,
+  Alert,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList, Material } from "../navigation/AppNavigator";
 import axios from "axios";
+
+// Mapa tłumaczenia dla materiałów
+const materialMapping: Record<string, string> = {
+  wood: "Drewno",
+  steel: "Stal",
+  brick: "Cegła",
+  glass: "Szkło",
+  pvc: "PVC",
+  aluminium: "Aluminium",
+  composite: "Kompozyt",
+  drywall: "Płyta gipsowo-kartonowa",
+  vinyl: "Winyl",
+  mineralfiber: "Włókno mineralne",
+  metal: "Metal",
+  glassfiber: "Włókno szklane",
+  wroughtiron: "Kute żelazo",
+  styrofoam: "Styropian",
+  mineralwool: "Wełna mineralna",
+  polyurethanefoam: "Pianka poliuretanowa",
+  fiberglass: "Włókno szklane",
+  plaster: "Tynk",
+  stone: "Kamień",
+  metalsiding: "Okładzina metalowa",
+  laminate: "Laminat",
+  hardwood: "Drewno liściaste",
+  carpet: "Dywan",
+  tile: "Płytki",
+  cellulose: "Celuloza",
+  rockwool: "Wełna skalna",
+  acrylic: "Akryl",
+  latex: "Lateks",
+  oilbased: "Na bazie oleju",
+  waterbased: "Na bazie wody",
+  enamel: "Emalia",
+  chalk: "Kreda",
+  glossy: "Błyszcząca",
+  epoxy: "Epoksydowa",
+  matte: "Matowa",
+  satin: "Satynowa",
+  gypsum: "Gips",
+  cement: "Cement",
+  lime: "Wapno",
+  limecement: "Wapno-cementowy",
+  clay: "Glina",
+  silicone: "Silikon",
+  silicate: "Krzemian",
+  concrete: "Beton",
+  prefabricatedconcrete: "Beton prefabrykowany",
+  aeratedconcrete: "Beton komórkowy",
+  metalsheet: "Blacha",
+  asphaltshingle: "Gont asfaltowy",
+  slate: "Łupek",
+  thatch: "Strzecha",
+  marble: "Marmur",
+  granite: "Granit",
+};
+
+
+// Mapa tłumaczenia dla kategorii – przykładowo: jeśli kategoria to "balcony" to wyświetlamy "Balkon"
+const categoryMapping: Record<string, string> = {
+  balcony: "Balkon",
+  // Dodaj inne tłumaczenia, jeśli są potrzebne.
+};
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, "Materials">;
 type MaterialsRouteProps = RouteProp<StackParamList, "Materials">;
@@ -20,31 +84,10 @@ const MaterialsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialsRouteProps>();
 
-  // Teraz oczekujemy, że trasa przekazuje clientId, userRole oraz userName
+  // Oczekujemy, że trasa przekazuje clientId, userRole oraz userName
   const { clientId, userRole, userName } = route.params;
-  console.log("MaterialsScreen - Received clientId:", clientId);
+  console.log("MaterialsScreen - Otrzymano clientId:", clientId);
 
-  const [materials, setMaterials] = useState<Material[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchMaterials = async () => {
-    try {
-      const response = await fetch(
-        "http://10.0.2.2:5142/api/MaterialPrice/available"
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data: Material[] = await response.json();
-      setMaterials(data);
-    } catch (err: any) {
-      console.error("Error fetching materials:", err);
-      setError("Failed to load materials.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchMaterials();
@@ -163,34 +206,56 @@ const MaterialsScreen: React.FC = () => {
   };
 
   const handleOrder = (material: Material) => {
-    console.log("MaterialsScreen - Passing clientId:", clientId);
+    console.log("MaterialsScreen - Przekazywanie clientId:", clientId);
     navigation.navigate("OrderMaterial", { material, clientId, userRole, userName });
   };
 
   const renderMaterialItem = ({ item }: { item: Material }) => (
     <View style={styles.materialCard}>
       <View style={styles.cardLeft}>
-        <Image
-          source={getMaterialIcon(item.materialType)}
-          style={styles.materialIcon}
-        />
+        <Image source={getMaterialIcon(item.materialType)} style={styles.materialIcon} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.materialType}>{item.materialType}</Text>
-          <Text style={styles.category}>Category: {item.materialCategory}</Text>
-          <Text style={styles.supplier}>Supplier: {item.supplierName}</Text>
+          <Text style={styles.materialType}>
+            {materialMapping[item.materialType.toLowerCase()] || item.materialType}
+          </Text>
+          <Text style={styles.category}>
+            Kategoria: {categoryMapping[item.materialCategory.toLowerCase()] || item.materialCategory}
+          </Text>
+          <Text style={styles.supplier}>Dostawca: {item.supplierName}</Text>
           <Text style={styles.price}>
-            Price without taxes: {item.priceWithoutTax} $
+            Cena netto: {item.priceWithoutTax} $
           </Text>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.orderButton}
-        onPress={() => handleOrder(item)}
-      >
-        <Text style={styles.orderButtonText}>Order</Text>
+      <TouchableOpacity style={styles.orderButton} onPress={() => handleOrder(item)}>
+        <Text style={styles.orderButtonText}>Zamów</Text>
       </TouchableOpacity>
     </View>
   );
+
+  const [materialsList, setMaterialsList] = useState<Material[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMaterials = async () => {
+    try {
+      const response = await fetch("http://10.0.2.2:5142/api/MaterialPrice/available");
+      if (!response.ok) {
+        throw new Error(`Błąd HTTP! Status: ${response.status}`);
+      }
+      const data: Material[] = await response.json();
+      setMaterialsList(data);
+    } catch (err: any) {
+      console.error("Błąd pobierania materiałów:", err);
+      setError("Nie udało się załadować materiałów.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
 
   if (loading) {
     return (
@@ -210,15 +275,12 @@ const MaterialsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Materials</Text>
+      <Text style={styles.headerText}>Materiały</Text>
       <FlatList
-        data={materials}
+        data={materialsList}
         renderItem={renderMaterialItem}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.materialList}

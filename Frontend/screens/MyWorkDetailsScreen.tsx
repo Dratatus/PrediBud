@@ -26,7 +26,7 @@ const MyWorkDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
@@ -34,23 +34,23 @@ const MyWorkDetailsScreen: React.FC = () => {
           source={require("../assets/logo.png")}
           style={styles.headerIcon}
         />
-        <Text style={styles.headerText}>WORK DETAILS</Text>
+        <Text style={styles.headerText}>SZCZEGÓŁY PRACY</Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>OBJECT</Text>
-        <Text style={styles.detailValue}>Partition Wall</Text>
+        <Text style={styles.detailLabel}>OBIEKT</Text>
+        <Text style={styles.detailValue}>Ściana działowa</Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>DESCRIPTION</Text>
+        <Text style={styles.detailLabel}>OPIS</Text>
         <Text style={styles.detailValue}>
-          Round the corner in front of the window
+          Za rogiem przed oknem
         </Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>PHOTO OF PLACEMENT</Text>
+        <Text style={styles.detailLabel}>ZDJĘCIE LOKALIZACJI</Text>
         <View style={styles.photoContainer}>
           <Image
             source={require("../assets/images/photo1.png")}
@@ -64,12 +64,12 @@ const MyWorkDetailsScreen: React.FC = () => {
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>DIMENSIONS</Text>
+        <Text style={styles.detailLabel}>WYMIARY</Text>
         <Text style={styles.detailValue}>5m x 3m x 1m</Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>CUSTOMER CONTACT</Text>
+        <Text style={styles.detailLabel}>KONTAKT KLIENTA</Text>
         <View style={styles.row}>
           <Image
             source={require("../assets/icons/phone.png")}
@@ -80,7 +80,7 @@ const MyWorkDetailsScreen: React.FC = () => {
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>AGREED PRICE</Text>
+        <Text style={styles.detailLabel}>UZGODNIONA CENA</Text>
         <View style={styles.row}>
           <Image
             source={require("../assets/icons/dollar.png")}
@@ -91,7 +91,7 @@ const MyWorkDetailsScreen: React.FC = () => {
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>DESIRED START DATE</Text>
+        <Text style={styles.detailLabel}>POŻĄDANA DATA ROZPOCZĘCIA</Text>
         <View style={styles.row}>
           <Image
             source={require("../assets/icons/calendar.png")}
@@ -102,7 +102,7 @@ const MyWorkDetailsScreen: React.FC = () => {
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>ADDRESS</Text>
+        <Text style={styles.detailLabel}>ADRES</Text>
         <View style={styles.row}>
           <Image
             source={require("../assets/icons/location.png")}

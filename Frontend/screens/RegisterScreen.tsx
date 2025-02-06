@@ -49,12 +49,12 @@ const RegisterScreen = () => {
         requestBody
       );
 
-      console.log("Registration successful:", response.data);
+      console.log("Rejestracja udana:", response.data);
 
       navigation.navigate("Login");
     } catch (error: any) {
       console.error(
-        "Error during registration:",
+        "Błąd podczas rejestracji:",
         error.response?.data || error.message
       );
     }
@@ -64,22 +64,22 @@ const RegisterScreen = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Image source={require("../assets/logo.png")} style={styles.logo} />
-        <Text style={styles.title}>PREDICT YOUR FUTURE!</Text>
-        <Text style={styles.subtitle}>Create new Account</Text>
+        <Text style={styles.title}>PRZEWIDŹ SWOJĄ PRZYSZŁOŚĆ!</Text>
+        <Text style={styles.subtitle}>Utwórz nowe konto</Text>
 
         <View style={styles.form}>
-          <Text style={styles.label}>NAME</Text>
+          <Text style={styles.label}>IMIĘ I NAZWISKO</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Imię i nazwisko"
             value={name}
             onChangeText={setName}
           />
 
-          <Text style={styles.label}>PHONE NUMBER</Text>
+          <Text style={styles.label}>NUMER TELEFONU</Text>
           <TextInput
             style={styles.input}
-            placeholder="Phone Number"
+            placeholder="Numer telefonu"
             keyboardType="phone-pad"
             value={phoneNumber}
             onChangeText={setPhoneNumber}
@@ -94,42 +94,42 @@ const RegisterScreen = () => {
             onChangeText={setEmail}
           />
 
-          <Text style={styles.label}>PASSWORD</Text>
+          <Text style={styles.label}>HASŁO</Text>
           <TextInput
             style={styles.input}
-            placeholder="Password"
+            placeholder="Hasło"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
           />
 
-          <Text style={styles.label}>STREET NAME</Text>
+          <Text style={styles.label}>NAZWA ULICY</Text>
           <TextInput
             style={styles.input}
-            placeholder="Street Name"
+            placeholder="Nazwa ulicy"
             value={streetName}
             onChangeText={setStreetName}
           />
 
-          <Text style={styles.label}>CITY</Text>
+          <Text style={styles.label}>MIASTO</Text>
           <TextInput
             style={styles.input}
-            placeholder="City"
+            placeholder="Miasto"
             value={city}
             onChangeText={setCity}
           />
 
-          <Text style={styles.label}>POST CODE</Text>
+          <Text style={styles.label}>KOD POCZTOWY</Text>
           <TextInput
             style={styles.input}
-            placeholder="Post Code"
+            placeholder="Kod pocztowy"
             keyboardType="numeric"
             value={postCode}
             onChangeText={setPostCode}
           />
 
           <View style={styles.switchContainer}>
-            <Text style={styles.label}>REGISTER AS CLIENT</Text>
+            <Text style={styles.label}>ZAREJESTRUJ SIĘ JAKO KLIENT</Text>
             <Switch
               value={isClient}
               onValueChange={setIsClient}
@@ -142,7 +142,7 @@ const RegisterScreen = () => {
             style={[styles.button, { marginBottom: 1 }]}
             onPress={handleRegister}
           >
-            <Text style={styles.buttonText}>SIGN UP</Text>
+            <Text style={styles.buttonText}>ZAREJESTRUJ SIĘ</Text>
           </TouchableOpacity>
         </View>
 
@@ -150,7 +150,7 @@ const RegisterScreen = () => {
           onPress={() => navigation.navigate("Login")}
           style={styles.linkContainer}
         >
-          <Text style={styles.linkText}>Already Registered? Log in here.</Text>
+          <Text style={styles.linkText}>Masz już konto? Zaloguj się tutaj.</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -49,15 +49,15 @@ const NegotiationCounterScreen: React.FC = () => {
       proposedPrice: Number(counterPrice),
     };
 
-    console.log("Submitting counter offer with payload:", payload);
-    console.log("Parameters:", { negotiationId, clientId, userRole, userName });
+    console.log("Wysyłanie kontrpropozycji z danymi:", payload);
+    console.log("Parametry:", { negotiationId, clientId, userRole, userName });
 
     try {
       const url = `http://10.0.2.2:5142/api/Negotiation/${negotiationId}/continue`;
       await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-      // Jeśli użytkownik to Worker, przekierowujemy do WorkerNegotiationsScreen, w przeciwnym razie do ClientNegotiationsScreen
+      // Jeśli użytkownik to Worker – nawiguj do WorkerNegotiationsScreen, w przeciwnym razie do ClientNegotiationsScreen
       if (userRole.toLowerCase() === "worker") {
         navigation.navigate("WorkerNegotiations", {
           workerId: clientId,
@@ -68,8 +68,8 @@ const NegotiationCounterScreen: React.FC = () => {
         navigation.navigate("ClientNegotiations", { clientId, userRole, userName });
       }
     } catch (err) {
-      console.error("Error during counter negotiation:", err);
-      setError("Failed to submit counter offer.");
+      console.error("Błąd podczas wysyłania kontrpropozycji:", err);
+      setError("Nie udało się wysłać oferty kontrpropozycji.");
     } finally {
       setLoading(false);
     }
@@ -82,29 +82,29 @@ const NegotiationCounterScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Counter Offer</Text>
+      <Text style={styles.headerText}>Oferta kontrpropozycji</Text>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>Negotiation ID</Text>
+        <Text style={styles.detailLabel}>ID negocjacji</Text>
         <Text style={styles.detailValue}>{negotiationId}</Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>Client Proposed Price</Text>
+        <Text style={styles.detailLabel}>Cena zaproponowana przez klienta</Text>
         <Text style={styles.detailValue}>{clientProposedPrice} PLN</Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>Worker Proposed Price</Text>
+        <Text style={styles.detailLabel}>Cena zaproponowana przez wykonawcę</Text>
         <Text style={styles.detailValue}>
-          {workerProposedPrice ? `${workerProposedPrice} PLN` : "N/A"}
+          {workerProposedPrice ? `${workerProposedPrice} PLN` : "N/D"}
         </Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.label}>Your Counter Offer:</Text>
+        <Text style={styles.label}>Twoja oferta kontrpropozycji:</Text>
         <TextInput
           style={styles.input}
           keyboardType="numeric"
@@ -117,7 +117,7 @@ const NegotiationCounterScreen: React.FC = () => {
         <ActivityIndicator size="large" color="#000" />
       ) : (
         <TouchableOpacity style={styles.button} onPress={handleSubmitCounter}>
-          <Text style={styles.buttonText}>Submit Counter Offer</Text>
+          <Text style={styles.buttonText}>Wyślij ofertę kontrpropozycji</Text>
         </TouchableOpacity>
       )}
     </ScrollView>

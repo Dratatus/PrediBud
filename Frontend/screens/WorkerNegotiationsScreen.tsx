@@ -5,15 +5,42 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Image,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList, Negotiation } from "../navigation/AppNavigator"; // Upewnij się, że typ Negotiation jest eksportowany
+import { StackParamList, Negotiation } from "../navigation/AppNavigator";
 import axios from "axios";
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, "WorkerNegotiations">;
 type WorkerNegotiationsRouteProps = RouteProp<StackParamList, "WorkerNegotiations">;
+
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string | undefined): string => {
+  if (!type) return "Brak typu";
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
 
 const WorkerNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
@@ -21,6 +48,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
 
   // Pobieramy workerId oraz userName (dla pracownika) z parametrów
   const { workerId, userName } = route.params as { workerId: number; userName: string };
+  console.log("WorkerNegotiationsScreen - Worker ID:", workerId);
 
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,8 +62,8 @@ const WorkerNegotiationsScreen: React.FC = () => {
         );
         setNegotiations(response.data);
       } catch (err) {
-        console.error("Error fetching worker negotiations:", err);
-        setError("Failed to load negotiations.");
+        console.error("Błąd pobierania negocjacji wykonawcy:", err);
+        setError("Nie udało się załadować negocjacji.");
       } finally {
         setLoading(false);
       }
@@ -52,7 +80,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
       negotiation,
       clientId: workerId, // mimo nazwy parametru, tutaj używamy workerId jako clientId
       userRole: "Worker",
-      userName: userName || "Unknown Worker",
+      userName: userName || "Nieznany wykonawca",
     });
   };
 
@@ -60,14 +88,16 @@ const WorkerNegotiationsScreen: React.FC = () => {
     <View style={styles.itemContainer}>
       <View style={styles.itemInfoContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.itemTitle}>{item.constructionType}</Text>
+          <Text style={styles.itemTitle}>
+            {formatConstructionType(item.constructionType)}
+          </Text>
           <Text style={styles.itemSubtitle}>{item.description}</Text>
         </View>
         <TouchableOpacity
           style={styles.detailsButton}
           onPress={() => handleDetails(item)}
         >
-          <Text style={styles.detailsButtonText}>see details</Text>
+          <Text style={styles.detailsButtonText}>szczegóły</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -86,7 +116,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
       <View style={[styles.container, styles.centered]}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
         </TouchableOpacity>
       </View>
     );
@@ -95,9 +125,9 @@ const WorkerNegotiationsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Worker Negotiations</Text>
+      <Text style={styles.headerText}>Negocjacje wykonawcy</Text>
       <FlatList
         data={negotiations}
         renderItem={renderNegotiationItem}

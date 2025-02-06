@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../navigation/AppNavigator";
 import { SpecificationDetails } from "../screens/CalculatorScreen";
@@ -11,36 +11,30 @@ type CostSummaryRouteProps = RouteProp<StackParamList, "CostSummary">;
 
 const CostSummaryScreen: React.FC = () => {
   const route = useRoute<CostSummaryRouteProps>();
-  const {
-    constructionType,
-    specificationDetails,
-    includeTax,
-    totalCost,
-    clientId,
-  } = route.params;
+  const { constructionType, specificationDetails, includeTax, totalCost, clientId } = route.params;
   const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProps>();
 
   const CONSTRUCTION_TYPE_PRETTY: Record<string, string> = {
-    partitionwall: "Partition Wall",
-    foundation: "Foundation",
-    windows: "Windows",
-    doors: "Doors",
-    facade: "Facade",
-    flooring: "Flooring",
-    suspendedceiling: "Suspended Ceiling",
-    insulationofattic: "Insulation Of Attic",
-    plastering: "Plastering",
-    painting: "Painting",
-    staircase: "Staircase",
-    balcony: "Balcony",
-    shellopen: "Shell Open",
-    chimney: "Chimney",
-    loadbearingwall: "Load Bearing Wall",
-    ventilationsystem: "Ventilation System",
-    roof: "Roof",
-    ceiling: "Ceiling",
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
   };
 
   const renderSpecificationDetails = () => {
@@ -138,7 +132,7 @@ const CostSummaryScreen: React.FC = () => {
           includeTax,
         };
 
-        console.log("Payload sent to backend:", payload);
+        console.log("Wysyłany ładunek do backendu:", payload);
 
         const response = await axios.post(
           "http://10.0.2.2:5142/api/Calculator/calculate",
@@ -148,14 +142,14 @@ const CostSummaryScreen: React.FC = () => {
           ? response.data.priceWithTax
           : response.data.priceWithoutTax;
 
-        console.log("Response received from backend:", response.data);
+        console.log("Otrzymana odpowiedź z backendu:", response.data);
 
         setCalculatedCost(cost);
         setError(null);
       } catch (error: any) {
-        console.error("Error fetching price:", error.message || error);
+        console.error("Błąd pobierania ceny:", error.message || error);
         setCalculatedCost(null);
-        setError("Failed to calculate the total cost. Please try again.");
+        setError("Nie udało się obliczyć całkowitego kosztu. Spróbuj ponownie.");
       }
     };
 
@@ -169,15 +163,15 @@ const CostSummaryScreen: React.FC = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>{"<"} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Cost Summary</Text>
+        <Text style={styles.title}>Podsumowanie kosztów</Text>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() => setCalculatedCost(null)}
         >
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={styles.retryButtonText}>Spróbuj ponownie</Text>
         </TouchableOpacity>
       </View>
     );
@@ -186,7 +180,7 @@ const CostSummaryScreen: React.FC = () => {
   if (calculatedCost === null) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>Calculating cost...</Text>
+        <Text style={styles.loadingText}>Obliczanie kosztu...</Text>
       </View>
     );
   }
@@ -197,7 +191,7 @@ const CostSummaryScreen: React.FC = () => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
       <Image
@@ -205,23 +199,23 @@ const CostSummaryScreen: React.FC = () => {
         style={styles.icon}
       />
 
-      <Text style={styles.title}>Cost Summary</Text>
+      <Text style={styles.title}>Podsumowanie kosztów</Text>
 
       <View style={styles.box}>
         <Text style={styles.detailText}>
-          Construction Type:{" "}
+          Typ budowy:{" "}
           {CONSTRUCTION_TYPE_PRETTY[constructionType.toLowerCase()] ||
             constructionType}
         </Text>
 
         <Text style={styles.detailText}>
-          Include Tax: {includeTax ? "Yes" : "No"}
+          Uwzględnić podatek: {includeTax ? "Tak" : "Nie"}
         </Text>
-        <Text style={styles.detailText}>Total Cost: {calculatedCost} PLN</Text>
+        <Text style={styles.detailText}>Całkowity koszt: {calculatedCost} PLN</Text>
       </View>
 
       <View style={styles.box}>
-        <Text style={styles.subtitle}>Specification Details:</Text>
+        <Text style={styles.subtitle}>Szczegóły specyfikacji:</Text>
         {renderSpecificationDetails()}
       </View>
 
@@ -241,156 +235,156 @@ const CostSummaryScreen: React.FC = () => {
           })
         }
       >
-        <Text style={styles.proceedButtonText}>Proceed to Order</Text>
+        <Text style={styles.proceedButtonText}>Przejdź do zamówienia</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const MATERIAL_ENUM1: Record<number, string> = {
-  0: "Drywall",
-  1: "Brick",
-  2: "Aerated Concrete",
-  3: "Wood",
-  4: "Glass",
+  0: "Płyta gipsowo-kartonowa",
+  1: "Cegła",
+  2: "Beton komórkowy",
+  3: "Drewno",
+  4: "Szkło",
 };
 const MATERIAL_ENUM3: Record<number, string> = {
-  0: "Unknown",
-  1: "Wood",
+  0: "Nieznany",
+  1: "Drewno",
   2: "PVC",
-  3: "Aluminum",
-  4: "Steel",
-  5: "Composite",
+  3: "Aluminium",
+  4: "Stal",
+  5: "Kompozyt",
 };
 const MATERIAL_ENUM4: Record<number, string> = {
-  0: "Wood",
-  1: "Steel",
+  0: "Drewno",
+  1: "Stal",
   2: "PVC",
-  3: "Aluminum",
-  4: "Glass",
+  3: "Aluminium",
+  4: "Szkło",
 };
 const MATERIAL_ENUM6: Record<number, string> = {
-  0: "Laminate",
-  1: "Hardwood",
-  2: "Vinyl",
-  3: "Tile",
-  4: "Carpet",
+  0: "Laminat",
+  1: "Drewno liściaste",
+  2: "Winyl",
+  3: "Płytki",
+  4: "Dywan",
 };
 const MATERIAL_ENUM7: Record<number, string> = {
-  0: "Drywall",
-  1: "Mineral Fiber",
+  0: "Płyta gipsowo-kartonowa",
+  1: "Włókno mineralne",
   2: "Metal",
   3: "PVC",
-  4: "Wood",
-  5: "Glass Fiber",
-  6: "Composite",
+  4: "Drewno",
+  5: "Włókno szklane",
+  6: "Kompozyt",
 };
 const MATERIAL_ENUM8: Record<number, string> = {
-  0: "Mineral Wool",
-  1: "Styrofoam",
-  2: "Polyurethane Foam",
-  3: "Cellulose",
-  4: "Fiberglass",
-  5: "Rock Wool",
+  0: "Wełna mineralna",
+  1: "Styropian",
+  2: "Pianka poliuretanowa",
+  3: "Celuloza",
+  4: "Wełna szklana",
+  5: "Wełna skalna",
 };
 const MATERIAL_ENUM9: Record<number, string> = {
-  0: "Gypsum",
+  0: "Gips",
   1: "Cement",
-  2: "Lime",
-  3: "Lime Cement",
-  4: "Clay",
-  5: "Acrylic",
-  6: "Silicone",
-  7: "Silicate",
+  2: "Wapno",
+  3: "Wapno-cementowy",
+  4: "Glina",
+  5: "Akryl",
+  6: "Silikon",
+  7: "Krzemian",
 };
 const MATERIAL_ENUM10: Record<number, string> = {
-  0: "Acrylic",
-  1: "Latex",
-  2: "Oil Based",
-  3: "Water Based",
-  4: "Epoxy",
-  5: "Enamel",
-  6: "Chalk",
-  7: "Matte",
-  8: "Satin",
-  9: "Glossy",
+  0: "Akryl",
+  1: "Lateks",
+  2: "Na bazie oleju",
+  3: "Na bazie wody",
+  4: "Epoksydowa",
+  5: "Emalia",
+  6: "Kreda",
+  7: "Matowa",
+  8: "Satynowa",
+  9: "Błyszcząca",
 };
 const MATERIAL_ENUM11: Record<number, string> = {
-  0: "Unknown",
-  1: "Wood",
+  0: "Nieznany",
+  1: "Drewno",
   2: "Metal",
-  3: "Concrete",
-  4: "Stone",
-  5: "Glass",
-  6: "Composite",
-  7: "Marble",
-  8: "Granite",
+  3: "Beton",
+  4: "Kamień",
+  5: "Szkło",
+  6: "Kompozyt",
+  7: "Marmur",
+  8: "Granit",
 };
 const MATERIAL_ENUM12: Record<number, string> = {
-  0: "Steel",
-  1: "Wood",
-  2: "Glass",
-  3: "Aluminum",
-  4: "Wrought Iron",
+  0: "Stal",
+  1: "Drewno",
+  2: "Szkło",
+  3: "Aluminium",
+  4: "Kute żelazo",
 };
 const MATERIAL_ENUM13: Record<number, string> = {
-  0: "Concrete",
-  1: "Brick",
-  2: "Aerated Concrete",
-  3: "Stone",
-  4: "Wood",
+  0: "Beton",
+  1: "Cegła",
+  2: "Beton komórkowy",
+  3: "Kamień",
+  4: "Drewno",
 };
 const MATERIAL_ENUM14: Record<number, string> = {
-  0: "Tile",
-  1: "Metal Sheet",
-  2: "Asphalt Shingle",
-  3: "Thatch",
-  4: "Slate",
+  0: "Dachówka",
+  1: "Blacha",
+  2: "Gont asfaltowy",
+  3: "Strzecha",
+  4: "Łupek",
   5: "PVC",
-  6: "Composite",
+  6: "Kompozyt",
 };
 const MATERIAL_ENUM15: Record<number, string> = {
-  0: "Concrete",
-  1: "Wood",
-  2: "Steel",
-  3: "Composite",
-  4: "Prefabricated Concrete",
+  0: "Beton",
+  1: "Drewno",
+  2: "Stal",
+  3: "Kompozyt",
+  4: "Beton prefabrykowany",
 };
 
 const INSULATION_TYPE_MAP: Record<number, string> = {
-  0: "Styrofoam",
-  1: "Mineral Wool",
-  2: "Polyurethane Foam",
-  3: "Fiberglass",
+  0: "Styropian",
+  1: "Wełna mineralna",
+  2: "Pianka poliuretanowa",
+  3: "Wełna szklana",
 };
 const FINISH_MATERIAL_MAP: Record<number, string> = {
-  0: "Plaster",
-  1: "Brick",
-  2: "Stone",
-  3: "Wood",
-  4: "Metal Siding",
+  0: "Tynk",
+  1: "Cegła",
+  2: "Kamień",
+  3: "Drewno",
+  4: "Okładzina metalowa",
 };
 
 const SPECIFICATION_LABELS: Record<string, string> = {
-  height: "Height (m)",
-  width: "Width (m)",
-  thickness: "Thickness (m)",
-  material: "Material",
-  length: "Length (m)",
-  depth: "Depth (m)",
-  amount: "Amount",
-  surfacearea: "Surface area (m²)",
-  insulationtype: "Insulation type",
-  finishmaterial: "Finish material",
-  area: "Area (m²)",
-  pitch: "Pitch (°)",
-  wallsurfacearea: "Wall surface area (m²)",
-  plastertype: "Plaster type",
-  painttype: "Paint type",
-  numberofcoats: "Number of coats",
-  numberofsteps: "Number of steps",
-  railingmaterial: "Railing material",
-  count: "Count",
+  height: "Wysokość (m)",
+  width: "Szerokość (m)",
+  thickness: "Grubość (m)",
+  material: "Materiał",
+  length: "Długość (m)",
+  depth: "Głębokość (m)",
+  amount: "Ilość",
+  surfacearea: "Powierzchnia (m²)",
+  insulationtype: "Rodzaj izolacji",
+  finishmaterial: "Materiał wykończeniowy",
+  area: "Powierzchnia (m²)",
+  pitch: "Kąt nachylenia (°)",
+  wallsurfacearea: "Powierzchnia ściany (m²)",
+  plastertype: "Rodzaj tynku",
+  painttype: "Rodzaj farby",
+  numberofcoats: "Liczba warstw",
+  numberofsteps: "Liczba schodków",
+  railingmaterial: "Materiał balustrady",
+  count: "Ilość",
 };
 
 const styles = StyleSheet.create({
@@ -398,6 +392,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f9b234",
     padding: 20,
+    width: "100%",
+    // Możesz usunąć lub zmienić alignItems, aby elementy rozciągały się na całą szerokość:
+    alignItems: "stretch",
   },
   backButton: {
     position: "absolute",
@@ -431,6 +428,8 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
+    // Ustawienie szerokości na 100% pozwoli boxowi rozciągnąć się:
+    width: "100%",
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -481,6 +480,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+
 });
 
 export default CostSummaryScreen;

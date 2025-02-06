@@ -12,6 +12,40 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
+// Funkcja tłumacząca ostatnią akcję
+const translateLastAction = (action: string): string => {
+  const mapping: Record<string, string> = {
+    client: "Klient",
+    worker: "Wykonawca",
+  };
+  return mapping[action.toLowerCase()] || action;
+};
+
 type NavigationProps = NativeStackNavigationProp<StackParamList, "NegotiationDetails">;
 type NegotiationDetailsRouteProps = RouteProp<StackParamList, "NegotiationDetails">;
 
@@ -23,7 +57,7 @@ const NegotiationDetailsScreen: React.FC = () => {
     negotiation,
     clientId,
     userRole = "Client",
-    userName = "Unknown User",
+    userName = "Nieznany użytkownik",
   } = route.params as {
     negotiation: any; // Zamień 'any' na właściwy typ, jeśli masz jego definicję.
     clientId: number;
@@ -54,8 +88,8 @@ const NegotiationDetailsScreen: React.FC = () => {
         navigation.navigate("MyOrders", { clientId, userRole, userName });
       }
     } catch (err) {
-      console.error(`Error on ${action}:`, err);
-      Alert.alert("Error", `Failed to ${action} negotiation.`);
+      console.error(`Błąd przy akcji ${action}:`, err);
+      Alert.alert("Błąd", `Nie udało się ${action === "accept" ? "zaakceptować" : "odrzucić"} negocjacji.`);
     }
   };
 
@@ -76,7 +110,7 @@ const NegotiationDetailsScreen: React.FC = () => {
       <Text style={styles.detailValue}>
         {value !== null && value !== undefined && value !== ""
           ? value.toString()
-          : "N/A"}
+          : "N/D"}
       </Text>
     </View>
   );
@@ -90,7 +124,7 @@ const NegotiationDetailsScreen: React.FC = () => {
       <Text style={styles.detailLabel}>{label}</Text>
       {Object.entries(keyMapping).map(([objKey, displayLabel]) => (
         <Text key={objKey} style={styles.detailValue}>
-          {displayLabel}: {obj && obj[objKey] ? obj[objKey].toString() : "N/A"}
+          {displayLabel}: {obj && obj[objKey] ? obj[objKey].toString() : "N/D"}
         </Text>
       ))}
     </View>
@@ -99,70 +133,70 @@ const NegotiationDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Negotiation Details</Text>
+        <Text style={styles.headerText}>SZCZEGÓŁY NEGOCJACJI</Text>
       </View>
 
       {renderField("ID", negotiation.id)}
-      {renderField("Description", negotiation.description)}
+      {renderField("Opis", negotiation.description)}
       {renderField(
         "Status",
         negotiation.status === "NegotiationInProgress"
-          ? "Negotiation in progress"
+          ? "Negocjacje w toku"
           : negotiation.status
       )}
-      {renderField("Construction Type", negotiation.constructionType)}
-      {renderField("Requested Start Time", negotiation.requestedStartTime)}
-      {renderField("Client Proposed Price", `${negotiation.clientProposedPrice} PLN`)}
+      {renderField("Typ budowy", formatConstructionType(negotiation.constructionType))}
+      {renderField("Żądany termin rozpoczęcia", negotiation.requestedStartTime)}
+      {renderField("Cena zaproponowana przez klienta", `${negotiation.clientProposedPrice} PLN`)}
       {renderField(
-        "Worker Proposed Price",
+        "Cena zaproponowana przez wykonawcę",
         negotiation.workerProposedPrice !== null
           ? `${negotiation.workerProposedPrice} PLN`
-          : "N/A"
+          : "N/D"
       )}
-      {renderField("Last Action By", negotiation.lastActionBy)}
-      {renderObjectFieldWithMapping("Order Address", negotiation.address, {
-        postCode: "Post code",
-        city: "City",
-        streetName: "Street Name",
+      {renderField("Ostatnia akcja wykonana przez", translateLastAction(negotiation.lastActionBy))}
+      {renderObjectFieldWithMapping("Adres zamówienia", negotiation.address, {
+        postCode: "Kod pocztowy",
+        city: "Miasto",
+        streetName: "Nazwa ulicy",
       })}
-      {renderObjectFieldWithMapping("Client Contact", negotiation.client.contactDetails, {
-        name: "Name",
-        phone: "Phone",
+      {renderObjectFieldWithMapping("Kontakt klienta", negotiation.client.contactDetails, {
+        name: "Imię",
+        phone: "Telefon",
       })}
       {negotiation.client.address &&
-        renderObjectFieldWithMapping("Client Address", negotiation.client.address, {
-          postCode: "Post code",
-          city: "City",
-          streetName: "Street Name",
+        renderObjectFieldWithMapping("Adres klienta", negotiation.client.address, {
+          postCode: "Kod pocztowy",
+          city: "Miasto",
+          streetName: "Nazwa ulicy",
         })}
       {negotiation.worker &&
-        renderObjectFieldWithMapping("Worker Contact", negotiation.worker.contactDetails, {
-          name: "Name",
-          phone: "Phone",
+        renderObjectFieldWithMapping("Kontakt wykonawcy", negotiation.worker.contactDetails, {
+          name: "Imię",
+          phone: "Telefon",
         })}
       {negotiation.worker &&
         negotiation.worker.address &&
-        renderObjectFieldWithMapping("Worker Address", negotiation.worker.address, {
-          postCode: "Post code",
-          city: "City",
-          streetName: "Street Name",
+        renderObjectFieldWithMapping("Adres wykonawcy", negotiation.worker.address, {
+          postCode: "Kod pocztowy",
+          city: "Miasto",
+          streetName: "Nazwa ulicy",
         })}
 
       {/* Renderuj przyciski tylko, jeśli warunek hideActionButtons jest fałszywy */}
       {!hideActionButtons && (
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.acceptButton} onPress={() => handleAction("accept")}>
-            <Text style={styles.actionButtonText}>Accept</Text>
+            <Text style={styles.actionButtonText}>Akceptuj</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.rejectButton} onPress={() => handleAction("reject")}>
-            <Text style={styles.actionButtonText}>Reject</Text>
+            <Text style={styles.actionButtonText}>Odrzuć</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.counterButton} onPress={handleCounter}>
-            <Text style={styles.actionButtonText}>Counter</Text>
+            <Text style={styles.actionButtonText}>Kontruj</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -171,19 +205,88 @@ const NegotiationDetailsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: "#f9b234", padding: 20, alignItems: "center" },
-  backButton: { position: "absolute", top: 50, left: 20, backgroundColor: "#f0f0d0", paddingVertical: 8, paddingHorizontal: 15, borderRadius: 5, zIndex: 1 },
-  backButtonText: { color: "black", fontWeight: "bold" },
-  headerContainer: { alignItems: "center", marginTop: 60, marginBottom: 20 },
-  headerText: { fontSize: 28, fontWeight: "bold", color: "#593100" },
-  detailBlock: { width: "100%", backgroundColor: "#fff8e1", borderRadius: 10, padding: 10, marginBottom: 15, alignItems: "center" },
-  detailLabel: { fontSize: 14, fontWeight: "bold", color: "#333", marginBottom: 4, textAlign: "center" },
-  detailValue: { fontSize: 16, color: "#666", textAlign: "center" },
-  buttonsContainer: { flexDirection: "row", justifyContent: "space-around", marginTop: 30, width: "100%" },
-  actionButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  acceptButton: { backgroundColor: "#4CAF50", paddingVertical: 12, paddingHorizontal: 20, borderRadius: 5, marginHorizontal: 5 },
-  rejectButton: { backgroundColor: "#d9534f", paddingVertical: 12, paddingHorizontal: 20, borderRadius: 5, marginHorizontal: 5 },
-  counterButton: { backgroundColor: "#fc9003", paddingVertical: 12, paddingHorizontal: 20, borderRadius: 5, marginHorizontal: 5 },
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#f9b234",
+    padding: 20,
+    alignItems: "center",
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    backgroundColor: "#f0f0d0",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  backButtonText: {
+    color: "black",
+    fontWeight: "bold",
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginTop: 60,
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#593100",
+  },
+  detailBlock: {
+    width: "100%",
+    backgroundColor: "#fff8e1",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 15,
+    alignItems: "center",
+  },
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 4,
+    textAlign: "center",
+  },
+  detailValue: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 30,
+    width: "100%",
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  acceptButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  rejectButton: {
+    backgroundColor: "#d9534f",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  counterButton: {
+    backgroundColor: "#fc9003",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
 });
 
 export default NegotiationDetailsScreen;

@@ -40,18 +40,18 @@ const NotificationsScreen: React.FC = () => {
   const fetchNotifications = async () => {
     try {
       const url = `http://10.0.2.2:5142/api/Notification/${clientId}/unread`;
-      console.log("Fetching notifications from:", url);
+      console.log("Pobieranie powiadomień z:", url);
       const response = await axios.get<Notification[]>(url);
-      console.log("Notifications response:", response.data);
+      console.log("Odpowiedź powiadomień:", response.data);
       if (Array.isArray(response.data)) {
         setNotifications(response.data);
       } else {
-        console.error("Unexpected response structure:", response.data);
-        setError("Unexpected response structure.");
+        console.error("Nieoczekiwana struktura odpowiedzi:", response.data);
+        setError("Nieoczekiwana struktura odpowiedzi.");
       }
     } catch (err) {
-      console.error("Error fetching notifications:", err);
-      setError("Failed to load notifications.");
+      console.error("Błąd pobierania powiadomień:", err);
+      setError("Nie udało się załadować powiadomień.");
     } finally {
       setLoading(false);
     }
@@ -61,13 +61,13 @@ const NotificationsScreen: React.FC = () => {
   const handleDeleteNotification = async (notificationId: number) => {
     try {
       const url = `http://10.0.2.2:5142/api/Notification/${notificationId}`;
-      console.log("Deleting notification with URL:", url);
+      console.log("Usuwanie powiadomienia, URL:", url);
       await axios.delete(url);
       // Po usunięciu, odśwież listę powiadomień
       fetchNotifications();
     } catch (err) {
-      console.error("Error deleting notification:", err);
-      Alert.alert("Error", "Failed to delete notification.");
+      console.error("Błąd usuwania powiadomienia:", err);
+      Alert.alert("Błąd", "Nie udało się usunąć powiadomienia.");
     }
   };
 
@@ -76,7 +76,7 @@ const NotificationsScreen: React.FC = () => {
       await axios.delete(`http://10.0.2.2:5142/api/Notification/${clientId}/all`);
       setNotifications([]);
     } catch (err) {
-      console.error("Error deleting notifications:", err);
+      console.error("Błąd usuwania powiadomień:", err);
     }
   };
 
@@ -133,15 +133,15 @@ const NotificationsScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
         </TouchableOpacity>
         <View style={styles.headerButtons}>
           <TouchableOpacity style={styles.headerButton} onPress={handleDeleteAll}>
-            <Text style={styles.headerButtonText}>Delete All</Text>
+            <Text style={styles.headerButtonText}>Usuń wszystko</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.headerText}>Notifications</Text>
+      <Text style={styles.headerText}>Powiadomienia</Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={notifications}

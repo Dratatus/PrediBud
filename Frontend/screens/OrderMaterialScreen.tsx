@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  FlatList,
   Image,
   ActivityIndicator,
   ScrollView,
@@ -26,6 +27,68 @@ interface Material {
   supplierName: string;
 }
 
+// Mapowanie tłumaczenia dla materiałów
+const materialMapping: Record<string, string> = {
+  wood: "Drewno",
+  steel: "Stal",
+  brick: "Cegła",
+  glass: "Szkło",
+  pvc: "PVC",
+  aluminium: "Aluminium",
+  composite: "Kompozyt",
+  drywall: "Płyta gipsowo-kartonowa",
+  vinyl: "Winyl",
+  mineralfiber: "Włókno mineralne",
+  metal: "Metal",
+  glassfiber: "Włókno szklane",
+  wroughtiron: "Kute żelazo",
+  styrofoam: "Styropian",
+  mineralwool: "Wełna mineralna",
+  polyurethanefoam: "Pianka poliuretanowa",
+  fiberglass: "Włókno szklane",
+  plaster: "Tynk",
+  stone: "Kamień",
+  metalsiding: "Okładzina metalowa",
+  laminate: "Laminat",
+  hardwood: "Drewno liściaste",
+  carpet: "Dywan",
+  tile: "Płytki",
+  cellulose: "Celuloza",
+  rockwool: "Wełna skalna",
+  acrylic: "Akryl",
+  latex: "Lateks",
+  oilbased: "Na bazie oleju",
+  waterbased: "Na bazie wody",
+  enamel: "Emalia",
+  chalk: "Kreda",
+  glossy: "Błyszcząca",
+  epoxy: "Epoksydowa",
+  matte: "Matowa",
+  satin: "Satynowa",
+  gypsum: "Gips",
+  cement: "Cement",
+  lime: "Wapno",
+  limecement: "Wapno-cementowy",
+  clay: "Glina",
+  silicone: "Silikon",
+  silicate: "Krzemian",
+  concrete: "Beton",
+  prefabricatedconcrete: "Beton prefabrykowany",
+  aeratedconcrete: "Beton komórkowy",
+  metalsheet: "Blacha",
+  asphaltshingle: "Gont asfaltowy",
+  slate: "Łupek",
+  thatch: "Strzecha",
+  marble: "Marmur",
+  granite: "Granit",
+};
+
+// Mapowanie tłumaczenia dla kategorii materiału
+const categoryMapping: Record<string, string> = {
+  balcony: "Balkon",
+  // Dodaj inne tłumaczenia, jeśli są potrzebne
+};
+
 const OrderMaterialScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<OrderMaterialRouteProps>();
@@ -33,8 +96,8 @@ const OrderMaterialScreen: React.FC = () => {
   // Oczekujemy, że trasa przekazuje material, clientId, userRole oraz userName
   const { material, clientId, userRole, userName } = route.params;
   
-  console.log("OrderMaterialScreen - Retrieved clientId:", clientId);
-  console.log("OrderMaterialScreen - Material:", material);
+  console.log("OrderMaterialScreen - Otrzymano clientId:", clientId);
+  console.log("OrderMaterialScreen - Materiał:", material);
 
   const [quantity, setQuantity] = useState<string>("");
   const [postCode, setPostCode] = useState<string>("");
@@ -165,8 +228,7 @@ const OrderMaterialScreen: React.FC = () => {
       unitPriceGross: material.priceWithoutTax * 1.23,
       quantity: parseInt(quantity) || 0,
       totalPriceNet: (parseInt(quantity) * material.priceWithoutTax) || 0,
-      totalPriceGross:
-        (parseInt(quantity) * material.priceWithoutTax * 1.23) || 0,
+      totalPriceGross: (parseInt(quantity) * material.priceWithoutTax * 1.23) || 0,
       createdDate: new Date().toISOString(),
       userId: clientId,
       supplierId: material.supplierId,
@@ -178,7 +240,7 @@ const OrderMaterialScreen: React.FC = () => {
       },
     };
 
-    console.log("Order data to be sent to backend:", orderData);
+    console.log("Dane zamówienia wysyłane do backendu:", orderData);
 
     try {
       const response = await fetch("http://10.0.2.2:5142/api/MaterialOrder", {
@@ -188,14 +250,14 @@ const OrderMaterialScreen: React.FC = () => {
       });
       if (!response.ok) {
         const errText = await response.text();
-        console.error("Failed to create order:", errText);
+        console.error("Nie udało się utworzyć zamówienia:", errText);
       } else {
         const responseData = await response.json();
-        console.log("Order created successfully:", responseData);
+        console.log("Zamówienie utworzone pomyślnie:", responseData);
         navigation.navigate("MyMaterials", { clientId, userRole, userName });
       }
     } catch (error) {
-      console.error("Error while creating order:", error);
+      console.error("Błąd podczas tworzenia zamówienia:", error);
     }
   };
 
@@ -206,7 +268,7 @@ const OrderMaterialScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
@@ -214,30 +276,33 @@ const OrderMaterialScreen: React.FC = () => {
           source={getMaterialIcon(material.materialType)}
           style={styles.headerIcon}
         />
-        <Text style={styles.headerText}>ORDER MATERIAL</Text>
+        <Text style={styles.headerText}>ZAMÓW MATERIAŁ</Text>
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>Material</Text>
-        <View style={styles.fixedInfo}>
-          <Text style={styles.fixedText}>{material.materialType}</Text>
-        </View>
-      </View>
-
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>Details</Text>
+        <Text style={styles.inputLabel}>Materiał</Text>
         <View style={styles.fixedInfo}>
           <Text style={styles.fixedText}>
-            Category: {material.materialCategory}
-          </Text>
-          <Text style={styles.fixedText}>
-            Supplier: {material.supplierName}
+            {materialMapping[material.materialType.toLowerCase()] || material.materialType}
           </Text>
         </View>
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>Quantity (pcs)</Text>
+        <Text style={styles.inputLabel}>Szczegóły</Text>
+        <View style={styles.fixedInfo}>
+          <Text style={styles.fixedText}>
+            Kategoria:{" "}
+            {categoryMapping[material.materialCategory.toLowerCase()] || material.materialCategory}
+          </Text>
+          <Text style={styles.fixedText}>
+            Dostawca: {material.supplierName}
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.inputBlock}>
+        <Text style={styles.inputLabel}>Ilość (szt.)</Text>
         <View style={styles.inputRow}>
           <Image
             source={require("../assets/icons/trolley.png")}
@@ -248,43 +313,43 @@ const OrderMaterialScreen: React.FC = () => {
             value={quantity}
             onChangeText={setQuantity}
             keyboardType="numeric"
-            placeholder="Enter quantity"
+            placeholder="Wpisz ilość"
           />
         </View>
       </View>
 
       <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>Post code</Text>
+        <Text style={styles.inputLabel}>Kod pocztowy</Text>
         <TextInput
           style={styles.inputField}
           value={postCode}
           onChangeText={setPostCode}
-          placeholder="Post code"
+          placeholder="Kod pocztowy"
         />
-        <Text style={styles.inputLabel}>City</Text>
+        <Text style={styles.inputLabel}>Miasto</Text>
         <TextInput
           style={styles.inputField}
           value={city}
           onChangeText={setCity}
-          placeholder="City"
+          placeholder="Miasto"
         />
-        <Text style={styles.inputLabel}>Street</Text>
+        <Text style={styles.inputLabel}>Ulica</Text>
         <TextInput
           style={styles.inputField}
           value={streetName}
           onChangeText={setStreetName}
-          placeholder="Street name"
+          placeholder="Nazwa ulicy"
         />
       </View>
 
       <View style={styles.totalCostBlock}>
-        <Text style={styles.totalCostText}>{`${
-          quantity || 0
-        } x ${pricePerUnit} = ${totalCost} PLN`}</Text>
+        <Text style={styles.totalCostText}>
+          {`${quantity || 0} x ${pricePerUnit} = ${totalCost} PLN`}
+        </Text>
       </View>
 
       <TouchableOpacity style={styles.orderButton} onPress={handleOrder}>
-        <Text style={styles.orderButtonText}>ORDER</Text>
+        <Text style={styles.orderButtonText}>Zamów</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -351,6 +416,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    textAlign: "center",
   },
   fixedInfo: {
     paddingVertical: 10,

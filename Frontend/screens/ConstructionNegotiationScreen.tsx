@@ -13,14 +13,8 @@ import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
-type NegotiationRouteProps = RouteProp<
-  StackParamList,
-  "ConstructionNegotiation"
->;
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "ConstructionNegotiation"
->;
+type NegotiationRouteProps = RouteProp<StackParamList, "ConstructionNegotiation">;
+type NavigationProps = NativeStackNavigationProp<StackParamList, "ConstructionNegotiation">;
 
 const ConstructionNegotiationScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
@@ -43,12 +37,12 @@ const ConstructionNegotiationScreen: React.FC = () => {
         `http://10.0.2.2:5142/api/Negotiation/${orderId}/initiate`,
         payload
       );
-      console.log("Negotiation initiated:", response.data);
+      console.log("Negocjacje rozpoczęte:", response.data);
       setLoading(false);
       navigation.navigate("FindWorks", { clientId: workerId });
     } catch (err: any) {
-      console.error("Error during negotiation:", err);
-      setError("Failed to initiate negotiation.");
+      console.error("Błąd podczas negocjacji:", err);
+      setError("Nie udało się rozpocząć negocjacji.");
       setLoading(false);
     }
   };
@@ -59,16 +53,16 @@ const ConstructionNegotiationScreen: React.FC = () => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
-      <Text style={styles.headerText}>Construction Negotiation</Text>
+      <Text style={styles.headerText}>Negocjacje budowlane</Text>
       <View style={styles.detailBox}>
-        <Text style={styles.detailLabel}>Client Proposed Price</Text>
+        <Text style={styles.detailLabel}>Cena zaproponowana przez klienta</Text>
         <Text style={styles.detailValue}>{clientProposedPrice} PLN</Text>
       </View>
       <View style={styles.detailBox}>
-        <Text style={styles.detailLabel}>Your Counter Offer</Text>
+        <Text style={styles.detailLabel}>Twoja oferta kontrpropozycji</Text>
         <TextInput
           style={[styles.input, { textAlign: "center" }]}
           keyboardType="numeric"
@@ -84,7 +78,7 @@ const ConstructionNegotiationScreen: React.FC = () => {
         <ActivityIndicator size="large" color="#000" />
       ) : (
         <TouchableOpacity style={styles.button} onPress={handlePropose}>
-          <Text style={styles.buttonText}>Propose</Text>
+          <Text style={styles.buttonText}>Zaproponuj</Text>
         </TouchableOpacity>
       )}
     </ScrollView>
@@ -97,6 +91,27 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f9b234",
     alignItems: "center",
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    backgroundColor: "#f0f0d0",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  backButtonText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginVertical: 20,
+    color: "#593100",
   },
   detailBox: {
     backgroundColor: "#fff8e1",
@@ -115,25 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
   },
-  backButton: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f0f0d0",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginBottom: 20,
-    marginTop: 30,
-  },
-  backButtonText: {
-    color: "black",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  headerText: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginVertical: 20,
-  },
   input: {
     width: "80%",
     borderWidth: 1,
@@ -141,7 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     backgroundColor: "#fff8e1",
-    marginBottom: 5,
+    marginBottom: 20,
     textAlign: "center",
   },
   button: {

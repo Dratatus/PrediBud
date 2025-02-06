@@ -23,6 +23,32 @@ interface ConstructionWork {
   isNew: boolean;
 }
 
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string | undefined): string => {
+  if (!type) return "Brak typu";
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
 const FindWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<FindWorksRouteProps>();
@@ -41,8 +67,8 @@ const FindWorksScreen: React.FC = () => {
       );
       setAvailableWorks(response.data);
     } catch (err) {
-      console.error("Error fetching available works:", err);
-      setError("Failed to load available works.");
+      console.error("Błąd pobierania dostępnych zleceń:", err);
+      setError("Nie udało się załadować dostępnych zleceń.");
     } finally {
       setLoading(false);
     }
@@ -56,21 +82,18 @@ const FindWorksScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  // Zaktualizowana funkcja handleDetails – przekazujemy również userRole oraz userName
+  // Funkcja wyświetlająca szczegóły zlecenia
   const handleDetails = (workId: string) => {
-    // Jeśli masz dane o pracowniku (np. nazwę) z innego źródła, możesz je tu przekazać.
-    // Teraz ustawiamy domyślne wartości:
+    // Ustawiamy domyślne wartości:
     const userRole = "Worker";
-    const userName = "Unknown Worker"; // lub inna wartość, jeśli posiadasz
-
-    console.log("Navigating to ConstructionOrderDetails with parameters:", {
+    const userName = "Nieznany wykonawca"; // lub inna wartość, jeśli posiadasz
+    console.log("Nawigacja do ConstructionOrderDetails z parametrami:", {
       workId,
       workerId,
       userType: "worker",
       userRole,
       userName,
     });
-
     navigation.navigate("ConstructionOrderDetails", {
       workId,
       workerId,
@@ -97,19 +120,19 @@ const FindWorksScreen: React.FC = () => {
         />
         <View>
           <Text style={styles.workId}>
-            {item.constructionType || "No type"}
+            {formatConstructionType(item.constructionType)}
           </Text>
           <Text style={styles.workTitle}>
-            {item.description || "No description"}
+            {item.description || "Brak opisu"}
           </Text>
         </View>
       </View>
-      {item.isNew && <Text style={styles.newBadge}>New</Text>}
+      {item.isNew && <Text style={styles.newBadge}>Nowe</Text>}
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => handleDetails(item.id.toString())}
       >
-        <Text style={styles.detailsButtonText}>see details</Text>
+        <Text style={styles.detailsButtonText}>szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
@@ -131,10 +154,10 @@ const FindWorksScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-          <Text style={styles.returnButtonText}>Back</Text>
+          <Text style={styles.returnButtonText}>Powrót</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.headerText}>Available Works</Text>
+      <Text style={styles.headerText}>Dostępne zlecenia</Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={availableWorks}
