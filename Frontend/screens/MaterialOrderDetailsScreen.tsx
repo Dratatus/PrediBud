@@ -14,7 +14,10 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "OrderDetails">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "OrderDetails"
+>;
 type MaterialOrderDetailsRouteProps = RouteProp<StackParamList, "OrderDetails">;
 
 export interface MaterialOrder {
@@ -55,7 +58,6 @@ export interface MaterialOrder {
   };
 }
 
-// Mapowanie tłumaczenia typu materiału
 const materialTypeMapping: Record<string, string> = {
   wood: "Drewno",
   steel: "Stal",
@@ -73,7 +75,6 @@ const materialTypeMapping: Record<string, string> = {
   styrofoam: "Styropian",
   mineralwool: "Wełna mineralna",
   polyurethanefoam: "Pianka poliuretanowa",
-  fiberglass: "Włókno szklane",
   plaster: "Tynk",
   stone: "Kamień",
   metalsiding: "Okładzina metalowa",
@@ -111,10 +112,134 @@ const materialTypeMapping: Record<string, string> = {
   granite: "Granit",
 };
 
-// Mapowanie tłumaczenia kategorii materiału
-const materialCategoryMapping: Record<string, string> = {
-  balcony: "Balkon",
-  // Możesz dodać inne tłumaczenia kategorii, jeśli będą potrzebne
+const normalizeMaterial = (material: string): string => {
+  return material.toLowerCase().replace(/[^a-z]/g, "");
+};
+
+const getTranslatedMaterial = (materialType: string): string => {
+  if (!materialType) return "";
+  const normalized = normalizeMaterial(materialType);
+  if (materialTypeMapping[normalized]) {
+    return materialTypeMapping[normalized];
+  }
+  for (const key in materialTypeMapping) {
+    if (normalized.includes(key)) {
+      return materialTypeMapping[key];
+    }
+  }
+  return materialType;
+};
+
+const getMaterialIcon = (materialType: string): any => {
+  const type = materialType.toLowerCase();
+  switch (type) {
+    case "steel":
+      return require("../assets/icons/steel.png");
+    case "wood":
+      return require("../assets/icons/wood.png");
+    case "brick":
+      return require("../assets/icons/brick.png");
+    case "glass":
+      return require("../assets/icons/glass.png");
+    case "aluminum":
+      return require("../assets/icons/aluminum.png");
+    case "drywall":
+      return require("../assets/icons/drywall.png");
+    case "mineralfiber":
+      return require("../assets/icons/mineralfiber.png");
+    case "metal":
+      return require("../assets/icons/metal.png");
+    case "pvc":
+      return require("../assets/icons/pvc.png");
+    case "glassfiber":
+      return require("../assets/icons/glassfiber.png");
+    case "composite":
+      return require("../assets/icons/composite.png");
+    case "wroughtiron":
+      return require("../assets/icons/wroughtiron.png");
+    case "styrofoam":
+      return require("../assets/icons/styrofoam.png");
+    case "mineralwool":
+      return require("../assets/icons/mineralwool.png");
+    case "polyurethanefoam":
+      return require("../assets/icons/polyurethanefoam.png");
+    case "fiberglass":
+      return require("../assets/icons/fiberglass.png");
+    case "plaster":
+      return require("../assets/icons/plaster.png");
+    case "stone":
+      return require("../assets/icons/stone.png");
+    case "metalsiding":
+      return require("../assets/icons/metalsiding.png");
+    case "laminate":
+      return require("../assets/icons/laminate.png");
+    case "hardwood":
+      return require("../assets/icons/hardwood.png");
+    case "vinyl":
+      return require("../assets/icons/vinyl.png");
+    case "carpet":
+      return require("../assets/icons/carpet.png");
+    case "tile":
+      return require("../assets/icons/tile.png");
+    case "cellulose":
+      return require("../assets/icons/cellulose.png");
+    case "rockwool":
+      return require("../assets/icons/mineralfiber.png");
+    case "acrylic":
+      return require("../assets/icons/acrylic.png");
+    case "latex":
+      return require("../assets/icons/latex.png");
+    case "oilbased":
+      return require("../assets/icons/oilbased.png");
+    case "waterbased":
+      return require("../assets/icons/waterbased.png");
+    case "enamel":
+      return require("../assets/icons/enamel.png");
+    case "chalk":
+      return require("../assets/icons/chalk.png");
+    case "glossy":
+      return require("../assets/icons/glossy.png");
+    case "epoxy":
+      return require("../assets/icons/epoxy.png");
+    case "matte":
+      return require("../assets/icons/matte.png");
+    case "satin":
+      return require("../assets/icons/satin.png");
+    case "gypsum":
+      return require("../assets/icons/gypsum.png");
+    case "cement":
+      return require("../assets/icons/cement.png");
+    case "lime":
+      return require("../assets/icons/lime.png");
+    case "limecement":
+      return require("../assets/icons/limecement.png");
+    case "clay":
+      return require("../assets/icons/clay.png");
+    case "silicone":
+      return require("../assets/icons/silicone.png");
+    case "silicate":
+      return require("../assets/icons/silicate.png");
+    case "concrete":
+      return require("../assets/icons/concrete.png");
+    case "prefabricatedconcrete":
+      return require("../assets/icons/prefabricatedconcrete.png");
+    case "aeratedconcrete":
+      return require("../assets/icons/aeratedconcrete.png");
+    case "metalsheet":
+      return require("../assets/icons/metalsheet.png");
+    case "asphaltshingle":
+      return require("../assets/icons/asphaltshingle.png");
+    case "slate":
+      return require("../assets/icons/slate.png");
+    case "thatch":
+      return require("../assets/icons/thatch.png");
+    case "marble":
+      return require("../assets/icons/marble.png");
+    case "granite":
+      return require("../assets/icons/granite.png");
+    default:
+      return require("../assets/icons/materials.png");
+  }
 };
 
 const renderOrderField = (label: string, value: any) => (
@@ -127,7 +252,6 @@ const renderOrderField = (label: string, value: any) => (
 const MaterialOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialOrderDetailsRouteProps>();
-  // Oczekujemy, że trasa przekazuje: workId, clientId, userRole oraz userName
   const { workId, clientId, userRole, userName } = route.params as {
     workId: string;
     clientId: number;
@@ -151,7 +275,10 @@ const MaterialOrderDetailsScreen: React.FC = () => {
         const data: MaterialOrder = await response.json();
         setOrder(data);
       } catch (err) {
-        console.error("Błąd pobierania szczegółów zamówienia materiałowego:", err);
+        console.error(
+          "Błąd pobierania szczegółów zamówienia materiałowego:",
+          err
+        );
         setError("Nie udało się załadować szczegółów zamówienia.");
       } finally {
         setLoading(false);
@@ -164,7 +291,6 @@ const MaterialOrderDetailsScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  // Funkcja usuwająca zamówienie
   const handleDelete = async () => {
     if (!order) return;
     try {
@@ -199,7 +325,7 @@ const MaterialOrderDetailsScreen: React.FC = () => {
           {error || "Zamówienie nie zostało znalezione"}
         </Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+          <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
       </View>
     );
@@ -208,40 +334,39 @@ const MaterialOrderDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
         <Image
-          source={require("../assets/logo.png")}
+          source={getMaterialIcon(order.materialPrice.materialType)}
           style={styles.headerIcon}
         />
-        <Text style={styles.headerText}>SZCZEGÓŁY ZAMÓWIONEGO MATERIAŁU</Text>
+        <Text style={styles.headerText}>Szczegóły zamówionego materiału</Text>
       </View>
 
-      {renderOrderField("ID", order.id)}
-      {renderOrderField("Ilość", order.quantity)}
-      {renderOrderField("Całkowita cena netto", order.totalPriceNet)}
-      {order.supplier &&
-        renderOrderField("Kontakt dostawcy", order.supplier.contactEmail)}
-      {renderOrderField(
-        "Adres zamówienia",
-        `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
-      )}
-      {order.materialPrice && (
-        <>
-          {renderOrderField(
-            "Rodzaj materiału",
-            materialTypeMapping[order.materialPrice.materialType.toLowerCase()] ||
-              order.materialPrice.materialType
-          )}
-          {renderOrderField(
-            "Kategoria materiału",
-            materialCategoryMapping[order.materialPrice.materialCategory.toLowerCase()] ||
-              order.materialPrice.materialCategory
-          )}
-        </>
-      )}
+      <View style={styles.detailsContainer}>
+        {renderOrderField("Ilość", order.quantity)}
+        {renderOrderField("Całkowita cena netto", order.totalPriceNet)}
+        {order.supplier &&
+          renderOrderField("Kontakt dostawcy", order.supplier.contactEmail)}
+        {renderOrderField(
+          "Adres zamówienia",
+          `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
+        )}
+        {order.materialPrice && (
+          <>
+            {renderOrderField(
+              "Rodzaj materiału",
+              getTranslatedMaterial(order.materialPrice.materialType)
+            )}
+            {renderOrderField(
+              "Kategoria materiału",
+              order.materialPrice.materialCategory || ""
+            )}
+          </>
+        )}
+      </View>
 
       <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
         <Text style={styles.deleteButtonText}>Usuń</Text>
@@ -273,8 +398,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 20,
     marginTop: 50,
+    marginBottom: 20,
   },
   headerIcon: {
     width: 80,
@@ -285,9 +410,23 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  orderIDContainer: {
+    alignSelf: "flex-start",
+    marginBottom: 10,
+  },
+  orderIDText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  detailsContainer: {
+    alignItems: "center",
+    width: "100%",
   },
   detailBlock: {
-    width: "100%",
+    width: "90%",
     backgroundColor: "#fff8e1",
     borderRadius: 10,
     padding: 10,
@@ -314,8 +453,8 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: "#d9534f",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 5,
     marginTop: 20,
   },

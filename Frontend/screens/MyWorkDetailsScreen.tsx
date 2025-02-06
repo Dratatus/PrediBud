@@ -26,7 +26,7 @@ const MyWorkDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
@@ -44,9 +44,7 @@ const MyWorkDetailsScreen: React.FC = () => {
 
       <View style={styles.detailBlock}>
         <Text style={styles.detailLabel}>OPIS</Text>
-        <Text style={styles.detailValue}>
-          Za rogiem przed oknem
-        </Text>
+        <Text style={styles.detailValue}>Za rogiem przed oknem</Text>
       </View>
 
       <View style={styles.detailBlock}>

@@ -117,9 +117,7 @@ const LoginScreen = () => {
       </View>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={styles.linkText}>
-          Nie masz konta? Utwórz je tutaj.
-        </Text>
+        <Text style={styles.linkText}>Nie masz konta? Utwórz je tutaj.</Text>
       </TouchableOpacity>
     </View>
   );

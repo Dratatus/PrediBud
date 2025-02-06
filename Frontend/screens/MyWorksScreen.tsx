@@ -61,7 +61,6 @@ interface CommonOrder {
 type MyWorksRouteProps = RouteProp<StackParamList, "MyWorks">;
 type NavigationProps = NativeStackNavigationProp<StackParamList, "MyWorks">;
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
     partitionwall: "Ściana działowa",
@@ -137,7 +136,7 @@ const MyWorksScreen: React.FC = () => {
   const handleDetails = (order: CommonOrder) => {
     navigation.navigate("ConstructionOrderDetails", {
       workId: order.id.toString(),
-      workerId: clientId, // w MyWorksScreen "clientId" to ID pracownika
+      workerId: clientId,
       userType: "Worker",
       userRole: userRole,
       userName: userName,
@@ -155,7 +154,11 @@ const MyWorksScreen: React.FC = () => {
           <Text style={styles.orderId}>
             {formatConstructionType(item.main)}
           </Text>
-          <Text style={styles.orderTitle} numberOfLines={2} ellipsizeMode="tail">
+          <Text
+            style={styles.orderTitle}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
             {item.sub}
           </Text>
         </View>
@@ -171,7 +174,12 @@ const MyWorksScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -180,9 +188,16 @@ const MyWorksScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-        <Text style={styles.returnButtonText}>Powrót</Text>
+        <Text style={styles.returnButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Moje prace</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/my-works.png")}
+          style={styles.headerIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Moje prace</Text>
+      </View>
       <FlatList
         data={orders}
         renderItem={renderOrderItem}
@@ -213,11 +228,20 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerContainer: {
+    alignItems: "center",
+    marginTop: 50,
+    marginBottom: 30,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    marginTop: 90,
-    marginBottom: 30,
+    textAlign: "center",
   },
   orderList: {
     paddingBottom: 100,

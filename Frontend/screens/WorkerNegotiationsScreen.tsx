@@ -16,7 +16,6 @@ import axios from "axios";
 type NavigationProps = NativeStackNavigationProp<StackParamList, "WorkerNegotiations">;
 type WorkerNegotiationsRouteProps = RouteProp<StackParamList, "WorkerNegotiations">;
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string | undefined): string => {
   if (!type) return "Brak typu";
   const mapping: Record<string, string> = {
@@ -46,7 +45,6 @@ const WorkerNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<WorkerNegotiationsRouteProps>();
 
-  // Pobieramy workerId oraz userName (dla pracownika) z parametrów
   const { workerId, userName } = route.params as { workerId: number; userName: string };
   console.log("WorkerNegotiationsScreen - Worker ID:", workerId);
 
@@ -78,7 +76,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
   const handleDetails = (negotiation: Negotiation) => {
     navigation.navigate("NegotiationDetails", {
       negotiation,
-      clientId: workerId, // mimo nazwy parametru, tutaj używamy workerId jako clientId
+      clientId: workerId, 
       userRole: "Worker",
       userName: userName || "Nieznany wykonawca",
     });
@@ -116,7 +114,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
       <View style={[styles.container, styles.centered]}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+          <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
       </View>
     );
@@ -125,9 +123,16 @@ const WorkerNegotiationsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Negocjacje wykonawcy</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/negotiations.png")}
+          style={styles.headerIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Negocjacje</Text>
+      </View>
       <FlatList
         data={negotiations}
         renderItem={renderNegotiationItem}
@@ -163,11 +168,20 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: -20,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 20,
   },
   listContainer: {
     paddingBottom: 100,

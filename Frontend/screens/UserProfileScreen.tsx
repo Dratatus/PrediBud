@@ -6,9 +6,10 @@ import { StackParamList } from "../navigation/AppNavigator";
 
 const icons = {
   calculator: require("../assets/icons/calculator.png"),
-  orders: require("../assets/icons/orders.png"),
+  orders: require("../assets/icons/crane.png"),
   notifications: require("../assets/icons/notifications.png"),
-  materials: require("../assets/icons/materials.png"),
+  materials: require("../assets/icons/trolley.png"),
+  mymaterials: require("../assets/icons/materials.png"),
   findWorks: require("../assets/icons/find-works.png"),
   myWorks: require("../assets/icons/my-works.png"),
   negotiations: require("../assets/icons/negotiations.png"),
@@ -91,10 +92,21 @@ const UserProfileScreen: React.FC = () => {
     });
   };
 
+  const handleHelp = () => {
+    navigation.navigate("HelpScreen", {
+      clientId: clientIdNum,
+      userRole,
+      userName,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Wyloguj</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.helpButton} onPress={handleHelp}>
+        <Text style={styles.helpButtonText}>Pomoc</Text>
       </TouchableOpacity>
       <Image
         source={
@@ -118,20 +130,6 @@ const UserProfileScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
-              onPress={handleMyOrders}
-            >
-              <Image source={icons.orders} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Moje zamówienia</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={handleMyMaterials}
-            >
-              <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Moje materiały</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
               onPress={handleClientNegotiations}
             >
               <Image source={icons.negotiations} style={styles.optionIcon} />
@@ -139,17 +137,31 @@ const UserProfileScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
-              onPress={handleNotifications}
+              onPress={handleMyOrders}
             >
-              <Image source={icons.notifications} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Powiadomienia</Text>
+              <Image source={icons.orders} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Moje zlecenia</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
               onPress={handleMaterials}
             >
               <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Materiały</Text>
+              <Text style={styles.optionText}>Zamów materiały</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyMaterials}
+            >
+              <Image source={icons.mymaterials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Moje materiały</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleNotifications}
+            >
+              <Image source={icons.notifications} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Powiadomienia</Text>
             </TouchableOpacity>
           </>
         ) : (
@@ -163,20 +175,6 @@ const UserProfileScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
-              onPress={handleMyWorks}
-            >
-              <Image source={icons.myWorks} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Moje prace</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={handleMyMaterials}
-            >
-              <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Moje materiały</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
               onPress={handleWorkerNegotiations}
             >
               <Image source={icons.negotiations} style={styles.optionIcon} />
@@ -184,17 +182,31 @@ const UserProfileScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
-              onPress={handleNotifications}
+              onPress={handleMyWorks}
             >
-              <Image source={icons.notifications} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Powiadomienia</Text>
+              <Image source={icons.myWorks} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Moje prace</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.optionButton}
               onPress={handleMaterials}
             >
               <Image source={icons.materials} style={styles.optionIcon} />
-              <Text style={styles.optionText}>Materiały</Text>
+              <Text style={styles.optionText}>Zamów materiały</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleMyMaterials}
+            >
+              <Image source={icons.mymaterials} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Moje materiały</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={handleNotifications}
+            >
+              <Image source={icons.notifications} style={styles.optionIcon} />
+              <Text style={styles.optionText}>Powiadomienia</Text>
             </TouchableOpacity>
           </>
         )}
@@ -219,9 +231,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
-    zIndex: 1,
+    zIndex: 2,
   },
   logoutButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  helpButton: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    backgroundColor: "#007bff",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    zIndex: 2,
+  },
+  helpButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },

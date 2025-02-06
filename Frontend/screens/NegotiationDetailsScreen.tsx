@@ -6,13 +6,13 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
     partitionwall: "Ściana działowa",
@@ -37,7 +37,6 @@ const formatConstructionType = (type: string): string => {
   return mapping[type.toLowerCase()] || type;
 };
 
-// Funkcja tłumacząca ostatnią akcję
 const translateLastAction = (action: string): string => {
   const mapping: Record<string, string> = {
     client: "Klient",
@@ -46,8 +45,14 @@ const translateLastAction = (action: string): string => {
   return mapping[action.toLowerCase()] || action;
 };
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "NegotiationDetails">;
-type NegotiationDetailsRouteProps = RouteProp<StackParamList, "NegotiationDetails">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "NegotiationDetails"
+>;
+type NegotiationDetailsRouteProps = RouteProp<
+  StackParamList,
+  "NegotiationDetails"
+>;
 
 const NegotiationDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
@@ -59,13 +64,12 @@ const NegotiationDetailsScreen: React.FC = () => {
     userRole = "Client",
     userName = "Nieznany użytkownik",
   } = route.params as {
-    negotiation: any; // Zamień 'any' na właściwy typ, jeśli masz jego definicję.
+    negotiation: any;
     clientId: number;
     userRole?: string;
     userName?: string;
   };
 
-  // Ukryj przyciski, jeśli rola zalogowanego użytkownika (userRole) jest taka sama jak wartość negotiation.lastActionBy (ignorujemy wielkość liter)
   const hideActionButtons =
     userRole.toLowerCase() === negotiation.lastActionBy.toLowerCase();
 
@@ -81,7 +85,6 @@ const NegotiationDetailsScreen: React.FC = () => {
       await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-      // Jeśli rola użytkownika to worker – nawiguj do MyWorks, w przeciwnym razie do MyOrders.
       if (userRole.toLowerCase() === "worker") {
         navigation.navigate("MyWorks", { clientId, userRole, userName });
       } else {
@@ -89,7 +92,12 @@ const NegotiationDetailsScreen: React.FC = () => {
       }
     } catch (err) {
       console.error(`Błąd przy akcji ${action}:`, err);
-      Alert.alert("Błąd", `Nie udało się ${action === "accept" ? "zaakceptować" : "odrzucić"} negocjacji.`);
+      Alert.alert(
+        "Błąd",
+        `Nie udało się ${
+          action === "accept" ? "zaakceptować" : "odrzucić"
+        } negocjacji.`
+      );
     }
   };
 
@@ -133,11 +141,16 @@ const NegotiationDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>SZCZEGÓŁY NEGOCJACJI</Text>
+        <Image
+          source={require("../assets/icons/negotiations.png")}
+          style={styles.icon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Szczegóły negocjacji</Text>
       </View>
 
       {renderField("ID", negotiation.id)}
@@ -148,54 +161,87 @@ const NegotiationDetailsScreen: React.FC = () => {
           ? "Negocjacje w toku"
           : negotiation.status
       )}
-      {renderField("Typ budowy", formatConstructionType(negotiation.constructionType))}
+      {renderField(
+        "Typ budowy",
+        formatConstructionType(negotiation.constructionType)
+      )}
       {renderField("Żądany termin rozpoczęcia", negotiation.requestedStartTime)}
-      {renderField("Cena zaproponowana przez klienta", `${negotiation.clientProposedPrice} PLN`)}
+      {renderField(
+        "Cena zaproponowana przez klienta",
+        `${negotiation.clientProposedPrice} PLN`
+      )}
       {renderField(
         "Cena zaproponowana przez wykonawcę",
         negotiation.workerProposedPrice !== null
           ? `${negotiation.workerProposedPrice} PLN`
           : "N/D"
       )}
-      {renderField("Ostatnia akcja wykonana przez", translateLastAction(negotiation.lastActionBy))}
+      {renderField(
+        "Ostatnia akcja wykonana przez",
+        translateLastAction(negotiation.lastActionBy)
+      )}
       {renderObjectFieldWithMapping("Adres zamówienia", negotiation.address, {
         postCode: "Kod pocztowy",
         city: "Miasto",
         streetName: "Nazwa ulicy",
       })}
-      {renderObjectFieldWithMapping("Kontakt klienta", negotiation.client.contactDetails, {
-        name: "Imię",
-        phone: "Telefon",
-      })}
-      {negotiation.client.address &&
-        renderObjectFieldWithMapping("Adres klienta", negotiation.client.address, {
-          postCode: "Kod pocztowy",
-          city: "Miasto",
-          streetName: "Nazwa ulicy",
-        })}
-      {negotiation.worker &&
-        renderObjectFieldWithMapping("Kontakt wykonawcy", negotiation.worker.contactDetails, {
+      {renderObjectFieldWithMapping(
+        "Kontakt klienta",
+        negotiation.client.contactDetails,
+        {
           name: "Imię",
           phone: "Telefon",
-        })}
+        }
+      )}
+      {negotiation.client.address &&
+        renderObjectFieldWithMapping(
+          "Adres klienta",
+          negotiation.client.address,
+          {
+            postCode: "Kod pocztowy",
+            city: "Miasto",
+            streetName: "Nazwa ulicy",
+          }
+        )}
+      {negotiation.worker &&
+        renderObjectFieldWithMapping(
+          "Kontakt wykonawcy",
+          negotiation.worker.contactDetails,
+          {
+            name: "Imię",
+            phone: "Telefon",
+          }
+        )}
       {negotiation.worker &&
         negotiation.worker.address &&
-        renderObjectFieldWithMapping("Adres wykonawcy", negotiation.worker.address, {
-          postCode: "Kod pocztowy",
-          city: "Miasto",
-          streetName: "Nazwa ulicy",
-        })}
+        renderObjectFieldWithMapping(
+          "Adres wykonawcy",
+          negotiation.worker.address,
+          {
+            postCode: "Kod pocztowy",
+            city: "Miasto",
+            streetName: "Nazwa ulicy",
+          }
+        )}
 
-      {/* Renderuj przyciski tylko, jeśli warunek hideActionButtons jest fałszywy */}
       {!hideActionButtons && (
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.acceptButton} onPress={() => handleAction("accept")}>
+          <TouchableOpacity
+            style={styles.acceptButton}
+            onPress={() => handleAction("accept")}
+          >
             <Text style={styles.actionButtonText}>Akceptuj</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.rejectButton} onPress={() => handleAction("reject")}>
+          <TouchableOpacity
+            style={styles.rejectButton}
+            onPress={() => handleAction("reject")}
+          >
             <Text style={styles.actionButtonText}>Odrzuć</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.counterButton} onPress={handleCounter}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={handleCounter}
+          >
             <Text style={styles.actionButtonText}>Kontruj</Text>
           </TouchableOpacity>
         </View>
@@ -227,8 +273,13 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     alignItems: "center",
-    marginTop: 60,
+    marginTop: 50,
     marginBottom: 20,
+  },
+  icon: {
+    width: 50,
+    height: 50,
+    marginBottom: 10,
   },
   headerText: {
     fontSize: 28,

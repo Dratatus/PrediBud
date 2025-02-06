@@ -14,7 +14,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList, Material } from "../navigation/AppNavigator";
 import axios from "axios";
 
-// Mapa tłumaczenia dla materiałów
 const materialMapping: Record<string, string> = {
   wood: "Drewno",
   steel: "Stal",
@@ -70,11 +69,22 @@ const materialMapping: Record<string, string> = {
   granite: "Granit",
 };
 
-
-// Mapa tłumaczenia dla kategorii – przykładowo: jeśli kategoria to "balcony" to wyświetlamy "Balkon"
 const categoryMapping: Record<string, string> = {
   balcony: "Balkon",
-  // Dodaj inne tłumaczenia, jeśli są potrzebne.
+  suspendedceiling: "Sufit podwieszany",
+  doors: "Drzwi",
+  facade: "Elewacja",
+  flooring: "Podłoga",
+  insulationofattic: "Izolacja poddasza",
+  painting: "Malowanie",
+  plastering: "Tynkowanie",
+  ceiling: "Sufit",
+  chimney: "Kominek",
+  foundation: "Fundament",
+  loadbearingwall: "Ściana nośna",
+  partitionwall: "Ściana działowa",
+  roof: "Dach",
+  ventilationsystem: "System wentylacyjny",
 };
 
 type NavigationProps = NativeStackNavigationProp<StackParamList, "Materials">;
@@ -84,14 +94,12 @@ const MaterialsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MaterialsRouteProps>();
 
-  // Oczekujemy, że trasa przekazuje clientId, userRole oraz userName
   const { clientId, userRole, userName } = route.params;
   console.log("MaterialsScreen - Otrzymano clientId:", clientId);
 
-
-  useEffect(() => {
-    fetchMaterials();
-  }, []);
+  const [materialsList, setMaterialsList] = useState<Material[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const getMaterialIcon = (materialType: string): any => {
     const lowerType = materialType.toLowerCase();
@@ -207,39 +215,49 @@ const MaterialsScreen: React.FC = () => {
 
   const handleOrder = (material: Material) => {
     console.log("MaterialsScreen - Przekazywanie clientId:", clientId);
-    navigation.navigate("OrderMaterial", { material, clientId, userRole, userName });
+    navigation.navigate("OrderMaterial", {
+      material,
+      clientId,
+      userRole,
+      userName,
+    });
   };
 
   const renderMaterialItem = ({ item }: { item: Material }) => (
     <View style={styles.materialCard}>
       <View style={styles.cardLeft}>
-        <Image source={getMaterialIcon(item.materialType)} style={styles.materialIcon} />
+        <Image
+          source={getMaterialIcon(item.materialType)}
+          style={styles.materialIcon}
+        />
         <View style={{ flex: 1 }}>
           <Text style={styles.materialType}>
-            {materialMapping[item.materialType.toLowerCase()] || item.materialType}
+            {materialMapping[item.materialType.toLowerCase()] ||
+              item.materialType}
           </Text>
           <Text style={styles.category}>
-            Kategoria: {categoryMapping[item.materialCategory.toLowerCase()] || item.materialCategory}
+            Kategoria:{" "}
+            {categoryMapping[item.materialCategory.toLowerCase()] ||
+              item.materialCategory}
           </Text>
           <Text style={styles.supplier}>Dostawca: {item.supplierName}</Text>
-          <Text style={styles.price}>
-            Cena netto: {item.priceWithoutTax} $
-          </Text>
+          <Text style={styles.price}>Cena netto: {item.priceWithoutTax} $</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.orderButton} onPress={() => handleOrder(item)}>
+      <TouchableOpacity
+        style={styles.orderButton}
+        onPress={() => handleOrder(item)}
+      >
         <Text style={styles.orderButtonText}>Zamów</Text>
       </TouchableOpacity>
     </View>
   );
 
-  const [materialsList, setMaterialsList] = useState<Material[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
   const fetchMaterials = async () => {
     try {
-      const response = await fetch("http://10.0.2.2:5142/api/MaterialPrice/available");
+      const response = await fetch(
+        "http://10.0.2.2:5142/api/MaterialPrice/available"
+      );
       if (!response.ok) {
         throw new Error(`Błąd HTTP! Status: ${response.status}`);
       }
@@ -275,10 +293,20 @@ const MaterialsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Materiały</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/trolley.png")}
+          style={styles.headerIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Materiały</Text>
+      </View>
       <FlatList
         data={materialsList}
         renderItem={renderMaterialItem}
@@ -309,11 +337,20 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerContainer: {
+    alignItems: "center",
+    marginTop: 50,
+    marginBottom: 30,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    marginTop: 90,
-    marginBottom: 30,
+    textAlign: "center",
   },
   materialList: {
     paddingBottom: 100,

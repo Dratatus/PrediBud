@@ -8,14 +8,21 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "NegotiationCounter">;
-type NegotiationCounterRouteProps = RouteProp<StackParamList, "NegotiationCounter">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "NegotiationCounter"
+>;
+type NegotiationCounterRouteProps = RouteProp<
+  StackParamList,
+  "NegotiationCounter"
+>;
 
 const NegotiationCounterScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
@@ -57,7 +64,6 @@ const NegotiationCounterScreen: React.FC = () => {
       await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-      // Jeśli użytkownik to Worker – nawiguj do WorkerNegotiationsScreen, w przeciwnym razie do ClientNegotiationsScreen
       if (userRole.toLowerCase() === "worker") {
         navigation.navigate("WorkerNegotiations", {
           workerId: clientId,
@@ -65,7 +71,11 @@ const NegotiationCounterScreen: React.FC = () => {
           userName,
         } as any);
       } else {
-        navigation.navigate("ClientNegotiations", { clientId, userRole, userName });
+        navigation.navigate("ClientNegotiations", {
+          clientId,
+          userRole,
+          userName,
+        });
       }
     } catch (err) {
       console.error("Błąd podczas wysyłania kontrpropozycji:", err);
@@ -82,9 +92,16 @@ const NegotiationCounterScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Oferta kontrpropozycji</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/negotiations.png")}
+          style={styles.headerIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Oferta kontrpropozycji</Text>
+      </View>
 
       <View style={styles.detailBlock}>
         <Text style={styles.detailLabel}>ID negocjacji</Text>
@@ -97,14 +114,16 @@ const NegotiationCounterScreen: React.FC = () => {
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.detailLabel}>Cena zaproponowana przez wykonawcę</Text>
+        <Text style={styles.detailLabel}>
+          Cena zaproponowana przez wykonawcę
+        </Text>
         <Text style={styles.detailValue}>
           {workerProposedPrice ? `${workerProposedPrice} PLN` : "N/D"}
         </Text>
       </View>
 
       <View style={styles.detailBlock}>
-        <Text style={styles.label}>Twoja oferta kontrpropozycji:</Text>
+        <Text style={styles.label}>Twoja nowa oferta:</Text>
         <TextInput
           style={styles.input}
           keyboardType="numeric"
@@ -146,10 +165,19 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+    marginTop: 45,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
-    marginVertical: 20,
     color: "#593100",
   },
   detailBlock: {

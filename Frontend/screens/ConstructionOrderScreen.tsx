@@ -37,7 +37,7 @@ const FIELD_PRETTY: Record<string, string> = {
   numberofsteps: "Liczba schodków",
   railingmaterial: "Materiał balustrady",
   count: "Ilość",
-  material: "Materiał"
+  material: "Materiał",
 };
 
 const CONSTRUCTION_TYPE_ENUM = {
@@ -294,8 +294,11 @@ const ConstructionOrderScreen: React.FC = () => {
   const route = useRoute<RouteProp<StackParamList, "ConstructionOrder">>();
 
   const [description, setDescription] = useState<string>("");
-  const [constructionType, setConstructionType] = useState<string>("partitionwall");
-  const [specificationDetails, setSpecificationDetails] = useState<Record<string, string>>({});
+  const [constructionType, setConstructionType] =
+    useState<string>("partitionwall");
+  const [specificationDetails, setSpecificationDetails] = useState<
+    Record<string, string>
+  >({});
   const [proposedPrice, setProposedPrice] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -309,7 +312,9 @@ const ConstructionOrderScreen: React.FC = () => {
     city: "",
     streetName: "",
   });
-  const [userNameState, setUserNameState] = useState<string>("Nieznany użytkownik");
+  const [userNameState, setUserNameState] = useState<string>(
+    "Nieznany użytkownik"
+  );
   const [userRoleState, setUserRoleState] = useState<string>("Klient");
 
   useEffect(() => {
@@ -329,22 +334,11 @@ const ConstructionOrderScreen: React.FC = () => {
     }
   }, [route.params]);
 
-  const handleAddPhoto = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true,
-    });
-    if (!result.canceled && result.assets) {
-      setPlacementPhotos([
-        ...placementPhotos,
-        ...result.assets.map((asset) => asset.uri),
-      ]);
-    }
-  };
-
   const handleSubmit = async () => {
     const constructionTypeNumber =
-      CONSTRUCTION_TYPE_ENUM[constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM];
+      CONSTRUCTION_TYPE_ENUM[
+        constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM
+      ];
     const convertedSpecDetails = Object.fromEntries(
       Object.entries(specificationDetails).map(([key, value]) => [
         key,
@@ -382,7 +376,10 @@ const ConstructionOrderScreen: React.FC = () => {
           userName: route.params?.userName ?? "Nieznany użytkownik",
         });
       } else {
-        console.error("Nie udało się utworzyć zamówienia:", await response.text());
+        console.error(
+          "Nie udało się utworzyć zamówienia:",
+          await response.text()
+        );
       }
     } catch (error) {
       console.error("Błąd podczas tworzenia zamówienia:", error);
@@ -526,14 +523,6 @@ const ConstructionOrderScreen: React.FC = () => {
         />
       )}
 
-      <Text style={styles.label}>Zdjęcia lokalizacji</Text>
-      <Button title="Dodaj zdjęcia" onPress={handleAddPhoto} />
-      <View style={styles.photosContainer}>
-        {placementPhotos.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.photo} />
-        ))}
-      </View>
-
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Utwórz zamówienie</Text>
       </TouchableOpacity>
@@ -571,7 +560,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     alignSelf: "center",
-    marginTop: 75,
+    marginTop: 50,
     marginBottom: 20,
   },
   title: {

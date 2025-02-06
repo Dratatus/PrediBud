@@ -23,7 +23,6 @@ interface ConstructionWork {
   isNew: boolean;
 }
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string | undefined): string => {
   if (!type) return "Brak typu";
   const mapping: Record<string, string> = {
@@ -52,7 +51,6 @@ const formatConstructionType = (type: string | undefined): string => {
 const FindWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<FindWorksRouteProps>();
-  // Zakładamy, że w route.params mamy przekazany clientId jako workerId (dla pracownika)
   const { clientId: workerId } = route.params;
   console.log("FindWorksScreen - Worker ID:", workerId);
 
@@ -82,11 +80,9 @@ const FindWorksScreen: React.FC = () => {
     navigation.goBack();
   };
 
-  // Funkcja wyświetlająca szczegóły zlecenia
   const handleDetails = (workId: string) => {
-    // Ustawiamy domyślne wartości:
     const userRole = "Worker";
-    const userName = "Nieznany wykonawca"; // lub inna wartość, jeśli posiadasz
+    const userName = "Nieznany wykonawca";
     console.log("Nawigacja do ConstructionOrderDetails z parametrami:", {
       workId,
       workerId,
@@ -154,10 +150,17 @@ const FindWorksScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-          <Text style={styles.returnButtonText}>Powrót</Text>
+          <Text style={styles.returnButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.headerText}>Dostępne zlecenia</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/find-works.png")}
+          style={styles.headerIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.headerText}>Dostępne zlecenia</Text>
+      </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={availableWorks}
@@ -179,7 +182,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 10,
   },
   returnButton: {
@@ -192,10 +195,19 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: -30,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 60,
     textAlign: "center",
   },
   workList: {

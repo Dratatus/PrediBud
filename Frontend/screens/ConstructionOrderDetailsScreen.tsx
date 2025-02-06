@@ -59,6 +59,16 @@ const SPECIFICATION_LABELS: Record<string, string> = {
   count: "Ilość",
 };
 
+const translateStatus = (status: string): string => {
+  const mapping: Record<string, string> = {
+    New: "Nowy",
+    NegotiationInProgress: "Trwają negocjacje",
+    Accepted: "Zaakceptowne",
+    Completed: "Ukończone",
+  };
+  return mapping[status] || status;
+};
+
 const MATERIAL_ENUM1: Record<number, string> = {
   0: "Płyta gipsowo-kartonowa",
   1: "Cegła",
@@ -183,8 +193,14 @@ const FINISH_MATERIAL_MAP: Record<number, string> = {
   4: "Okładzina metalowa",
 };
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "ConstructionOrderDetails">;
-type ConstructionOrderDetailsRouteProps = RouteProp<StackParamList, "ConstructionOrderDetails">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "ConstructionOrderDetails"
+>;
+type ConstructionOrderDetailsRouteProps = RouteProp<
+  StackParamList,
+  "ConstructionOrderDetails"
+>;
 
 export interface ConstructionOrder {
   id: number;
@@ -240,13 +256,14 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<ConstructionOrderDetailsRouteProps>();
 
-  // Pobieramy parametry – dla pracownika domyślne wartości dla userRole i userName
   const {
     workId,
     workerId,
     userType = "Worker",
     userRole = userType.toLowerCase() === "worker" ? "Worker" : "Client",
-    userName = userType.toLowerCase() === "worker" ? "Unknown Worker" : "Unknown User",
+    userName = userType.toLowerCase() === "worker"
+      ? "Unknown Worker"
+      : "Unknown User",
   } = route.params as {
     workId: string;
     workerId: number;
@@ -269,7 +286,9 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch(`http://10.0.2.2:5142/api/ConstructionOrderClient/${workId}`);
+        const response = await fetch(
+          `http://10.0.2.2:5142/api/ConstructionOrderClient/${workId}`
+        );
         if (!response.ok) {
           throw new Error(`Błąd HTTP! status: ${response.status}`);
         }
@@ -303,12 +322,21 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
     if (!order) return;
     try {
       const url = `http://10.0.2.2:5142/api/Negotiation/${order.id}/complete`;
-      const currentUserId = userType.toLowerCase() === "client" && order.client ? order.client.id : workerId;
+      const currentUserId =
+        userType.toLowerCase() === "client" && order.client
+          ? order.client.id
+          : workerId;
       console.log("handleComplete - currentUserId:", currentUserId);
       if (userType.toLowerCase() === "client" && order.client) {
-        console.log("handleComplete - nazwa klienta z zamówienia:", order.client.contactDetails.name);
+        console.log(
+          "handleComplete - nazwa klienta z zamówienia:",
+          order.client.contactDetails.name
+        );
       } else {
-        console.log("handleComplete - worker userName (z parametrów):", userName);
+        console.log(
+          "handleComplete - worker userName (z parametrów):",
+          userName
+        );
       }
       const payload = { userId: currentUserId };
       const response = await fetch(url, {
@@ -320,8 +348,11 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
         const errText = await response.text();
         throw new Error(`Błąd HTTP! status: ${response.status} - ${errText}`);
       }
-      Alert.alert("Sukces", "Zamówienie zostało pomyślnie zakończone.");
-      navigation.navigate("UserProfile", { clientId: currentUserId, userRole, userName });
+      navigation.navigate("UserProfile", {
+        clientId: currentUserId,
+        userRole,
+        userName,
+      });
     } catch (err) {
       console.error("Błąd przy finalizacji negocjacji:", err);
       Alert.alert("Błąd", "Nie udało się zakończyć negocjacji.");
@@ -331,7 +362,10 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   const handleDelete = async () => {
     if (!order) return;
     try {
-      const currentClientId = userType.toLowerCase() === "client" && order.client ? order.client.id : workerId;
+      const currentClientId =
+        userType.toLowerCase() === "client" && order.client
+          ? order.client.id
+          : workerId;
       const url = `http://10.0.2.2:5142/api/ConstructionOrderClient/${order.id}/${currentClientId}`;
       console.log("handleDelete - currentClientId:", currentClientId);
       const response = await fetch(url, {
@@ -343,7 +377,11 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
         throw new Error(`Błąd HTTP! status: ${response.status} - ${errText}`);
       }
       Alert.alert("Sukces", "Zamówienie zostało pomyślnie usunięte.");
-      navigation.navigate("MyOrders", { clientId: currentClientId, userRole, userName });
+      navigation.navigate("MyOrders", {
+        clientId: currentClientId,
+        userRole,
+        userName,
+      });
     } catch (err) {
       console.error("Błąd przy usuwaniu zamówienia:", err);
       Alert.alert("Błąd", "Nie udało się usunąć zamówienia.");
@@ -360,7 +398,12 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
   const renderSpecificationDetails = () => {
     if (!order?.constructionSpecification) return null;
     return Object.entries(order.constructionSpecification)
-      .filter(([key]) => !["id", "type", "clientprovidedprice", "ispricegross"].includes(key.toLowerCase()))
+      .filter(
+        ([key]) =>
+          !["id", "type", "clientprovidedprice", "ispricegross"].includes(
+            key.toLowerCase()
+          )
+      )
       .map(([key, value]) => {
         const lowerKey = key.toLowerCase();
         const label = SPECIFICATION_LABELS[lowerKey] || key;
@@ -397,18 +440,34 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/logo.png")} style={styles.headerIcon} />
-        <Text style={styles.headerText}>SZCZEGÓŁY ZAMÓWIENIA BUDOWLANEGO</Text>
+        <Image
+          source={require("../assets/icons/crane.png")}
+          style={styles.headerIcon}
+        />
+        <Text style={styles.headerText}>Szczegóły zlecenia budowlanego</Text>
       </View>
 
-      {renderOrderField("Status", order.status)}
+      {renderOrderField("Status", translateStatus(order.status))}
       {renderOrderField("Opis", order.description)}
-      {renderOrderField("Typ budowy", formatConstructionType(order.constructionType))}
+      {renderOrderField(
+        "Typ budowy",
+        formatConstructionType(order.constructionType)
+      )}
       {renderOrderField("Żądany termin rozpoczęcia", order.requestedStartTime)}
-      {renderOrderField("Cena zaproponowana przez klienta", `${order.clientProposedPrice} PLN`)}
-      {renderOrderField("Uzgodniona cena", order.agreedPrice !== null ? `${order.agreedPrice} PLN` : "N/A")}
-      {order.client && renderOrderField("Telefon klienta", order.client.contactDetails.phone)}
-      {renderOrderField("Adres zamówienia", `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`)}
+      {renderOrderField(
+        "Cena zaproponowana przez klienta",
+        `${order.clientProposedPrice} PLN`
+      )}
+      {renderOrderField(
+        "Uzgodniona cena",
+        order.agreedPrice !== null ? `${order.agreedPrice} PLN` : "N/A"
+      )}
+      {order.client &&
+        renderOrderField("Telefon klienta", order.client.contactDetails.phone)}
+      {renderOrderField(
+        "Adres zamówienia",
+        `${order.address.postCode}, ${order.address.city}, ${order.address.streetName}`
+      )}
 
       <View style={styles.detailBlock}>
         <Text style={styles.detailLabel}>Specyfikacja budowy</Text>
@@ -421,24 +480,35 @@ const ConstructionOrderDetailsScreen: React.FC = () => {
         order.worker && (
           <View style={styles.detailBlock}>
             <Text style={styles.detailLabel}>Kontakt do wykonawcy</Text>
-            <Text style={styles.detailValue}>Imię: {order.worker.contactDetails.name}</Text>
-            <Text style={styles.detailValue}>Telefon: {order.worker.contactDetails.phone}</Text>
+            <Text style={styles.detailValue}>
+              Imię: {order.worker.contactDetails.name}
+            </Text>
+            <Text style={styles.detailValue}>
+              Telefon: {order.worker.contactDetails.phone}
+            </Text>
           </View>
         )}
 
       {order.status === "Accepted" && (
-        <TouchableOpacity style={styles.completeButton} onPress={handleComplete}>
+        <TouchableOpacity
+          style={styles.completeButton}
+          onPress={handleComplete}
+        >
           <Text style={styles.completeButtonText}>Zakończ</Text>
         </TouchableOpacity>
       )}
 
       {order.status !== "Accepted" && userType.toLowerCase() === "worker" && (
-        <TouchableOpacity style={styles.initiateButton} onPress={handleInitiate}>
+        <TouchableOpacity
+          style={styles.initiateButton}
+          onPress={handleInitiate}
+        >
           <Text style={styles.initiateButtonText}>Zainicjuj</Text>
         </TouchableOpacity>
       )}
 
-      {(order.status === "Completed" || (order.status === "New" && userType.toLowerCase() !== "worker")) && (
+      {(order.status === "Completed" ||
+        (order.status === "New" && userType.toLowerCase() !== "worker")) && (
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
           <Text style={styles.deleteButtonText}>Usuń</Text>
         </TouchableOpacity>
@@ -486,12 +556,12 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginBottom: 10,
-    borderRadius: 100,
   },
   headerText: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#593100",
+    textAlign: "center",
   },
   detailBlock: {
     width: "100%",

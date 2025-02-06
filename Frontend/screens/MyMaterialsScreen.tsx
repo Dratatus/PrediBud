@@ -62,7 +62,6 @@ interface CommonOrder {
   sub: string;
 }
 
-// Funkcja tłumacząca typ materiału na język polski
 const materialMapping: Record<string, string> = {
   wood: "Drewno",
   steel: "Stal",
@@ -73,15 +72,71 @@ const materialMapping: Record<string, string> = {
   composite: "Kompozyt",
   drywall: "Płyta gipsowo-kartonowa",
   vinyl: "Winyl",
+  mineralfiber: "Włókno mineralne",
+  metal: "Metal",
+  glassfiber: "Włókno szklane",
+  wroughtiron: "Kute żelazo",
+  styrofoam: "Styropian",
+  mineralwool: "Wełna mineralna",
+  polyurethanefoam: "Pianka poliuretanowa",
+  fiberglass: "Włókno szklane",
+  plaster: "Tynk",
+  stone: "Kamień",
+  metalsiding: "Okładzina metalowa",
+  laminate: "Laminat",
+  hardwood: "Drewno liściaste",
+  carpet: "Dywan",
+  tile: "Płytki",
+  cellulose: "Celuloza",
+  rockwool: "Wełna skalna",
+  acrylic: "Akryl",
+  latex: "Lateks",
+  oilbased: "Na bazie oleju",
+  waterbased: "Na bazie wody",
+  enamel: "Emalia",
+  chalk: "Kreda",
+  glossy: "Błyszcząca",
+  epoxy: "Epoksydowa",
+  matte: "Matowa",
+  satin: "Satynowa",
+  gypsum: "Gips",
+  cement: "Cement",
+  lime: "Wapno",
+  limecement: "Wapno-cementowy",
+  clay: "Glina",
+  silicone: "Silikon",
+  silicate: "Krzemian",
+  concrete: "Beton",
+  prefabricatedconcrete: "Beton prefabrykowany",
+  aeratedconcrete: "Beton komórkowy",
+  metalsheet: "Blacha",
+  asphaltshingle: "Gont asfaltowy",
+  slate: "Łupek",
+  thatch: "Strzecha",
+  marble: "Marmur",
+  granite: "Granit",
 };
 
-// Mapowanie tłumaczenia kategorii materiału
 const categoryMapping: Record<string, string> = {
   balcony: "Balkon",
-  // Możesz dodać więcej tłumaczeń kategorii, jeśli są potrzebne
+  suspendedceiling: "Sufit podwieszany",
+  doors: "Drzwi",
+  facade: "Elewacja",
+  flooring: "Podłoga",
+  insulationofattic: "Izolacja poddasza",
+  painting: "Malowanie",
+  plastering: "Tynkowanie",
+  ceiling: "Sufit",
+  chimney: "Kominek",
+  foundation: "Fundament",
+  loadbearingwall: "Ściana nośna",
+  partitionwall: "Ściana działowa",
+  roof: "Dach",
+  ventilationsystem: "System wentylacyjny",
+  staircase: "Schody",
+  windows: "Okna",
 };
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
     partitionwall: "Ściana działowa",
@@ -124,7 +179,9 @@ const MyMaterialsScreen: React.FC = () => {
       console.log("Odpowiedź dla zamówień materiałowych:", response.data);
       const filteredOrders: CommonOrder[] = response.data
         .filter((order) => {
-          console.log(`Zamówienie materiałowe o id ${order.id} - userId: ${order.userId}`);
+          console.log(
+            `Zamówienie materiałowe o id ${order.id} - userId: ${order.userId}`
+          );
           return order.userId === clientId;
         })
         .map((order) => ({
@@ -149,7 +206,6 @@ const MyMaterialsScreen: React.FC = () => {
     navigation.navigate("UserProfile", { clientId, userRole, userName });
   };
 
-  // Uaktualniona funkcja handleDetails przekazuje wszystkie wymagane parametry
   const handleDetails = (orderId: number) => {
     navigation.navigate("OrderDetails", {
       workId: orderId.toString(),
@@ -296,7 +352,12 @@ const MyMaterialsScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -304,9 +365,13 @@ const MyMaterialsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
+      <Image
+        source={require("../assets/icons/orders.png")}
+        style={styles.headerIcon}
+      />
       <Text style={styles.headerText}>Moje zamówione materiały</Text>
       <FlatList
         data={orders}
@@ -338,10 +403,16 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
   },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    alignSelf: "center",
+    marginTop: 50,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    marginTop: 90,
     marginBottom: 30,
     textAlign: "center",
   },

@@ -7,6 +7,7 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import axios from "axios";
@@ -14,7 +15,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
 type NotificationsRouteProps = RouteProp<StackParamList, "Notifications">;
-type NavigationProps = NativeStackNavigationProp<StackParamList, "Notifications">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "Notifications"
+>;
 
 interface Notification {
   id: number;
@@ -57,13 +61,11 @@ const NotificationsScreen: React.FC = () => {
     }
   };
 
-  // Funkcja do usuwania pojedynczego powiadomienia
   const handleDeleteNotification = async (notificationId: number) => {
     try {
       const url = `http://10.0.2.2:5142/api/Notification/${notificationId}`;
       console.log("Usuwanie powiadomienia, URL:", url);
       await axios.delete(url);
-      // Po usunięciu, odśwież listę powiadomień
       fetchNotifications();
     } catch (err) {
       console.error("Błąd usuwania powiadomienia:", err);
@@ -73,7 +75,9 @@ const NotificationsScreen: React.FC = () => {
 
   const handleDeleteAll = async () => {
     try {
-      await axios.delete(`http://10.0.2.2:5142/api/Notification/${clientId}/all`);
+      await axios.delete(
+        `http://10.0.2.2:5142/api/Notification/${clientId}/all`
+      );
       setNotifications([]);
     } catch (err) {
       console.error("Błąd usuwania powiadomień:", err);
@@ -95,16 +99,13 @@ const NotificationsScreen: React.FC = () => {
 
     return (
       <View style={styles.notificationItem}>
-        {/* Lewa sekcja – constructionOrderID */}
         <View style={styles.leftSection}>
           <Text style={styles.orderIDText}>ID: {item.constructionOrderID}</Text>
         </View>
-        {/* Środkowa sekcja – tytuł i opis */}
         <View style={styles.notificationContent}>
           <Text style={styles.notificationTitle}>{item.title}</Text>
           <Text style={styles.notificationDescription}>{item.description}</Text>
         </View>
-        {/* Prawa sekcja – data, godzina oraz przycisk X */}
         <View style={styles.rightSection}>
           <View style={styles.dateTimeContainer}>
             <Text style={styles.notificationTime}>{timeStr}</Text>
@@ -123,7 +124,12 @@ const NotificationsScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -133,22 +139,34 @@ const NotificationsScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+          <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
         <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.headerButton} onPress={handleDeleteAll}>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleDeleteAll}
+          >
             <Text style={styles.headerButtonText}>Usuń wszystko</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.headerText}>Powiadomienia</Text>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      <FlatList
-        data={notifications}
-        renderItem={renderNotification}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.notificationList}
-      />
+      <View style={styles.contentWrapper}>
+        <View style={styles.headerContainer}>
+          <Image
+            source={require("../assets/icons/notifications.png")}
+            style={styles.icon}
+            resizeMode="contain"
+          />
+          <Text style={styles.headerText}>Powiadomienia</Text>
+        </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        <FlatList
+          data={notifications}
+          renderItem={renderNotification}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.notificationList}
+        />
+      </View>
     </View>
   );
 };
@@ -163,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 10,
   },
   backButton: {
@@ -191,10 +209,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
+  contentWrapper: {
+    marginTop: -30,
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  icon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 30,
     textAlign: "center",
   },
   notificationList: {

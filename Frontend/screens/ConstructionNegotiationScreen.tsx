@@ -13,15 +13,22 @@ import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
-type NegotiationRouteProps = RouteProp<StackParamList, "ConstructionNegotiation">;
-type NavigationProps = NativeStackNavigationProp<StackParamList, "ConstructionNegotiation">;
+type NegotiationRouteProps = RouteProp<
+  StackParamList,
+  "ConstructionNegotiation"
+>;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "ConstructionNegotiation"
+>;
 
 const ConstructionNegotiationScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<NegotiationRouteProps>();
 
   const { orderId, clientProposedPrice, workerId } = route.params;
-  const [proposedPrice, setProposedPrice] = useState<number>(clientProposedPrice);
+  const [proposedPrice, setProposedPrice] =
+    useState<number>(clientProposedPrice);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,9 +74,7 @@ const ConstructionNegotiationScreen: React.FC = () => {
           style={[styles.input, { textAlign: "center" }]}
           keyboardType="numeric"
           value={proposedPrice.toString()}
-          onChangeText={(text) =>
-            setProposedPrice(text ? parseFloat(text) : 0)
-          }
+          onChangeText={(text) => setProposedPrice(text ? parseFloat(text) : 0)}
         />
       </View>
 

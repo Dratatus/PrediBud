@@ -1,6 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { StackParamList } from "../navigation/AppNavigator";
 import { SpecificationDetails } from "../screens/CalculatorScreen";
@@ -11,7 +20,13 @@ type CostSummaryRouteProps = RouteProp<StackParamList, "CostSummary">;
 
 const CostSummaryScreen: React.FC = () => {
   const route = useRoute<CostSummaryRouteProps>();
-  const { constructionType, specificationDetails, includeTax, totalCost, clientId } = route.params;
+  const {
+    constructionType,
+    specificationDetails,
+    includeTax,
+    totalCost,
+    clientId,
+  } = route.params;
   const [calculatedCost, setCalculatedCost] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProps>();
@@ -149,7 +164,9 @@ const CostSummaryScreen: React.FC = () => {
       } catch (error: any) {
         console.error("Błąd pobierania ceny:", error.message || error);
         setCalculatedCost(null);
-        setError("Nie udało się obliczyć całkowitego kosztu. Spróbuj ponownie.");
+        setError(
+          "Nie udało się obliczyć całkowitego kosztu. Spróbuj ponownie."
+        );
       }
     };
 
@@ -163,7 +180,7 @@ const CostSummaryScreen: React.FC = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+          <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Podsumowanie kosztów</Text>
         <Text style={styles.errorText}>{error}</Text>
@@ -191,7 +208,7 @@ const CostSummaryScreen: React.FC = () => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <Image
@@ -211,7 +228,9 @@ const CostSummaryScreen: React.FC = () => {
         <Text style={styles.detailText}>
           Uwzględnić podatek: {includeTax ? "Tak" : "Nie"}
         </Text>
-        <Text style={styles.detailText}>Całkowity koszt: {calculatedCost} PLN</Text>
+        <Text style={styles.detailText}>
+          Całkowity koszt: {calculatedCost} PLN
+        </Text>
       </View>
 
       <View style={styles.box}>
@@ -393,7 +412,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9b234",
     padding: 20,
     width: "100%",
-    // Możesz usunąć lub zmienić alignItems, aby elementy rozciągały się na całą szerokość:
     alignItems: "stretch",
   },
   backButton: {
@@ -415,7 +433,7 @@ const styles = StyleSheet.create({
     height: 70,
     alignSelf: "center",
     marginBottom: 20,
-    marginTop: 75,
+    marginTop: 50,
   },
   title: {
     fontSize: 32,
@@ -428,7 +446,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
-    // Ustawienie szerokości na 100% pozwoli boxowi rozciągnąć się:
     width: "100%",
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -480,7 +497,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-
 });
 
 export default CostSummaryScreen;

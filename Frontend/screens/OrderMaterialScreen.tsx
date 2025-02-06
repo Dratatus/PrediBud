@@ -15,7 +15,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import * as ImagePicker from "expo-image-picker";
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "OrderMaterial">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "OrderMaterial"
+>;
 type OrderMaterialRouteProps = RouteProp<StackParamList, "OrderMaterial">;
 
 interface Material {
@@ -27,7 +30,6 @@ interface Material {
   supplierName: string;
 }
 
-// Mapowanie tłumaczenia dla materiałów
 const materialMapping: Record<string, string> = {
   wood: "Drewno",
   steel: "Stal",
@@ -83,19 +85,32 @@ const materialMapping: Record<string, string> = {
   granite: "Granit",
 };
 
-// Mapowanie tłumaczenia dla kategorii materiału
 const categoryMapping: Record<string, string> = {
   balcony: "Balkon",
-  // Dodaj inne tłumaczenia, jeśli są potrzebne
+  suspendedceiling: "Sufit podwieszany",
+  doors: "Drzwi",
+  facade: "Elewacja",
+  flooring: "Podłoga",
+  insulationofattic: "Izolacja poddasza",
+  painting: "Malowanie",
+  plastering: "Tynkowanie",
+  ceiling: "Sufit",
+  chimney: "Kominek",
+  foundation: "Fundament",
+  loadbearingwall: "Ściana nośna",
+  partitionwall: "Ściana działowa",
+  roof: "Dach",
+  ventilationsystem: "System wentylacyjny",
+  staircase: "Schody",
+  windows: "Okna",
 };
 
 const OrderMaterialScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<OrderMaterialRouteProps>();
-  
-  // Oczekujemy, że trasa przekazuje material, clientId, userRole oraz userName
+
   const { material, clientId, userRole, userName } = route.params;
-  
+
   console.log("OrderMaterialScreen - Otrzymano clientId:", clientId);
   console.log("OrderMaterialScreen - Materiał:", material);
 
@@ -227,8 +242,9 @@ const OrderMaterialScreen: React.FC = () => {
       unitPriceNet: material.priceWithoutTax,
       unitPriceGross: material.priceWithoutTax * 1.23,
       quantity: parseInt(quantity) || 0,
-      totalPriceNet: (parseInt(quantity) * material.priceWithoutTax) || 0,
-      totalPriceGross: (parseInt(quantity) * material.priceWithoutTax * 1.23) || 0,
+      totalPriceNet: parseInt(quantity) * material.priceWithoutTax || 0,
+      totalPriceGross:
+        parseInt(quantity) * material.priceWithoutTax * 1.23 || 0,
       createdDate: new Date().toISOString(),
       userId: clientId,
       supplierId: material.supplierId,
@@ -268,7 +284,7 @@ const OrderMaterialScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
@@ -276,14 +292,15 @@ const OrderMaterialScreen: React.FC = () => {
           source={getMaterialIcon(material.materialType)}
           style={styles.headerIcon}
         />
-        <Text style={styles.headerText}>ZAMÓW MATERIAŁ</Text>
+        <Text style={styles.headerText}>Zamów materiał</Text>
       </View>
 
       <View style={styles.inputBlock}>
         <Text style={styles.inputLabel}>Materiał</Text>
         <View style={styles.fixedInfo}>
           <Text style={styles.fixedText}>
-            {materialMapping[material.materialType.toLowerCase()] || material.materialType}
+            {materialMapping[material.materialType.toLowerCase()] ||
+              material.materialType}
           </Text>
         </View>
       </View>
@@ -293,7 +310,8 @@ const OrderMaterialScreen: React.FC = () => {
         <View style={styles.fixedInfo}>
           <Text style={styles.fixedText}>
             Kategoria:{" "}
-            {categoryMapping[material.materialCategory.toLowerCase()] || material.materialCategory}
+            {categoryMapping[material.materialCategory.toLowerCase()] ||
+              material.materialCategory}
           </Text>
           <Text style={styles.fixedText}>
             Dostawca: {material.supplierName}
@@ -377,7 +395,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     alignItems: "center",
-    marginTop: 90,
+    marginTop: 50,
     marginBottom: 30,
   },
   headerIcon: {

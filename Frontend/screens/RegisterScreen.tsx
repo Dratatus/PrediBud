@@ -150,7 +150,9 @@ const RegisterScreen = () => {
           onPress={() => navigation.navigate("Login")}
           style={styles.linkContainer}
         >
-          <Text style={styles.linkText}>Masz już konto? Zaloguj się tutaj.</Text>
+          <Text style={styles.linkText}>
+            Masz już konto? Zaloguj się tutaj.
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

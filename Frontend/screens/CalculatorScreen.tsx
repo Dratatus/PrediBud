@@ -205,7 +205,6 @@ const CalculatorScreen: React.FC = () => {
 
   const navigation = useNavigation<NavProps>();
   const route = useRoute<CalculatorRouteProps>();
-  // Pobieramy wszystkie wymagane dane
   const { clientId, userRole, userName } = route.params!;
   if (clientId == null) {
     console.error("CalculatorScreen: clientId nie został przekazany.");
@@ -279,7 +278,9 @@ const CalculatorScreen: React.FC = () => {
       }
     } else if (state.constructionType === "Balcony") {
       materialEnumValue =
-        MATERIAL_ENUM12[state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12];
+        MATERIAL_ENUM12[
+          state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12
+        ];
       if (materialEnumValue === undefined) {
         console.error("Wybrano nieprawidłowy materiał");
         return;
@@ -684,7 +685,10 @@ const CalculatorScreen: React.FC = () => {
               >
                 <Picker.Item label="Styropian" value="Styrofoam" />
                 <Picker.Item label="Wełna mineralna" value="MineralWool" />
-                <Picker.Item label="Pianka poliuretanowa" value="PolyurethaneFoam" />
+                <Picker.Item
+                  label="Pianka poliuretanowa"
+                  value="PolyurethaneFoam"
+                />
                 <Picker.Item label="Wełna szklana" value="Fiberglass" />
               </Picker>
             </View>
@@ -827,7 +831,10 @@ const CalculatorScreen: React.FC = () => {
               >
                 <Picker.Item label="Wełna mineralna" value="MineralWool" />
                 <Picker.Item label="Styropian" value="Styrofoam" />
-                <Picker.Item label="Pianka poliuretanowa" value="PolyurethaneFoam" />
+                <Picker.Item
+                  label="Pianka poliuretanowa"
+                  value="PolyurethaneFoam"
+                />
                 <Picker.Item label="Celuloza" value="Cellulose" />
                 <Picker.Item label="Wełna szklana" value="Fiberglass" />
                 <Picker.Item label="Wełna skalna" value="RockWool" />
@@ -1203,7 +1210,10 @@ const CalculatorScreen: React.FC = () => {
                 <Picker.Item label="Drewno" value="Wood" />
                 <Picker.Item label="Stal" value="Steel" />
                 <Picker.Item label="Kompozyt" value="Composite" />
-                <Picker.Item label="Beton prefabrykowany" value="PrefabricatedConcrete" />
+                <Picker.Item
+                  label="Beton prefabrykowany"
+                  value="PrefabricatedConcrete"
+                />
               </Picker>
             </View>
           </>
@@ -1258,7 +1268,10 @@ const CalculatorScreen: React.FC = () => {
             <Picker.Item label="Balkon" value="Balcony" />
             <Picker.Item label="Kominek" value="Chimney" />
             <Picker.Item label="Ściana nośna" value="LoadBearingWall" />
-            <Picker.Item label="System wentylacyjny" value="VentilationSystem" />
+            <Picker.Item
+              label="System wentylacyjny"
+              value="VentilationSystem"
+            />
             <Picker.Item label="Dach" value="Roof" />
             <Picker.Item label="Sufit" value="Ceiling" />
           </Picker>
@@ -1317,7 +1330,7 @@ const styles = StyleSheet.create({
     height: 70,
     alignSelf: "center",
     marginBottom: 10,
-    marginTop: 75,
+    marginTop: 50,
   },
   title: {
     fontSize: 24,

@@ -6,13 +6,14 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Image,
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
-// Funkcja tłumacząca typ budowy na język polski
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
     partitionwall: "Ściana działowa",
@@ -37,8 +38,14 @@ const formatConstructionType = (type: string): string => {
   return mapping[type.toLowerCase()] || type;
 };
 
-type NavigationProps = NativeStackNavigationProp<StackParamList, "ClientNegotiations">;
-type ClientNegotiationsRouteProps = RouteProp<StackParamList, "ClientNegotiations">;
+type NavigationProps = NativeStackNavigationProp<
+  StackParamList,
+  "ClientNegotiations"
+>;
+type ClientNegotiationsRouteProps = RouteProp<
+  StackParamList,
+  "ClientNegotiations"
+>;
 
 interface Negotiation {
   id: number;
@@ -140,7 +147,9 @@ const ClientNegotiationsScreen: React.FC = () => {
     <View style={styles.itemContainer}>
       <View style={styles.itemInfoContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.itemTitle}>{formatConstructionType(item.constructionType)}</Text>
+          <Text style={styles.itemTitle}>
+            {formatConstructionType(item.constructionType)}
+          </Text>
           <Text style={styles.itemSubtitle}>{item.description}</Text>
         </View>
         <TouchableOpacity
@@ -173,7 +182,7 @@ const ClientNegotiationsScreen: React.FC = () => {
       <View style={[styles.container, styles.centered]}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+          <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
         </TouchableOpacity>
       </View>
     );
@@ -182,9 +191,15 @@ const ClientNegotiationsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Negocjacje klienta</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require("../assets/icons/negotiations.png")}
+          style={styles.headerIcon}
+        />
+        <Text style={styles.headerText}>Negocjacje</Text>
+      </View>
       <FlatList
         data={negotiations}
         renderItem={renderNegotiationItem}
@@ -200,7 +215,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f9b234",
     paddingHorizontal: 20,
-    paddingTop: 90,
+    paddingTop: 70,
   },
   centered: {
     justifyContent: "center",
@@ -219,6 +234,15 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: "black",
     fontWeight: "bold",
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  headerIcon: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
   },
   headerText: {
     fontSize: 32,
