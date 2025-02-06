@@ -30,10 +30,10 @@ const LoginScreen = () => {
       console.log(response);
 
       const token = response.data.token;
-      console.log("Login successful:", token);
+      console.log("Logowanie udane:", token);
 
       const decodedToken = decodeJWT(token);
-      console.log("Decoded Token:", decodedToken);
+      console.log("Zdekodowany token:", decodedToken);
 
       const userName =
         decodedToken?.[
@@ -42,9 +42,9 @@ const LoginScreen = () => {
       const userRole = decodedToken?.UserType;
       const clientId = Number(decodedToken?.sub);
 
-      console.log("User Name:", userName);
-      console.log("User Role:", userRole);
-      console.log("Client ID:", clientId);
+      console.log("Nazwa użytkownika:", userName);
+      console.log("Rola użytkownika:", userRole);
+      console.log("ID klienta:", clientId);
 
       navigation.navigate("UserProfile", {
         userRole: userRole,
@@ -53,10 +53,10 @@ const LoginScreen = () => {
       });
     } catch (error: any) {
       console.error(
-        "Error during login:",
+        "Błąd podczas logowania:",
         error.response?.data || error.message
       );
-      console.error("Error during login:", error);
+      console.error("Błąd podczas logowania:", error);
     }
   };
 
@@ -80,7 +80,7 @@ const LoginScreen = () => {
 
       return JSON.parse(jsonPayload);
     } catch (error) {
-      console.error("Error decoding JWT:", error);
+      console.error("Błąd podczas dekodowania JWT:", error);
       return null;
     }
   };
@@ -88,9 +88,9 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <Image source={require("../assets/logo.png")} style={styles.logo} />
-      <Text style={styles.title}>PREDICT YOUR FUTURE!</Text>
-      <Text style={styles.subtitle}>Login</Text>
-      <Text style={styles.description}>Sign in to continue.</Text>
+      <Text style={styles.title}>PRZEWIDŹ SWOJĄ PRZYSZŁOŚĆ!</Text>
+      <Text style={styles.subtitle}>Logowanie</Text>
+      <Text style={styles.description}>Zaloguj się, aby kontynuować.</Text>
 
       <View style={styles.form}>
         <Text style={styles.label}>EMAIL</Text>
@@ -102,23 +102,23 @@ const LoginScreen = () => {
           onChangeText={setEmail}
         />
 
-        <Text style={styles.label}>PASSWORD</Text>
+        <Text style={styles.label}>HASŁO</Text>
         <TextInput
           style={styles.input}
-          placeholder="Password"
+          placeholder="Hasło"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>LOG IN</Text>
+          <Text style={styles.buttonText}>ZALOGUJ SIĘ</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={() => navigation.navigate("Register")}>
         <Text style={styles.linkText}>
-          Don't have an account? Create one here.
+          Nie masz konta? Utwórz je tutaj.
         </Text>
       </TouchableOpacity>
     </View>

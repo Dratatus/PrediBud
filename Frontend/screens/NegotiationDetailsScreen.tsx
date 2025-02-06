@@ -12,19 +12,62 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "NegotiationDetails"
->;
-type NegotiationDetailsRouteProps = RouteProp<
-  StackParamList,
-  "NegotiationDetails"
->;
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
+// Funkcja tłumacząca ostatnią akcję
+const translateLastAction = (action: string): string => {
+  const mapping: Record<string, string> = {
+    client: "Klient",
+    worker: "Wykonawca",
+  };
+  return mapping[action.toLowerCase()] || action;
+};
+
+type NavigationProps = NativeStackNavigationProp<StackParamList, "NegotiationDetails">;
+type NegotiationDetailsRouteProps = RouteProp<StackParamList, "NegotiationDetails">;
 
 const NegotiationDetailsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<NegotiationDetailsRouteProps>();
-  const { negotiation, clientId } = route.params;
+
+  const {
+    negotiation,
+    clientId,
+    userRole = "Client",
+    userName = "Nieznany użytkownik",
+  } = route.params as {
+    negotiation: any; // Zamień 'any' na właściwy typ, jeśli masz jego definicję.
+    clientId: number;
+    userRole?: string;
+    userName?: string;
+  };
+
+  // Ukryj przyciski, jeśli rola zalogowanego użytkownika (userRole) jest taka sama jak wartość negotiation.lastActionBy (ignorujemy wielkość liter)
+  const hideActionButtons =
+    userRole.toLowerCase() === negotiation.lastActionBy.toLowerCase();
 
   const handleBack = () => {
     navigation.goBack();
@@ -32,17 +75,21 @@ const NegotiationDetailsScreen: React.FC = () => {
 
   const handleAction = async (action: "accept" | "reject") => {
     const url = `http://10.0.2.2:5142/api/Negotiation/${negotiation.id}/${action}`;
-    const payload =
-      action === "accept" ? { clientId: clientId } : { userId: clientId };
+    const payload = action === "accept" ? { clientId } : { userId: clientId };
 
     try {
       await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-      navigation.navigate("MyOrders", { clientId });
+      // Jeśli rola użytkownika to worker – nawiguj do MyWorks, w przeciwnym razie do MyOrders.
+      if (userRole.toLowerCase() === "worker") {
+        navigation.navigate("MyWorks", { clientId, userRole, userName });
+      } else {
+        navigation.navigate("MyOrders", { clientId, userRole, userName });
+      }
     } catch (err) {
-      console.error(`Error on ${action}:`, err);
-      Alert.alert("Error", `Failed to ${action} negotiation.`);
+      console.error(`Błąd przy akcji ${action}:`, err);
+      Alert.alert("Błąd", `Nie udało się ${action === "accept" ? "zaakceptować" : "odrzucić"} negocjacji.`);
     }
   };
 
@@ -52,6 +99,8 @@ const NegotiationDetailsScreen: React.FC = () => {
       clientProposedPrice: negotiation.clientProposedPrice,
       workerProposedPrice: negotiation.workerProposedPrice ?? 0,
       clientId,
+      userRole,
+      userName,
     });
   };
 
@@ -61,7 +110,7 @@ const NegotiationDetailsScreen: React.FC = () => {
       <Text style={styles.detailValue}>
         {value !== null && value !== undefined && value !== ""
           ? value.toString()
-          : "N/A"}
+          : "N/D"}
       </Text>
     </View>
   );
@@ -75,7 +124,7 @@ const NegotiationDetailsScreen: React.FC = () => {
       <Text style={styles.detailLabel}>{label}</Text>
       {Object.entries(keyMapping).map(([objKey, displayLabel]) => (
         <Text key={objKey} style={styles.detailValue}>
-          {displayLabel}: {obj && obj[objKey] ? obj[objKey].toString() : "N/A"}
+          {displayLabel}: {obj && obj[objKey] ? obj[objKey].toString() : "N/D"}
         </Text>
       ))}
     </View>
@@ -84,95 +133,73 @@ const NegotiationDetailsScreen: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
 
       <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Negotiation Details</Text>
+        <Text style={styles.headerText}>SZCZEGÓŁY NEGOCJACJI</Text>
       </View>
 
       {renderField("ID", negotiation.id)}
-      {renderField("Description", negotiation.description)}
+      {renderField("Opis", negotiation.description)}
       {renderField(
         "Status",
         negotiation.status === "NegotiationInProgress"
-          ? "Negotiation in progress"
+          ? "Negocjacje w toku"
           : negotiation.status
       )}
-      {renderField("Construction Type", negotiation.constructionType)}
-      {renderField("Requested Start Time", negotiation.requestedStartTime)}
+      {renderField("Typ budowy", formatConstructionType(negotiation.constructionType))}
+      {renderField("Żądany termin rozpoczęcia", negotiation.requestedStartTime)}
+      {renderField("Cena zaproponowana przez klienta", `${negotiation.clientProposedPrice} PLN`)}
       {renderField(
-        "Client Proposed Price",
-        `${negotiation.clientProposedPrice} PLN`
-      )}
-      {renderField(
-        "Worker Proposed Price",
+        "Cena zaproponowana przez wykonawcę",
         negotiation.workerProposedPrice !== null
           ? `${negotiation.workerProposedPrice} PLN`
-          : "N/A"
+          : "N/D"
       )}
-      {renderField("Last Action By", negotiation.lastActionBy)}
-      {renderObjectFieldWithMapping("Order Address", negotiation.address, {
-        postCode: "Post code",
-        city: "City",
-        streetName: "Street Name",
+      {renderField("Ostatnia akcja wykonana przez", translateLastAction(negotiation.lastActionBy))}
+      {renderObjectFieldWithMapping("Adres zamówienia", negotiation.address, {
+        postCode: "Kod pocztowy",
+        city: "Miasto",
+        streetName: "Nazwa ulicy",
       })}
-      {renderObjectFieldWithMapping(
-        "Client Contact",
-        negotiation.client.contactDetails,
-        {
-          name: "Name",
-          phone: "Phone",
-        }
-      )}
+      {renderObjectFieldWithMapping("Kontakt klienta", negotiation.client.contactDetails, {
+        name: "Imię",
+        phone: "Telefon",
+      })}
       {negotiation.client.address &&
-        renderObjectFieldWithMapping(
-          "Client Address",
-          negotiation.client.address,
-          {
-            postCode: "Post code",
-            city: "City",
-            streetName: "Street Name",
-          }
-        )}
+        renderObjectFieldWithMapping("Adres klienta", negotiation.client.address, {
+          postCode: "Kod pocztowy",
+          city: "Miasto",
+          streetName: "Nazwa ulicy",
+        })}
       {negotiation.worker &&
-        renderObjectFieldWithMapping(
-          "Worker Contact",
-          negotiation.worker.contactDetails,
-          {
-            name: "Name",
-            phone: "Phone",
-          }
-        )}
+        renderObjectFieldWithMapping("Kontakt wykonawcy", negotiation.worker.contactDetails, {
+          name: "Imię",
+          phone: "Telefon",
+        })}
       {negotiation.worker &&
         negotiation.worker.address &&
-        renderObjectFieldWithMapping(
-          "Worker Address",
-          negotiation.worker.address,
-          {
-            postCode: "Post code",
-            city: "City",
-            streetName: "Street Name",
-          }
-        )}
+        renderObjectFieldWithMapping("Adres wykonawcy", negotiation.worker.address, {
+          postCode: "Kod pocztowy",
+          city: "Miasto",
+          streetName: "Nazwa ulicy",
+        })}
 
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleAction("accept")}
-        >
-          <Text style={styles.actionButtonText}>Accept</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleAction("reject")}
-        >
-          <Text style={styles.actionButtonText}>Reject</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={handleCounter}>
-          <Text style={styles.actionButtonText}>Counter</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Renderuj przyciski tylko, jeśli warunek hideActionButtons jest fałszywy */}
+      {!hideActionButtons && (
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.acceptButton} onPress={() => handleAction("accept")}>
+            <Text style={styles.actionButtonText}>Akceptuj</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.rejectButton} onPress={() => handleAction("reject")}>
+            <Text style={styles.actionButtonText}>Odrzuć</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.counterButton} onPress={handleCounter}>
+            <Text style={styles.actionButtonText}>Kontruj</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -183,7 +210,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9b234",
     padding: 20,
     alignItems: "center",
-    paddingBottom: 40,
   },
   backButton: {
     position: "absolute",
@@ -235,17 +261,31 @@ const styles = StyleSheet.create({
     marginTop: 30,
     width: "100%",
   },
-  actionButton: {
-    backgroundColor: "#000",
+  actionButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  acceptButton: {
+    backgroundColor: "#4CAF50",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginHorizontal: 5,
   },
-  actionButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
+  rejectButton: {
+    backgroundColor: "#d9534f",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  counterButton: {
+    backgroundColor: "#fc9003",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
 });
 

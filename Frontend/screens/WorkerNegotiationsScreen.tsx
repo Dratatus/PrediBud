@@ -5,83 +5,51 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Image,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../navigation/AppNavigator";
+import { StackParamList, Negotiation } from "../navigation/AppNavigator";
 import axios from "axios";
 
-interface Negotiation {
-  id: number;
-  description: string;
-  status: string;
-  constructionType: string;
-  placementPhotos: string[];
-  requestedStartTime: string;
-  startDate: string | null;
-  endDate: string | null;
-  clientProposedPrice: number;
-  workerProposedPrice: number | null;
-  agreedPrice: number | null;
-  totalPrice: number;
-  client: {
-    id: number;
-    contactDetails: {
-      name: string;
-      phone: string;
-    };
-    addressId: number;
-    address: {
-      id: number;
-      postCode: string;
-      city: string;
-      streetName: string;
-    } | null;
-  };
-  worker: {
-    id: number;
-    contactDetails: {
-      name: string;
-      phone: string;
-    };
-    addressId: number;
-    address: {
-      id: number;
-      postCode: string;
-      city: string;
-      streetName: string;
-    } | null;
-  } | null;
-  lastActionBy: string;
-  address: {
-    city: string;
-    postCode: string;
-    streetName: string;
-  };
-  constructionSpecification: {
-    [key: string]: any;
-    id: number;
-    type: string;
-    clientProvidedPrice: number | null;
-    isPriceGross: boolean | null;
-  };
-  constructionSpecificationId: number;
-}
+type NavigationProps = NativeStackNavigationProp<StackParamList, "WorkerNegotiations">;
+type WorkerNegotiationsRouteProps = RouteProp<StackParamList, "WorkerNegotiations">;
 
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "WorkerNegotiations"
->;
-type WorkerNegotiationsRouteProps = RouteProp<
-  StackParamList,
-  "WorkerNegotiations"
->;
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string | undefined): string => {
+  if (!type) return "Brak typu";
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
 
 const WorkerNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<WorkerNegotiationsRouteProps>();
-  const { workerId } = route.params;
+
+  // Pobieramy workerId oraz userName (dla pracownika) z parametrów
+  const { workerId, userName } = route.params as { workerId: number; userName: string };
+  console.log("WorkerNegotiationsScreen - Worker ID:", workerId);
+
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,8 +62,8 @@ const WorkerNegotiationsScreen: React.FC = () => {
         );
         setNegotiations(response.data);
       } catch (err) {
-        console.error("Error fetching worker negotiations:", err);
-        setError("Failed to load negotiations.");
+        console.error("Błąd pobierania negocjacji wykonawcy:", err);
+        setError("Nie udało się załadować negocjacji.");
       } finally {
         setLoading(false);
       }
@@ -110,7 +78,9 @@ const WorkerNegotiationsScreen: React.FC = () => {
   const handleDetails = (negotiation: Negotiation) => {
     navigation.navigate("NegotiationDetails", {
       negotiation,
-      clientId: workerId,
+      clientId: workerId, // mimo nazwy parametru, tutaj używamy workerId jako clientId
+      userRole: "Worker",
+      userName: userName || "Nieznany wykonawca",
     });
   };
 
@@ -118,14 +88,16 @@ const WorkerNegotiationsScreen: React.FC = () => {
     <View style={styles.itemContainer}>
       <View style={styles.itemInfoContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.itemTitle}>{item.constructionType}</Text>
+          <Text style={styles.itemTitle}>
+            {formatConstructionType(item.constructionType)}
+          </Text>
           <Text style={styles.itemSubtitle}>{item.description}</Text>
         </View>
         <TouchableOpacity
           style={styles.detailsButton}
           onPress={() => handleDetails(item)}
         >
-          <Text style={styles.detailsButtonText}>see details</Text>
+          <Text style={styles.detailsButtonText}>szczegóły</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -144,7 +116,7 @@ const WorkerNegotiationsScreen: React.FC = () => {
       <View style={[styles.container, styles.centered]}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
         </TouchableOpacity>
       </View>
     );
@@ -153,9 +125,9 @@ const WorkerNegotiationsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Worker Negotiations</Text>
+      <Text style={styles.headerText}>Negocjacje wykonawcy</Text>
       <FlatList
         data={negotiations}
         renderItem={renderNegotiationItem}

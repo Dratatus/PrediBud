@@ -15,7 +15,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
 const MATERIAL_ENUM1 = {
-  //PartitionWall
   Drywall: 0,
   Brick: 1,
   AeratedConcrete: 2,
@@ -24,7 +23,6 @@ const MATERIAL_ENUM1 = {
 };
 
 const MATERIAL_ENUM3 = {
-  //Windows
   Unknown: 0,
   Wood: 1,
   PVC: 2,
@@ -34,7 +32,6 @@ const MATERIAL_ENUM3 = {
 };
 
 const MATERIAL_ENUM4 = {
-  //Doors
   Wood: 0,
   Steel: 1,
   PVC: 2,
@@ -43,7 +40,6 @@ const MATERIAL_ENUM4 = {
 };
 
 const INSULATION_TYPE_ENUM = {
-  //Facade
   Styrofoam: 0,
   MineralWool: 1,
   PolyurethaneFoam: 2,
@@ -51,7 +47,6 @@ const INSULATION_TYPE_ENUM = {
 };
 
 const FINISH_MATERIAL_ENUM = {
-  //Facade
   Plaster: 0,
   Brick: 1,
   Stone: 2,
@@ -60,7 +55,6 @@ const FINISH_MATERIAL_ENUM = {
 };
 
 const MATERIAL_ENUM6 = {
-  //Flooring
   Laminate: 0,
   Hardwood: 1,
   Vinyl: 2,
@@ -69,7 +63,6 @@ const MATERIAL_ENUM6 = {
 };
 
 const MATERIAL_ENUM7 = {
-  //SuspendedCeiling
   Drywall: 0,
   MineralFiber: 1,
   Metal: 2,
@@ -80,7 +73,6 @@ const MATERIAL_ENUM7 = {
 };
 
 const MATERIAL_ENUM8 = {
-  // InsulationOfAttic
   MineralWool: 0,
   Styrofoam: 1,
   PolyurethaneFoam: 2,
@@ -90,7 +82,6 @@ const MATERIAL_ENUM8 = {
 };
 
 const MATERIAL_ENUM9 = {
-  // Plastering
   Gypsum: 0,
   Cement: 1,
   Lime: 2,
@@ -102,7 +93,6 @@ const MATERIAL_ENUM9 = {
 };
 
 const MATERIAL_ENUM10 = {
-  // Painting
   Acrylic: 0,
   Latex: 1,
   OilBased: 2,
@@ -116,7 +106,6 @@ const MATERIAL_ENUM10 = {
 };
 
 const MATERIAL_ENUM11 = {
-  // Staircase
   Unknown: 0,
   Wood: 1,
   Metal: 2,
@@ -129,7 +118,6 @@ const MATERIAL_ENUM11 = {
 };
 
 const MATERIAL_ENUM12 = {
-  // Balcony
   Steel: 0,
   Wood: 1,
   Glass: 2,
@@ -138,7 +126,6 @@ const MATERIAL_ENUM12 = {
 };
 
 const MATERIAL_ENUM13 = {
-  // LoadBearingWall
   Concrete: 0,
   Brick: 1,
   AeratedConcrete: 2,
@@ -147,7 +134,6 @@ const MATERIAL_ENUM13 = {
 };
 
 const MATERIAL_ENUM14 = {
-  // Roof
   Tile: 0,
   MetalSheet: 1,
   AsphaltShingle: 2,
@@ -158,7 +144,6 @@ const MATERIAL_ENUM14 = {
 };
 
 const MATERIAL_ENUM15 = {
-  // Ceiling
   Concrete: 0,
   Wood: 1,
   Steel: 2,
@@ -179,8 +164,7 @@ const CONSTRUCTION_TYPE_ENUM = {
   Painting: 9,
   Staircase: 10,
   Balcony: 11,
-  ShellOpen: 12,
-  Chimney: 13,
+  Chimney: 12,
   LoadBearingWall: 14,
   VentilationSystem: 15,
   Roof: 16,
@@ -221,9 +205,10 @@ const CalculatorScreen: React.FC = () => {
 
   const navigation = useNavigation<NavProps>();
   const route = useRoute<CalculatorRouteProps>();
-  const { clientId } = route.params!;
+  // Pobieramy wszystkie wymagane dane
+  const { clientId, userRole, userName } = route.params!;
   if (clientId == null) {
-    console.error("CalculatorScreen: clientId is not provided.");
+    console.error("CalculatorScreen: clientId nie został przekazany.");
   }
 
   const handleCalculate = () => {
@@ -233,79 +218,77 @@ const CalculatorScreen: React.FC = () => {
       materialEnumValue =
         MATERIAL_ENUM1[state.fields.Material as keyof typeof MATERIAL_ENUM1];
       if (materialEnumValue === null || materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "Windows") {
       materialEnumValue =
         MATERIAL_ENUM3[state.fields.Material as keyof typeof MATERIAL_ENUM3];
       if (materialEnumValue === null || materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "Doors") {
       materialEnumValue =
         MATERIAL_ENUM4[state.fields.Material as keyof typeof MATERIAL_ENUM4];
       if (materialEnumValue === null || materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "Flooring") {
       materialEnumValue =
         MATERIAL_ENUM6[state.fields.Material as keyof typeof MATERIAL_ENUM6];
       if (materialEnumValue === null || materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "SuspendedCeiling") {
       materialEnumValue =
         MATERIAL_ENUM7[state.fields.Material as keyof typeof MATERIAL_ENUM7];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "InsulationOfAttic") {
       materialEnumValue =
         MATERIAL_ENUM8[state.fields.Material as keyof typeof MATERIAL_ENUM8];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "Plastering") {
       materialEnumValue =
         MATERIAL_ENUM9[state.fields.PlasterType as keyof typeof MATERIAL_ENUM9];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy rodzaj tynku");
         return;
       }
     } else if (state.constructionType === "Painting") {
       materialEnumValue =
         MATERIAL_ENUM10[state.fields.PaintType as keyof typeof MATERIAL_ENUM10];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy rodzaj farby");
         return;
       }
     } else if (state.constructionType === "Staircase") {
       materialEnumValue =
         MATERIAL_ENUM11[state.fields.Material as keyof typeof MATERIAL_ENUM11];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "Balcony") {
       materialEnumValue =
-        MATERIAL_ENUM12[
-          state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12
-        ];
+        MATERIAL_ENUM12[state.fields.RailingMaterial as keyof typeof MATERIAL_ENUM12];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     } else if (state.constructionType === "LoadBearingWall") {
       materialEnumValue =
         MATERIAL_ENUM13[state.fields.Material as keyof typeof MATERIAL_ENUM13];
       if (materialEnumValue === undefined) {
-        console.error("Invalid material selected");
+        console.error("Wybrano nieprawidłowy materiał");
         return;
       }
     }
@@ -449,18 +432,19 @@ const CalculatorScreen: React.FC = () => {
         };
         break;
       default:
-        console.error("Unsupported construction type");
+        console.error("Nieobsługiwany typ budowy");
         return;
     }
 
     const calculatedPrice = 1000;
-
     navigation.navigate("CostSummary", {
       constructionType: state.constructionType,
       specificationDetails,
       includeTax: state.includeTax,
       totalCost: calculatedPrice,
-      clientId,
+      clientId: clientId,
+      userRole: route.params?.userRole ?? "Client",
+      userName: route.params?.userName ?? "Unknown User",
     });
   };
 
@@ -469,7 +453,7 @@ const CalculatorScreen: React.FC = () => {
       case "PartitionWall":
         return (
           <>
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -480,7 +464,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -491,7 +475,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Thickness (m)</Text>
+            <Text style={styles.label}>Grubość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -502,7 +486,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -513,11 +497,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Drywall" value="Drywall" />
-                <Picker.Item label="Brick" value="Brick" />
-                <Picker.Item label="Aerated Concrete" value="AeratedConcrete" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Glass" value="Glass" />
+                <Picker.Item label="Płyta gipsowo-kartonowa" value="Drywall" />
+                <Picker.Item label="Cegła" value="Brick" />
+                <Picker.Item label="Beton komórkowy" value="AeratedConcrete" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Szkło" value="Glass" />
               </Picker>
             </View>
           </>
@@ -525,7 +509,7 @@ const CalculatorScreen: React.FC = () => {
       case "Foundation":
         return (
           <>
-            <Text style={styles.label}>Length (m)</Text>
+            <Text style={styles.label}>Długość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -536,7 +520,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -547,7 +531,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Depth (m)</Text>
+            <Text style={styles.label}>Głębokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -563,7 +547,7 @@ const CalculatorScreen: React.FC = () => {
       case "Windows":
         return (
           <>
-            <Text style={styles.label}>Amount</Text>
+            <Text style={styles.label}>Ilość</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -574,7 +558,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -585,7 +569,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -596,7 +580,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -607,12 +591,12 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Unknown" value="Unknown" />
-                <Picker.Item label="Wood" value="Wood" />
+                <Picker.Item label="Nieznany" value="Unknown" />
+                <Picker.Item label="Drewno" value="Wood" />
                 <Picker.Item label="PVC" value="PVC" />
-                <Picker.Item label="Aluminum" value="Aluminum" />
-                <Picker.Item label="Steel" value="Steel" />
-                <Picker.Item label="Composite" value="Composite" />
+                <Picker.Item label="Aluminium" value="Aluminum" />
+                <Picker.Item label="Stal" value="Steel" />
+                <Picker.Item label="Kompozyt" value="Composite" />
               </Picker>
             </View>
           </>
@@ -620,7 +604,7 @@ const CalculatorScreen: React.FC = () => {
       case "Doors":
         return (
           <>
-            <Text style={styles.label}>Amount</Text>
+            <Text style={styles.label}>Ilość</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -631,7 +615,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -642,7 +626,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -653,7 +637,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -664,11 +648,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Steel" value="Steel" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Stal" value="Steel" />
                 <Picker.Item label="PVC" value="PVC" />
-                <Picker.Item label="Aluminum" value="Aluminum" />
-                <Picker.Item label="Glass" value="Glass" />
+                <Picker.Item label="Aluminium" value="Aluminum" />
+                <Picker.Item label="Szkło" value="Glass" />
               </Picker>
             </View>
           </>
@@ -676,7 +660,7 @@ const CalculatorScreen: React.FC = () => {
       case "Facade":
         return (
           <>
-            <Text style={styles.label}>Surface Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -687,7 +671,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Insulation Type</Text>
+            <Text style={styles.label}>Rodzaj izolacji</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.InsulationType}
@@ -698,16 +682,13 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Styrofoam" value="Styrofoam" />
-                <Picker.Item label="Mineral Wool" value="MineralWool" />
-                <Picker.Item
-                  label="Polyurethane Foam"
-                  value="PolyurethaneFoam"
-                />
-                <Picker.Item label="Fiberglass" value="Fiberglass" />
+                <Picker.Item label="Styropian" value="Styrofoam" />
+                <Picker.Item label="Wełna mineralna" value="MineralWool" />
+                <Picker.Item label="Pianka poliuretanowa" value="PolyurethaneFoam" />
+                <Picker.Item label="Wełna szklana" value="Fiberglass" />
               </Picker>
             </View>
-            <Text style={styles.label}>Finish Material</Text>
+            <Text style={styles.label}>Materiał wykończeniowy</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.FinishMaterial}
@@ -718,11 +699,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Plaster" value="Plaster" />
-                <Picker.Item label="Brick" value="Brick" />
-                <Picker.Item label="Stone" value="Stone" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Metal Siding" value="MetalSiding" />
+                <Picker.Item label="Gips" value="Plaster" />
+                <Picker.Item label="Cegła" value="Brick" />
+                <Picker.Item label="Kamień" value="Stone" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Okładzina metalowa" value="MetalSiding" />
               </Picker>
             </View>
           </>
@@ -730,7 +711,7 @@ const CalculatorScreen: React.FC = () => {
       case "Flooring":
         return (
           <>
-            <Text style={styles.label}>Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -741,7 +722,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -752,11 +733,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Laminate" value="Laminate" />
-                <Picker.Item label="Hardwood" value="Hardwood" />
-                <Picker.Item label="Vinyl" value="Vinyl" />
-                <Picker.Item label="Tile" value="Tile" />
-                <Picker.Item label="Carpet" value="Carpet" />
+                <Picker.Item label="Laminat" value="Laminate" />
+                <Picker.Item label="Drewno" value="Hardwood" />
+                <Picker.Item label="Winyl" value="Vinyl" />
+                <Picker.Item label="Płytki" value="Tile" />
+                <Picker.Item label="Dywan" value="Carpet" />
               </Picker>
             </View>
           </>
@@ -764,7 +745,7 @@ const CalculatorScreen: React.FC = () => {
       case "SuspendedCeiling":
         return (
           <>
-            <Text style={styles.label}>Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -775,7 +756,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -786,7 +767,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -797,13 +778,13 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Drywall" value="Drywall" />
-                <Picker.Item label="Mineral Fiber" value="MineralFiber" />
+                <Picker.Item label="Płyta gipsowo-kartonowa" value="Drywall" />
+                <Picker.Item label="Włókno mineralne" value="MineralFiber" />
                 <Picker.Item label="Metal" value="Metal" />
                 <Picker.Item label="PVC" value="PVC" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Glass Fiber" value="GlassFiber" />
-                <Picker.Item label="Composite" value="Composite" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Włókno szklane" value="GlassFiber" />
+                <Picker.Item label="Kompozyt" value="Composite" />
               </Picker>
             </View>
           </>
@@ -811,7 +792,7 @@ const CalculatorScreen: React.FC = () => {
       case "InsulationOfAttic":
         return (
           <>
-            <Text style={styles.label}>Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -822,7 +803,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Thickness (m)</Text>
+            <Text style={styles.label}>Grubość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -833,7 +814,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -844,15 +825,12 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Mineral Wool" value="MineralWool" />
-                <Picker.Item label="Styrofoam" value="Styrofoam" />
-                <Picker.Item
-                  label="Polyurethane Foam"
-                  value="PolyurethaneFoam"
-                />
-                <Picker.Item label="Cellulose" value="Cellulose" />
-                <Picker.Item label="Fiberglass" value="Fiberglass" />
-                <Picker.Item label="Rock Wool" value="RockWool" />
+                <Picker.Item label="Wełna mineralna" value="MineralWool" />
+                <Picker.Item label="Styropian" value="Styrofoam" />
+                <Picker.Item label="Pianka poliuretanowa" value="PolyurethaneFoam" />
+                <Picker.Item label="Celuloza" value="Cellulose" />
+                <Picker.Item label="Wełna szklana" value="Fiberglass" />
+                <Picker.Item label="Wełna skalna" value="RockWool" />
               </Picker>
             </View>
           </>
@@ -860,7 +838,7 @@ const CalculatorScreen: React.FC = () => {
       case "Plastering":
         return (
           <>
-            <Text style={styles.label}>Wall Surface Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia ściany (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -874,7 +852,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Plaster Type</Text>
+            <Text style={styles.label}>Rodzaj tynku</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.PlasterType}
@@ -885,14 +863,14 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Gypsum" value="Gypsum" />
+                <Picker.Item label="Gips" value="Gypsum" />
                 <Picker.Item label="Cement" value="Cement" />
-                <Picker.Item label="Lime" value="Lime" />
-                <Picker.Item label="Lime-Cement" value="LimeCement" />
-                <Picker.Item label="Clay" value="Clay" />
-                <Picker.Item label="Acrylic" value="Acrylic" />
-                <Picker.Item label="Silicone" value="Silicone" />
-                <Picker.Item label="Silicate" value="Silicate" />
+                <Picker.Item label="Wapno" value="Lime" />
+                <Picker.Item label="Wapno-cementowy" value="LimeCement" />
+                <Picker.Item label="Glina" value="Clay" />
+                <Picker.Item label="Akryl" value="Acrylic" />
+                <Picker.Item label="Silikon" value="Silicone" />
+                <Picker.Item label="Krzemian" value="Silicate" />
               </Picker>
             </View>
           </>
@@ -900,7 +878,7 @@ const CalculatorScreen: React.FC = () => {
       case "Painting":
         return (
           <>
-            <Text style={styles.label}>Wall Surface Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia ściany (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -914,7 +892,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Paint Type</Text>
+            <Text style={styles.label}>Rodzaj farby</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.PaintType}
@@ -925,19 +903,19 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Acrylic" value="Acrylic" />
-                <Picker.Item label="Latex" value="Latex" />
-                <Picker.Item label="Oil-Based" value="OilBased" />
-                <Picker.Item label="Water-Based" value="WaterBased" />
-                <Picker.Item label="Epoxy" value="Epoxy" />
-                <Picker.Item label="Enamel" value="Enamel" />
-                <Picker.Item label="Chalk" value="Chalk" />
-                <Picker.Item label="Matte" value="Matte" />
-                <Picker.Item label="Satin" value="Satin" />
-                <Picker.Item label="Glossy" value="Glossy" />
+                <Picker.Item label="Akrylowa" value="Acrylic" />
+                <Picker.Item label="Lateksowa" value="Latex" />
+                <Picker.Item label="Olejna" value="OilBased" />
+                <Picker.Item label="Wodorozcieńczalna" value="WaterBased" />
+                <Picker.Item label="Epoksydowa" value="Epoxy" />
+                <Picker.Item label="Emalia" value="Enamel" />
+                <Picker.Item label="Kreda" value="Chalk" />
+                <Picker.Item label="Matowa" value="Matte" />
+                <Picker.Item label="Satynowa" value="Satin" />
+                <Picker.Item label="Błyszcząca" value="Glossy" />
               </Picker>
             </View>
-            <Text style={styles.label}>Number of Coats</Text>
+            <Text style={styles.label}>Liczba warstw</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -956,7 +934,7 @@ const CalculatorScreen: React.FC = () => {
       case "Staircase":
         return (
           <>
-            <Text style={styles.label}>Number of Steps</Text>
+            <Text style={styles.label}>Liczba schodków</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -970,7 +948,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -981,7 +959,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -992,7 +970,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -1003,15 +981,15 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Unknown" value="Unknown" />
-                <Picker.Item label="Wood" value="Wood" />
+                <Picker.Item label="Nieznany" value="Unknown" />
+                <Picker.Item label="Drewno" value="Wood" />
                 <Picker.Item label="Metal" value="Metal" />
-                <Picker.Item label="Concrete" value="Concrete" />
-                <Picker.Item label="Stone" value="Stone" />
-                <Picker.Item label="Glass" value="Glass" />
-                <Picker.Item label="Composite" value="Composite" />
-                <Picker.Item label="Marble" value="Marble" />
-                <Picker.Item label="Granite" value="Granite" />
+                <Picker.Item label="Beton" value="Concrete" />
+                <Picker.Item label="Kamień" value="Stone" />
+                <Picker.Item label="Szkło" value="Glass" />
+                <Picker.Item label="Kompozyt" value="Composite" />
+                <Picker.Item label="Marmur" value="Marble" />
+                <Picker.Item label="Granit" value="Granite" />
               </Picker>
             </View>
           </>
@@ -1019,7 +997,7 @@ const CalculatorScreen: React.FC = () => {
       case "Balcony":
         return (
           <>
-            <Text style={styles.label}>Length (m)</Text>
+            <Text style={styles.label}>Długość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1030,7 +1008,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1041,7 +1019,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Railing Material</Text>
+            <Text style={styles.label}>Materiał balustrady</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.RailingMaterial}
@@ -1052,11 +1030,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Steel" value="Steel" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Glass" value="Glass" />
-                <Picker.Item label="Aluminum" value="Aluminum" />
-                <Picker.Item label="Wrought Iron" value="WroughtIron" />
+                <Picker.Item label="Stal" value="Steel" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Szkło" value="Glass" />
+                <Picker.Item label="Aluminium" value="Aluminum" />
+                <Picker.Item label="Kute żelazo" value="WroughtIron" />
               </Picker>
             </View>
           </>
@@ -1064,7 +1042,7 @@ const CalculatorScreen: React.FC = () => {
       case "Chimney":
         return (
           <>
-            <Text style={styles.label}>Count</Text>
+            <Text style={styles.label}>Liczba</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1080,7 +1058,7 @@ const CalculatorScreen: React.FC = () => {
       case "LoadBearingWall":
         return (
           <>
-            <Text style={styles.label}>Height (m)</Text>
+            <Text style={styles.label}>Wysokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1091,7 +1069,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Width (m)</Text>
+            <Text style={styles.label}>Szerokość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1102,7 +1080,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Thickness (m)</Text>
+            <Text style={styles.label}>Grubość (m)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1113,7 +1091,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -1124,11 +1102,11 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Concrete" value="Concrete" />
-                <Picker.Item label="Brick" value="Brick" />
-                <Picker.Item label="Aerated Concrete" value="AeratedConcrete" />
-                <Picker.Item label="Stone" value="Stone" />
-                <Picker.Item label="Wood" value="Wood" />
+                <Picker.Item label="Beton" value="Concrete" />
+                <Picker.Item label="Cegła" value="Brick" />
+                <Picker.Item label="Beton komórkowy" value="AeratedConcrete" />
+                <Picker.Item label="Kamień" value="Stone" />
+                <Picker.Item label="Drewno" value="Wood" />
               </Picker>
             </View>
           </>
@@ -1136,7 +1114,7 @@ const CalculatorScreen: React.FC = () => {
       case "VentilationSystem":
         return (
           <>
-            <Text style={styles.label}>Number of Ventilation Systems</Text>
+            <Text style={styles.label}>Liczba systemów wentylacyjnych</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1152,7 +1130,7 @@ const CalculatorScreen: React.FC = () => {
       case "Roof":
         return (
           <>
-            <Text style={styles.label}>Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1163,7 +1141,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Pitch (°)</Text>
+            <Text style={styles.label}>Kąt nachylenia (°)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1174,7 +1152,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -1185,13 +1163,13 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Tile" value="Tile" />
-                <Picker.Item label="Metal Sheet" value="MetalSheet" />
-                <Picker.Item label="Asphalt Shingle" value="AsphaltShingle" />
-                <Picker.Item label="Thatch" value="Thatch" />
-                <Picker.Item label="Slate" value="Slate" />
+                <Picker.Item label="Dachówka" value="Tile" />
+                <Picker.Item label="Blacha" value="MetalSheet" />
+                <Picker.Item label="Gont asfaltowy" value="AsphaltShingle" />
+                <Picker.Item label="Strzechą" value="Thatch" />
+                <Picker.Item label="Łupek" value="Slate" />
                 <Picker.Item label="PVC" value="PVC" />
-                <Picker.Item label="Composite" value="Composite" />
+                <Picker.Item label="Kompozyt" value="Composite" />
               </Picker>
             </View>
           </>
@@ -1199,7 +1177,7 @@ const CalculatorScreen: React.FC = () => {
       case "Ceiling":
         return (
           <>
-            <Text style={styles.label}>Area (m²)</Text>
+            <Text style={styles.label}>Powierzchnia (m²)</Text>
             <TextInput
               style={styles.input}
               keyboardType="numeric"
@@ -1210,7 +1188,7 @@ const CalculatorScreen: React.FC = () => {
                 })
               }
             />
-            <Text style={styles.label}>Material</Text>
+            <Text style={styles.label}>Materiał</Text>
             <View style={styles.pickerContainer}>
               <Picker
                 selectedValue={state.fields.Material}
@@ -1221,21 +1199,18 @@ const CalculatorScreen: React.FC = () => {
                   })
                 }
               >
-                <Picker.Item label="Concrete" value="Concrete" />
-                <Picker.Item label="Wood" value="Wood" />
-                <Picker.Item label="Steel" value="Steel" />
-                <Picker.Item label="Composite" value="Composite" />
-                <Picker.Item
-                  label="Prefabricated Concrete"
-                  value="PrefabricatedConcrete"
-                />
+                <Picker.Item label="Beton" value="Concrete" />
+                <Picker.Item label="Drewno" value="Wood" />
+                <Picker.Item label="Stal" value="Steel" />
+                <Picker.Item label="Kompozyt" value="Composite" />
+                <Picker.Item label="Beton prefabrykowany" value="PrefabricatedConcrete" />
               </Picker>
             </View>
           </>
         );
       default:
         return (
-          <Text style={styles.label}>No fields available for this type.</Text>
+          <Text style={styles.label}>Brak dostępnych pól dla tego typu.</Text>
         );
     }
   };
@@ -1246,7 +1221,7 @@ const CalculatorScreen: React.FC = () => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
 
       <Image
@@ -1254,41 +1229,38 @@ const CalculatorScreen: React.FC = () => {
         style={styles.icon}
       />
 
-      <Text style={styles.title}>Construction Calculator</Text>
+      <Text style={styles.title}>Kalkulator budowlany</Text>
 
       <View style={styles.whiteContainer}>
-        <Text style={styles.label}>Select Construction Type</Text>
+        <Text style={styles.label}>Wybierz typ budowy</Text>
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={state.constructionType}
             onValueChange={(value) =>
-              setState({
-                ...state,
+              setState((prev) => ({
+                ...prev,
                 constructionType: value as keyof typeof CONSTRUCTION_TYPE_ENUM,
                 fields: {},
-              })
+              }))
             }
           >
-            <Picker.Item label="Partition Wall" value="PartitionWall" />
-            <Picker.Item label="Foundation" value="Foundation" />
-            <Picker.Item label="Windows" value="Windows" />
-            <Picker.Item label="Doors" value="Doors" />
-            <Picker.Item label="Facade" value="Facade" />
-            <Picker.Item label="Flooring" value="Flooring" />
-            <Picker.Item label="Suspended Ceiling" value="SuspendedCeiling" />
-            <Picker.Item
-              label="Insulation of Attic"
-              value="InsulationOfAttic"
-            />
-            <Picker.Item label="Plastering" value="Plastering" />
-            <Picker.Item label="Painting" value="Painting" />
-            <Picker.Item label="Staircase" value="Staircase" />
-            <Picker.Item label="Balcony" value="Balcony" />
-            <Picker.Item label="Chimney" value="Chimney" />
-            <Picker.Item label="Load Bearing Wall" value="LoadBearingWall" />
-            <Picker.Item label="Ventilation System" value="VentilationSystem" />
-            <Picker.Item label="Roof" value="Roof" />
-            <Picker.Item label="Ceiling" value="Ceiling" />
+            <Picker.Item label="Ściana działowa" value="PartitionWall" />
+            <Picker.Item label="Fundament" value="Foundation" />
+            <Picker.Item label="Okna" value="Windows" />
+            <Picker.Item label="Drzwi" value="Doors" />
+            <Picker.Item label="Elewacja" value="Facade" />
+            <Picker.Item label="Podłoga" value="Flooring" />
+            <Picker.Item label="Podwieszany sufit" value="SuspendedCeiling" />
+            <Picker.Item label="Izolacja poddasza" value="InsulationOfAttic" />
+            <Picker.Item label="Tynkowanie" value="Plastering" />
+            <Picker.Item label="Malowanie" value="Painting" />
+            <Picker.Item label="Schody" value="Staircase" />
+            <Picker.Item label="Balkon" value="Balcony" />
+            <Picker.Item label="Kominek" value="Chimney" />
+            <Picker.Item label="Ściana nośna" value="LoadBearingWall" />
+            <Picker.Item label="System wentylacyjny" value="VentilationSystem" />
+            <Picker.Item label="Dach" value="Roof" />
+            <Picker.Item label="Sufit" value="Ceiling" />
           </Picker>
         </View>
 
@@ -1296,17 +1268,19 @@ const CalculatorScreen: React.FC = () => {
 
         <View style={styles.switchContainer}>
           <Text style={styles.switchLabel}>
-            {state.includeTax ? "With Tax" : "Without Tax"}
+            {state.includeTax ? "Z podatkiem" : "Bez podatku"}
           </Text>
           <Switch
             value={state.includeTax}
-            onValueChange={(value) => setState({ ...state, includeTax: value })}
+            onValueChange={(value) =>
+              setState((prev) => ({ ...prev, includeTax: value }))
+            }
           />
         </View>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={handleCalculate}>
-        <Text style={styles.buttonText}>Calculate</Text>
+        <Text style={styles.buttonText}>Oblicz</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -1370,7 +1344,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 15,
     backgroundColor: "#fff8e1",
   },
   switchContainer: {

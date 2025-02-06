@@ -13,6 +13,31 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
+// Funkcja tłumacząca typ budowy z angielskiego na polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
 type NavigationProps = NativeStackNavigationProp<StackParamList, "MyOrders">;
 type MyOrdersRouteProps = RouteProp<StackParamList, "MyOrders">;
 
@@ -58,7 +83,12 @@ interface CommonOrder {
 const MyOrdersScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MyOrdersRouteProps>();
-  const { clientId } = route.params;
+  // Przekazujemy parametry: clientId, userRole oraz userName
+  const { clientId, userRole, userName } = route.params as { 
+    clientId: number; 
+    userRole: string; 
+    userName: string; 
+  };
   console.log("MyOrdersScreen - Client ID:", clientId);
 
   const [orders, setOrders] = useState<CommonOrder[]>([]);
@@ -69,20 +99,21 @@ const MyOrdersScreen: React.FC = () => {
       const constructionResponse = await axios.get<ConstructionOrder[]>(
         `http://10.0.2.2:5142/api/ConstructionOrderClient/all/${clientId}`
       );
-      console.log("Construction orders response:", constructionResponse.data);
+      console.log("Odpowiedź dla zamówień budowlanych:", constructionResponse.data);
       const constructionOrders: CommonOrder[] = constructionResponse.data.map(
         (item) => ({
           id: item.id,
           orderType: "construction",
-          main: item.constructionType,
+          // Tłumaczymy typ budowy przy użyciu funkcji formatConstructionType
+          main: formatConstructionType(item.constructionType),
           sub: item.description,
         })
       );
-      console.log("Construction orders mapped:", constructionOrders);
+      console.log("Zamówienia budowlane po mapowaniu:", constructionOrders);
 
       setOrders(constructionOrders);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Błąd pobierania zamówień:", error);
     } finally {
       setLoading(false);
     }
@@ -93,47 +124,52 @@ const MyOrdersScreen: React.FC = () => {
   }, []);
 
   const handleBack = () => {
-    navigation.goBack();
+    navigation.navigate("UserProfile", {
+      clientId,
+      userRole,
+      userName,
+    });
   };
 
   const handleDetails = (order: CommonOrder) => {
     if (order.orderType === "construction") {
+      // Przekazujemy dodatkowo userRole i userName
       navigation.navigate("ConstructionOrderDetails", {
         workId: order.id.toString(),
-        workerId: clientId,
+        workerId: clientId, // dla klienta przekazujemy jego id
+        userType: "Client",
+        userRole,
+        userName,
       });
     }
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
-      <View style={styles.orderInfoContainer}>
+      <View style={styles.orderInfoWrapper}>
         <Image
           source={require("../assets/icons/package.png")}
           style={styles.orderIcon}
         />
-        <View>
+        <View style={styles.textContainer}>
           <Text style={styles.orderId}>{item.main}</Text>
-          <Text style={styles.orderTitle}>{item.sub}</Text>
+          <Text style={styles.orderTitle} numberOfLines={2} ellipsizeMode="tail">
+            {item.sub}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => handleDetails(item)}
       >
-        <Text style={styles.detailsButtonText}>see details</Text>
+        <Text style={styles.detailsButtonText}>szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -142,9 +178,9 @@ const MyOrdersScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>My orders</Text>
+      <Text style={styles.headerText}>Moje zamówienia</Text>
       <FlatList
         data={orders}
         renderItem={renderOrderItem}
@@ -193,9 +229,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  orderInfoContainer: {
+  orderInfoWrapper: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   orderIcon: {
     width: 40,

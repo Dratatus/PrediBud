@@ -61,11 +61,44 @@ interface CommonOrder {
 type MyWorksRouteProps = RouteProp<StackParamList, "MyWorks">;
 type NavigationProps = NativeStackNavigationProp<StackParamList, "MyWorks">;
 
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
 const MyWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<MyWorksRouteProps>();
-  const { clientId: workerId } = route.params;
-  console.log("MyWorksScreen - Worker ID:", workerId);
+  const {
+    clientId,
+    userRole = "Worker",
+    userName = "Nieznany wykonawca",
+  } = route.params as {
+    clientId: number;
+    userRole: string;
+    userName: string;
+  };
+  console.log("MyWorksScreen - Worker ID:", clientId);
 
   const [orders, setOrders] = useState<CommonOrder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -73,9 +106,9 @@ const MyWorksScreen: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get<ConstructionOrder[]>(
-        `http://10.0.2.2:5142/api/ConstructionOrderWorker/my-orders/${workerId}`
+        `http://10.0.2.2:5142/api/ConstructionOrderWorker/my-orders/${clientId}`
       );
-      console.log("Construction orders response:", response.data);
+      console.log("Odpowiedź dla zamówień budowlanych:", response.data);
       const acceptedOrders = response.data.filter(
         (order) => order.status === "Accepted"
       );
@@ -84,10 +117,10 @@ const MyWorksScreen: React.FC = () => {
         main: order.constructionType,
         sub: order.description,
       }));
-      console.log("Mapped construction orders:", constructionOrders);
+      console.log("Przemapowane zamówienia budowlane:", constructionOrders);
       setOrders(constructionOrders);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Błąd pobierania zamówień:", error);
     } finally {
       setLoading(false);
     }
@@ -104,39 +137,41 @@ const MyWorksScreen: React.FC = () => {
   const handleDetails = (order: CommonOrder) => {
     navigation.navigate("ConstructionOrderDetails", {
       workId: order.id.toString(),
-      workerId,
+      workerId: clientId, // w MyWorksScreen "clientId" to ID pracownika
+      userType: "Worker",
+      userRole: userRole,
+      userName: userName,
     });
   };
 
   const renderOrderItem = ({ item }: { item: CommonOrder }) => (
     <View style={styles.orderItemContainer}>
-      <View style={styles.orderInfoContainer}>
+      <View style={styles.orderInfoWrapper}>
         <Image
           source={require("../assets/icons/package.png")}
           style={styles.orderIcon}
         />
-        <View>
-          <Text style={styles.orderId}>{item.main}</Text>
-          <Text style={styles.orderTitle}>{item.sub}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.orderId}>
+            {formatConstructionType(item.main)}
+          </Text>
+          <Text style={styles.orderTitle} numberOfLines={2} ellipsizeMode="tail">
+            {item.sub}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => handleDetails(item)}
       >
-        <Text style={styles.detailsButtonText}>see details</Text>
+        <Text style={styles.detailsButtonText}>szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
 
   if (loading) {
     return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color="#000" />
       </View>
     );
@@ -145,9 +180,9 @@ const MyWorksScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-        <Text style={styles.returnButtonText}>Back</Text>
+        <Text style={styles.returnButtonText}>Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>My Works</Text>
+      <Text style={styles.headerText}>Moje prace</Text>
       <FlatList
         data={orders}
         renderItem={renderOrderItem}
@@ -196,7 +231,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  orderInfoContainer: {
+  orderInfoWrapper: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -204,6 +240,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 10,
   },
   orderId: {
     fontSize: 16,

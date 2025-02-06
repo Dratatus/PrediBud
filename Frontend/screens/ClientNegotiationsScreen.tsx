@@ -12,14 +12,33 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 import axios from "axios";
 
-type NavigationProps = NativeStackNavigationProp<
-  StackParamList,
-  "ClientNegotiations"
->;
-type ClientNegotiationsRouteProps = RouteProp<
-  StackParamList,
-  "ClientNegotiations"
->;
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string): string => {
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
+type NavigationProps = NativeStackNavigationProp<StackParamList, "ClientNegotiations">;
+type ClientNegotiationsRouteProps = RouteProp<StackParamList, "ClientNegotiations">;
 
 interface Negotiation {
   id: number;
@@ -81,7 +100,17 @@ interface Negotiation {
 const ClientNegotiationsScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<ClientNegotiationsRouteProps>();
-  const { clientId } = route.params;
+  const {
+    clientId,
+    userRole = "Client",
+    userName = "Nieznany użytkownik",
+  } = route.params as {
+    clientId: number;
+    userRole?: string;
+    userName?: string;
+  };
+  console.log("ClientNegotiationsScreen - clientId:", clientId);
+
   const [negotiations, setNegotiations] = useState<Negotiation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -94,8 +123,8 @@ const ClientNegotiationsScreen: React.FC = () => {
         );
         setNegotiations(response.data);
       } catch (err) {
-        console.error("Error fetching negotiations:", err);
-        setError("Failed to load negotiations.");
+        console.error("Błąd pobierania negocjacji:", err);
+        setError("Nie udało się załadować negocjacji.");
       } finally {
         setLoading(false);
       }
@@ -111,7 +140,7 @@ const ClientNegotiationsScreen: React.FC = () => {
     <View style={styles.itemContainer}>
       <View style={styles.itemInfoContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.itemTitle}>{item.constructionType}</Text>
+          <Text style={styles.itemTitle}>{formatConstructionType(item.constructionType)}</Text>
           <Text style={styles.itemSubtitle}>{item.description}</Text>
         </View>
         <TouchableOpacity
@@ -120,10 +149,12 @@ const ClientNegotiationsScreen: React.FC = () => {
             navigation.navigate("NegotiationDetails", {
               negotiation: item,
               clientId,
+              userRole,
+              userName,
             })
           }
         >
-          <Text style={styles.detailsButtonText}>see details</Text>
+          <Text style={styles.detailsButtonText}>szczegóły</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -142,7 +173,7 @@ const ClientNegotiationsScreen: React.FC = () => {
       <View style={[styles.container, styles.centered]}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>{"<"} Back</Text>
+          <Text style={styles.backButtonText}>{"<"} Powrót</Text>
         </TouchableOpacity>
       </View>
     );
@@ -151,9 +182,9 @@ const ClientNegotiationsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Powrót</Text>
       </TouchableOpacity>
-      <Text style={styles.headerText}>Client Negotiations</Text>
+      <Text style={styles.headerText}>Negocjacje klienta</Text>
       <FlatList
         data={negotiations}
         renderItem={renderNegotiationItem}

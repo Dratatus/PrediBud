@@ -18,6 +18,28 @@ import * as ImagePicker from "expo-image-picker";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/AppNavigator";
 
+const FIELD_PRETTY: Record<string, string> = {
+  height: "Wysokość (m)",
+  width: "Szerokość (m)",
+  thickness: "Grubość (m)",
+  length: "Długość (m)",
+  depth: "Głębokość (m)",
+  amount: "Ilość",
+  surfacearea: "Powierzchnia (m²)",
+  insulationtype: "Rodzaj izolacji",
+  finishmaterial: "Materiał wykończeniowy",
+  area: "Powierzchnia (m²)",
+  pitch: "Kąt nachylenia (°)",
+  wallsurfacearea: "Powierzchnia ściany (m²)",
+  plastertype: "Rodzaj tynku",
+  painttype: "Rodzaj farby",
+  numberofcoats: "Liczba warstw",
+  numberofsteps: "Liczba schodków",
+  railingmaterial: "Materiał balustrady",
+  count: "Ilość",
+  material: "Materiał"
+};
+
 const CONSTRUCTION_TYPE_ENUM = {
   partitionwall: 0,
   foundation: 1,
@@ -61,31 +83,31 @@ const FIELD_CONFIGS: Record<string, string[]> = {
 };
 
 const ADDRESS_LABELS: Record<string, string> = {
-  postCode: "Post code",
-  city: "City",
-  streetName: "Street name",
+  postCode: "Kod pocztowy",
+  city: "Miasto",
+  streetName: "Nazwa ulicy",
 };
 
 const formatConstructionType = (type: string): string => {
   const mapping: Record<string, string> = {
-    partitionwall: "Partition Wall",
-    foundation: "Foundation",
-    windows: "Windows",
-    doors: "Doors",
-    facade: "Facade",
-    flooring: "Flooring",
-    suspendedceiling: "Suspended Ceiling",
-    insulationofattic: "Insulation of Attic",
-    plastering: "Plastering",
-    painting: "Painting",
-    staircase: "Staircase",
-    balcony: "Balcony",
-    shellopen: "Shell Open",
-    chimney: "Chimney",
-    loadbearingwall: "Load Bearing Wall",
-    ventilationsystem: "Ventilation System",
-    roof: "Roof",
-    ceiling: "Ceiling",
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
   };
   return mapping[type] || type;
 };
@@ -98,166 +120,166 @@ const getEnumOptions = (
     case "partitionwall":
       if (field === "material")
         return {
-          "0": "Drywall",
-          "1": "Brick",
-          "2": "Aerated Concrete",
-          "3": "Wood",
-          "4": "Glass",
+          "0": "Płyta gipsowo-kartonowa",
+          "1": "Cegła",
+          "2": "Beton komórkowy",
+          "3": "Drewno",
+          "4": "Szkło",
         };
       break;
     case "windows":
       if (field === "material")
         return {
-          "0": "Unknown",
-          "1": "Wood",
+          "0": "Nieznany",
+          "1": "Drewno",
           "2": "PVC",
-          "3": "Aluminum",
-          "4": "Steel",
-          "5": "Composite",
+          "3": "Aluminium",
+          "4": "Stal",
+          "5": "Kompozyt",
         };
       break;
     case "doors":
       if (field === "material")
         return {
-          "0": "Wood",
-          "1": "Steel",
+          "0": "Drewno",
+          "1": "Stal",
           "2": "PVC",
-          "3": "Aluminum",
-          "4": "Glass",
+          "3": "Aluminium",
+          "4": "Szkło",
         };
       break;
     case "flooring":
       if (field === "material")
         return {
-          "0": "Laminate",
-          "1": "Hardwood",
-          "2": "Vinyl",
-          "3": "Tile",
-          "4": "Carpet",
+          "0": "Laminat",
+          "1": "Drewno liściaste",
+          "2": "Winyl",
+          "3": "Płytki",
+          "4": "Dywan",
         };
       break;
     case "suspendedceiling":
       if (field === "material")
         return {
-          "0": "Drywall",
-          "1": "Mineral Fiber",
+          "0": "Płyta gipsowo-kartonowa",
+          "1": "Włókno mineralne",
           "2": "Metal",
           "3": "PVC",
-          "4": "Wood",
-          "5": "Glass Fiber",
-          "6": "Composite",
+          "4": "Drewno",
+          "5": "Włókno szklane",
+          "6": "Kompozyt",
         };
       break;
     case "insulationofattic":
       if (field === "material")
         return {
-          "0": "Mineral Wool",
-          "1": "Styrofoam",
-          "2": "Polyurethane Foam",
-          "3": "Cellulose",
-          "4": "Fiberglass",
-          "5": "Rock Wool",
+          "0": "Wełna mineralna",
+          "1": "Styropian",
+          "2": "Pianka poliuretanowa",
+          "3": "Celuloza",
+          "4": "Wełna szklana",
+          "5": "Wełna skalna",
         };
       break;
     case "plastering":
       if (field === "plastertype")
         return {
-          "0": "Gypsum",
+          "0": "Gips",
           "1": "Cement",
-          "2": "Lime",
-          "3": "Lime Cement",
-          "4": "Clay",
-          "5": "Acrylic",
-          "6": "Silicone",
-          "7": "Silicate",
+          "2": "Wapno",
+          "3": "Wapno-cementowy",
+          "4": "Glina",
+          "5": "Akryl",
+          "6": "Silikon",
+          "7": "Krzemian",
         };
       break;
     case "painting":
       if (field === "painttype")
         return {
-          "0": "Acrylic",
-          "1": "Latex",
-          "2": "Oil Based",
-          "3": "Water Based",
-          "4": "Epoxy",
-          "5": "Enamel",
-          "6": "Chalk",
-          "7": "Matte",
-          "8": "Satin",
-          "9": "Glossy",
+          "0": "Akryl",
+          "1": "Lateks",
+          "2": "Na bazie oleju",
+          "3": "Na bazie wody",
+          "4": "Epoksydowa",
+          "5": "Emalia",
+          "6": "Kreda",
+          "7": "Matowa",
+          "8": "Satynowa",
+          "9": "Błyszcząca",
         };
       break;
     case "staircase":
       if (field === "material")
         return {
-          "0": "Unknown",
-          "1": "Wood",
+          "0": "Nieznany",
+          "1": "Drewno",
           "2": "Metal",
-          "3": "Concrete",
-          "4": "Stone",
-          "5": "Glass",
-          "6": "Composite",
-          "7": "Marble",
-          "8": "Granite",
+          "3": "Beton",
+          "4": "Kamień",
+          "5": "Szkło",
+          "6": "Kompozyt",
+          "7": "Marmur",
+          "8": "Granit",
         };
       break;
     case "balcony":
       if (field === "railingmaterial")
         return {
-          "0": "Steel",
-          "1": "Wood",
-          "2": "Glass",
-          "3": "Aluminum",
-          "4": "Wrought Iron",
+          "0": "Stal",
+          "1": "Drewno",
+          "2": "Szkło",
+          "3": "Aluminium",
+          "4": "Kute żelazo",
         };
       break;
     case "loadbearingwall":
       if (field === "material")
         return {
-          "0": "Concrete",
-          "1": "Brick",
-          "2": "Aerated Concrete",
-          "3": "Stone",
-          "4": "Wood",
+          "0": "Beton",
+          "1": "Cegła",
+          "2": "Beton komórkowy",
+          "3": "Kamień",
+          "4": "Drewno",
         };
       break;
     case "roof":
       if (field === "material")
         return {
-          "0": "Tile",
-          "1": "Metal Sheet",
-          "2": "Asphalt Shingle",
-          "3": "Thatch",
-          "4": "Slate",
+          "0": "Dachówka",
+          "1": "Blacha",
+          "2": "Gont asfaltowy",
+          "3": "Strzecha",
+          "4": "Łupek",
           "5": "PVC",
-          "6": "Composite",
+          "6": "Kompozyt",
         };
       break;
     case "ceiling":
       if (field === "material")
         return {
-          "0": "Concrete",
-          "1": "Wood",
-          "2": "Steel",
-          "3": "Composite",
-          "4": "Prefabricated Concrete",
+          "0": "Beton",
+          "1": "Drewno",
+          "2": "Stal",
+          "3": "Kompozyt",
+          "4": "Beton prefabrykowany",
         };
       break;
     case "facade":
       if (field === "insulationtype")
         return {
-          "0": "Styrofoam",
-          "1": "Mineral Wool",
-          "2": "Polyurethane Foam",
-          "3": "Fiberglass",
+          "0": "Styropian",
+          "1": "Wełna mineralna",
+          "2": "Pianka poliuretanowa",
+          "3": "Wełna szklana",
         };
       if (field === "finishmaterial")
         return {
-          "0": "Plaster",
-          "1": "Brick",
-          "2": "Stone",
-          "3": "Wood",
-          "4": "Metal Siding",
+          "0": "Tynk",
+          "1": "Cegła",
+          "2": "Kamień",
+          "3": "Drewno",
+          "4": "Okładzina metalowa",
         };
       break;
   }
@@ -272,11 +294,8 @@ const ConstructionOrderScreen: React.FC = () => {
   const route = useRoute<RouteProp<StackParamList, "ConstructionOrder">>();
 
   const [description, setDescription] = useState<string>("");
-  const [constructionType, setConstructionType] =
-    useState<string>("partitionwall");
-  const [specificationDetails, setSpecificationDetails] = useState<
-    Record<string, string>
-  >({});
+  const [constructionType, setConstructionType] = useState<string>("partitionwall");
+  const [specificationDetails, setSpecificationDetails] = useState<Record<string, string>>({});
   const [proposedPrice, setProposedPrice] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -290,6 +309,8 @@ const ConstructionOrderScreen: React.FC = () => {
     city: "",
     streetName: "",
   });
+  const [userNameState, setUserNameState] = useState<string>("Nieznany użytkownik");
+  const [userRoleState, setUserRoleState] = useState<string>("Klient");
 
   useEffect(() => {
     if (route.params) {
@@ -323,9 +344,7 @@ const ConstructionOrderScreen: React.FC = () => {
 
   const handleSubmit = async () => {
     const constructionTypeNumber =
-      CONSTRUCTION_TYPE_ENUM[
-        constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM
-      ];
+      CONSTRUCTION_TYPE_ENUM[constructionType as keyof typeof CONSTRUCTION_TYPE_ENUM];
     const convertedSpecDetails = Object.fromEntries(
       Object.entries(specificationDetails).map(([key, value]) => [
         key,
@@ -345,7 +364,7 @@ const ConstructionOrderScreen: React.FC = () => {
       address,
     };
 
-    console.log("Data sent to backend:", orderData);
+    console.log("Dane wysyłane do backendu:", orderData);
 
     try {
       const response = await fetch(
@@ -357,12 +376,16 @@ const ConstructionOrderScreen: React.FC = () => {
         }
       );
       if (response.ok) {
-        navigation.navigate("MyOrders", { clientId: route.params!.clientId });
+        navigation.navigate("MyOrders", {
+          clientId: route.params!.clientId,
+          userRole: route.params?.userRole ?? "Klient",
+          userName: route.params?.userName ?? "Nieznany użytkownik",
+        });
       } else {
-        console.error("Failed to create order:", await response.text());
+        console.error("Nie udało się utworzyć zamówienia:", await response.text());
       }
     } catch (error) {
-      console.error("Error while creating order:", error);
+      console.error("Błąd podczas tworzenia zamówienia:", error);
     }
   };
 
@@ -372,17 +395,17 @@ const ConstructionOrderScreen: React.FC = () => {
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>{"<"} Back</Text>
+        <Text style={styles.backButtonText}>{"<"} Wstecz</Text>
       </TouchableOpacity>
       <Image
         source={require("../assets/icons/calculator.png")}
         style={styles.icon}
       />
 
-      <Text style={styles.title}>Create Construction Order</Text>
+      <Text style={styles.title}>Utwórz zamówienie budowlane</Text>
 
       <View style={styles.whiteContainer}>
-        <Text style={styles.label}>Construction Type</Text>
+        <Text style={styles.label}>Typ budowy</Text>
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={constructionType}
@@ -401,13 +424,15 @@ const ConstructionOrderScreen: React.FC = () => {
           </Picker>
         </View>
 
-        <Text style={styles.label}>Specification Details</Text>
+        <Text style={styles.label}>Szczegóły specyfikacji</Text>
         {FIELD_CONFIGS[constructionType as keyof typeof FIELD_CONFIGS]?.map(
           (field: string) => {
             const enumOptions = getEnumOptions(constructionType, field);
             return (
               <View key={field} style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>{field}</Text>
+                <Text style={styles.inputLabel}>
+                  {FIELD_PRETTY[field.toLowerCase()] || field}
+                </Text>
                 {enumOptions ? (
                   <View style={styles.pickerContainer}>
                     <Picker
@@ -444,26 +469,26 @@ const ConstructionOrderScreen: React.FC = () => {
           }
         )}
 
-        <Text style={styles.label}>Description</Text>
+        <Text style={styles.label}>Opis</Text>
         <TextInput
           style={styles.input}
           value={description}
           onChangeText={setDescription}
-          placeholder="Enter order description"
+          placeholder="Wprowadź opis zamówienia"
         />
 
-        <Text style={styles.label}>Proposed Price</Text>
+        <Text style={styles.label}>Proponowana cena</Text>
         <TextInput
           style={styles.input}
           value={proposedPrice !== null ? proposedPrice.toString() : ""}
           onChangeText={(text) =>
             setProposedPrice(text ? parseFloat(text) : null)
           }
-          placeholder="Enter proposed price (optional)"
+          placeholder="Wprowadź proponowaną cenę (opcjonalnie)"
           keyboardType="numeric"
         />
 
-        <Text style={styles.label}>Address</Text>
+        <Text style={styles.label}>Adres</Text>
         {Object.keys(address).map((field) => (
           <View key={field} style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
@@ -477,7 +502,7 @@ const ConstructionOrderScreen: React.FC = () => {
           </View>
         ))}
 
-        <Text style={styles.label}>Requested Start Time</Text>
+        <Text style={styles.label}>Żądany termin rozpoczęcia</Text>
         <TouchableOpacity
           style={styles.dateButton}
           onPress={() => setShowDatePicker(true)}
@@ -501,8 +526,8 @@ const ConstructionOrderScreen: React.FC = () => {
         />
       )}
 
-      <Text style={styles.label}>Placement Photos</Text>
-      <Button title="Add Photos" onPress={handleAddPhoto} />
+      <Text style={styles.label}>Zdjęcia lokalizacji</Text>
+      <Button title="Dodaj zdjęcia" onPress={handleAddPhoto} />
       <View style={styles.photosContainer}>
         {placementPhotos.map((uri, index) => (
           <Image key={index} source={{ uri }} style={styles.photo} />
@@ -510,7 +535,7 @@ const ConstructionOrderScreen: React.FC = () => {
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Create Order</Text>
+        <Text style={styles.submitButtonText}>Utwórz zamówienie</Text>
       </TouchableOpacity>
     </ScrollView>
   );

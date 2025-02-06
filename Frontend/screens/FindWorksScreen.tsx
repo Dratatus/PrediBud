@@ -23,9 +23,36 @@ interface ConstructionWork {
   isNew: boolean;
 }
 
+// Funkcja tłumacząca typ budowy na język polski
+const formatConstructionType = (type: string | undefined): string => {
+  if (!type) return "Brak typu";
+  const mapping: Record<string, string> = {
+    partitionwall: "Ściana działowa",
+    foundation: "Fundament",
+    windows: "Okna",
+    doors: "Drzwi",
+    facade: "Elewacja",
+    flooring: "Podłoga",
+    suspendedceiling: "Podwieszany sufit",
+    insulationofattic: "Izolacja poddasza",
+    plastering: "Tynkowanie",
+    painting: "Malowanie",
+    staircase: "Schody",
+    balcony: "Balkon",
+    shellopen: "Otwarta powłoka",
+    chimney: "Kominek",
+    loadbearingwall: "Ściana nośna",
+    ventilationsystem: "System wentylacyjny",
+    roof: "Dach",
+    ceiling: "Sufit",
+  };
+  return mapping[type.toLowerCase()] || type;
+};
+
 const FindWorksScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<FindWorksRouteProps>();
+  // Zakładamy, że w route.params mamy przekazany clientId jako workerId (dla pracownika)
   const { clientId: workerId } = route.params;
   console.log("FindWorksScreen - Worker ID:", workerId);
 
@@ -40,28 +67,10 @@ const FindWorksScreen: React.FC = () => {
       );
       setAvailableWorks(response.data);
     } catch (err) {
-      console.error("Error fetching available works:", err);
-      setError("Failed to load available works.");
+      console.error("Błąd pobierania dostępnych zleceń:", err);
+      setError("Nie udało się załadować dostępnych zleceń.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    const url = `http://10.0.2.2:5142/api/Notification/${workerId}/mark-all-as-read`;
-    try {
-      await axios.post(url);
-    } catch (err) {
-      console.error("Error marking notifications as read:", err);
-    }
-  };
-
-  const handleDeleteAll = async () => {
-    const url = `http://10.0.2.2:5142/api/Notification/${workerId}/all`;
-    try {
-      await axios.delete(url);
-    } catch (err) {
-      console.error("Error deleting notifications:", err);
     }
   };
 
@@ -73,8 +82,25 @@ const FindWorksScreen: React.FC = () => {
     navigation.goBack();
   };
 
+  // Funkcja wyświetlająca szczegóły zlecenia
   const handleDetails = (workId: string) => {
-    navigation.navigate("ConstructionOrderDetails", { workId, workerId });
+    // Ustawiamy domyślne wartości:
+    const userRole = "Worker";
+    const userName = "Nieznany wykonawca"; // lub inna wartość, jeśli posiadasz
+    console.log("Nawigacja do ConstructionOrderDetails z parametrami:", {
+      workId,
+      workerId,
+      userType: "worker",
+      userRole,
+      userName,
+    });
+    navigation.navigate("ConstructionOrderDetails", {
+      workId,
+      workerId,
+      userType: "worker",
+      userRole,
+      userName,
+    });
   };
 
   const getWorkIcon = (constructionType: string | undefined): any => {
@@ -94,19 +120,19 @@ const FindWorksScreen: React.FC = () => {
         />
         <View>
           <Text style={styles.workId}>
-            {item.constructionType || "No type"}
+            {formatConstructionType(item.constructionType)}
           </Text>
           <Text style={styles.workTitle}>
-            {item.description || "No description"}
+            {item.description || "Brak opisu"}
           </Text>
         </View>
       </View>
-      {item.isNew && <Text style={styles.newBadge}>New</Text>}
+      {item.isNew && <Text style={styles.newBadge}>Nowe</Text>}
       <TouchableOpacity
         style={styles.detailsButton}
         onPress={() => handleDetails(item.id.toString())}
       >
-        <Text style={styles.detailsButtonText}>see details</Text>
+        <Text style={styles.detailsButtonText}>szczegóły</Text>
       </TouchableOpacity>
     </View>
   );
@@ -128,10 +154,10 @@ const FindWorksScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.returnButton} onPress={handleBack}>
-          <Text style={styles.returnButtonText}>Back</Text>
+          <Text style={styles.returnButtonText}>Powrót</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.headerText}>Available Works</Text>
+      <Text style={styles.headerText}>Dostępne zlecenia</Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={availableWorks}
@@ -165,21 +191,6 @@ const styles = StyleSheet.create({
   returnButtonText: {
     color: "black",
     fontWeight: "bold",
-  },
-  headerButtons: {
-    flexDirection: "row",
-  },
-  headerButton: {
-    backgroundColor: "#f0f0d0",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  headerButtonText: {
-    color: "black",
-    fontWeight: "bold",
-    fontSize: 12,
   },
   headerText: {
     fontSize: 32,

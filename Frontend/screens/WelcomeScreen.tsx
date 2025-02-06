@@ -22,12 +22,12 @@ const WelcomeScreen = () => {
       style={styles.background}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>PREDICT YOUR{"\n"}FUTURE!</Text>
+        <Text style={styles.title}>PRZEWIDŹ SWOJĄ{"\n"}PRZYSZŁOŚĆ!</Text>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.buttonText}>START</Text>
+          <Text style={styles.buttonText}>ROZPOCZNIJ</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
